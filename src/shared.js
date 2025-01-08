@@ -2098,6 +2098,8 @@ export const siteSpecificLocation = {
   "Henry Ford Medical Center- Fairlane": {"siteAcronym":"HFHS", "siteCode":healthProviderAbbrToConceptIdObj.henryFordHealth, "loginSiteName": "Henry Ford Health System"},
   "HFH Livonia Research Clinic": {"siteAcronym":"HFHS", "siteCode":healthProviderAbbrToConceptIdObj.henryFordHealth, "loginSiteName": "Henry Ford Health System"},
   "HFH Pop-Up": {"siteAcronym": "HFHS", "siteCode": healthProviderAbbrToConceptIdObj.henryFordHealth, "loginSiteName": "Henry Ford Health System"},
+  "HFH Jackson": {"siteAcronym": "HFHS", "siteCode": healthProviderAbbrToConceptIdObj.henryFordHealth, "loginSiteName": "Henry Ford Health System"},
+  "In-Home Collection": {"siteAcronym": "HFHS", "siteCode": healthProviderAbbrToConceptIdObj.henryFordHealth, "loginSiteName": "Henry Ford Health System"},
   "KPCO RRL": {"siteAcronym":"KPCO", "siteCode": healthProviderAbbrToConceptIdObj.kpCO, "loginSiteName": "Kaiser Permanente Colorado"},
   "KPGA RRL":{"siteAcronym":"KPGA", "siteCode": healthProviderAbbrToConceptIdObj.kpGA, "loginSiteName": "Kaiser Permanente Georgia"},
   "KPHI RRL": {"siteAcronym":"KPHI", "siteCode": healthProviderAbbrToConceptIdObj.kpHI, "loginSiteName": "Kaiser Permanente Hawaii"},
@@ -2105,6 +2107,8 @@ export const siteSpecificLocation = {
   "Marshfield": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
   "Lake Hallie": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
   "Weston": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
+  "Stevens Point": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
+  "Neillsville": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
   "Rice Lake": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
   "Wisconsin Rapids": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
   "Colby Abbotsford": {"siteAcronym":"MFC", "siteCode": healthProviderAbbrToConceptIdObj.marshfieldClinic, "loginSiteName": "Marshfield Clinic Health System"},
@@ -2115,6 +2119,9 @@ export const siteSpecificLocation = {
   "Fargo South University": {"siteAcronym":"SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
   "Bismarck Medical Center": {"siteAcronym": "SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
   "Sioux Falls Sanford Center": {"siteAcronym": "SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
+  "Sioux Falls Edith Center": {"siteAcronym": "SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
+  "Fargo Amber Valley": {"siteAcronym": "SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
+  "Bemidji Clinic": {"siteAcronym": "SFH", "siteCode": healthProviderAbbrToConceptIdObj.sanfordHealth, "loginSiteName": "Sanford Health"},
   "DCAM": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
   "Ingalls Harvey": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
   "River East": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
@@ -2129,7 +2136,6 @@ export const siteSpecificLocation = {
   "NTX Biorepository": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
-
 }
 
 export const locationConceptIDToLocationMap = {
@@ -2189,6 +2195,25 @@ export const locationConceptIDToLocationMap = {
     loginSiteName: 'Henry Ford Health System',
     email: 'ConnectBioHFH@hfhs.org',
   },
+/*
+TBD: {
+    siteSpecificLocation: 'HFH Jackson',
+    siteAcronym: 'HFHS',
+    siteCode: 'TBD',
+    siteTeam: 'Henry Ford Connect Study Team',
+    loginSiteName: 'Henry Ford Health System',
+    email: 'ConnectBioHFH@hfhs.org',
+  },
+TBD: {
+    siteSpecificLocation: 'In-Home Collection',
+    siteAcronym: 'HFHS',
+    siteCode: 'TBD',
+    siteTeam: 'Henry Ford Connect Study Team',
+    loginSiteName: 'Henry Ford Health System',
+    email: 'ConnectBioHFH@hfhs.org',
+  }
+*/
+
   763273112: {
     siteSpecificLocation: 'KPCO RRL',
     siteAcronym: 'KPCO',
@@ -2293,6 +2318,26 @@ export const locationConceptIDToLocationMap = {
     loginSiteName: 'Marshfield Cancer Center',
     email: 'connectstudy@marshfieldresearch.org'
   },
+  /*
+  TBD:{
+    siteSpecificLocation: 'Stevens Point',
+    siteAcronym: 'MFC',
+    siteCode: '303349821',
+    siteTeam: 'Marshfield Connect Study Team',
+    loginSiteName: 'Marshfield Cancer Center',
+    email: 'connectstudy@marshfieldresearch.org'
+  },
+  TBD:{
+    siteSpecificLocation: 'Neillsville',
+    siteAcronym: 'MFC',
+    siteCode: '303349821',
+    siteTeam: 'Marshfield Connect Study Team',
+    loginSiteName: 'Marshfield Cancer Center',
+    email: 'connectstudy@marshfieldresearch.org'
+  },
+  
+  */
+
   589224449: {
     siteSpecificLocation: 'Sioux Falls Imagenetics',
     siteAcronym: 'SFH',
@@ -2317,6 +2362,33 @@ export const locationConceptIDToLocationMap = {
     loginSiteName: 'Sanford Health',
     email: 'connectstudy@sanfordhealth.org',
   },
+  /*
+  TBD: {
+    siteSpecificLocation: 'Sioux Falls Edith Center',
+    siteAcronym: 'SFH',
+    siteCode: `TBD`,
+    siteTeam: 'Sanford Connect Study Team',
+    loginSiteName: 'Sanford Health',
+    email: 'connectstudy@sanfordhealth.org',
+  },
+  TBD: {
+    siteSpecificLocation: 'Fargo Amber Valley',
+    siteAcronym: 'SFH',
+    siteCode: `TBD`,
+    siteTeam: 'Sanford Connect Study Team',
+    loginSiteName: 'Sanford Health',
+    email: 'connectstudy@sanfordhealth.org',
+  }
+  TBD: {
+    siteSpecificLocation: 'Bemidji Clinic',
+    siteAcronym: 'SFH',
+    siteCode: `TBD`,
+    siteTeam: 'Sanford Connect Study Team',
+    loginSiteName: 'Sanford Health',
+    email: 'connectstudy@sanfordhealth.org',
+  }
+
+  */
   467088902: {
     siteSpecificLocation: 'Fargo South University',
     siteAcronym: 'SFH',
@@ -2446,6 +2518,10 @@ export const conceptIdToSiteSpecificLocation = {
   570271641: "Henry Ford West Bloomfield Hospital",
   838480167: "Henry Ford Medical Center- Fairlane",
   706927479: "HFH Livonia Research Clinic",
+  /*
+  'TBD': "HFH Jackson"
+  'TBD': "In-Home collection "
+  */
   763273112: "KPCO RRL",
   767775934: "KPGA RRL",
   531313956: "KPHI RRL",
@@ -2458,13 +2534,22 @@ export const conceptIdToSiteSpecificLocation = {
   120264574: "South Loop",
   567969985: 'MF Pop-Up',
   940329442: "Orland Park",
+  /*
+  'TBD': "Stevens Point"
+  'TBD': "Neillsville"
+  */
   691714762: "Rice Lake",
   487512085: "Wisconsin Rapids",
   983848564: "Colby Abbotsford",
   261931804: "Minocqua",
   665277300: "Merrill",
   467088902: "Fargo South University",
-  589224449: "Sioux Falls Imagenetics",
+  589224449: "Sioux Falls Imagenetics", // Remove later
+  /*
+  'TBD': "Sioux Falls Edith Center"
+  'TBD': "Fargo Amber Valley"
+  'TBD': "Bemidji Clinic"
+  */
   777644826: "DCAM",
   111111111: "Main Campus",
   222222222: "Frederick",
@@ -2493,7 +2578,19 @@ export const siteSpecificLocationToConceptId = {
   "Marshfield": 692275326,
   "MF Pop-Up": 567969985,
   "Lake Hallie": 698283667,
+  /*
+  'TBD': "Stevens Point",
+  'TBD': "Neillsville",
+  'TBD': "In-Home collection",
+  */
   "Sioux Falls Imagenetics": 589224449,
+  /*
+  'TBD': "Sioux Falls Edith Center",
+  'TBD': "Fargo Amber Valley",
+  'TBD': "Bemidji Clinic",
+  'TBD': "HFH Jackson",
+  
+  */
   "DCAM": 777644826, 
   "Main Campus": 111111111,
   "HFH Livonia Research Clinic": 706927479,
@@ -2502,6 +2599,9 @@ export const siteSpecificLocationToConceptId = {
   "River East": 489380324,
   "South Loop": 120264574,
   "Orland Park": 940329442,
+/**/
+
+
   "Rice Lake": 691714762,
   "Wisconsin Rapids": 487512085,
   "Colby Abbotsford": 983848564,
@@ -2601,6 +2701,16 @@ export const keyToLocationObj =
     809370237: 'BCC- Worth St',
     856158129: 'BCC- Irving',
     436956777: 'NTX Biorepository',
+    /*
+    TBD : "Sioux Falls Edith Center",
+    TBD : "Fargo Amber Valley",
+    TBD : "Bemidji Clinic",
+    TBD : "Stevens Point",
+    TBD : "Neillsville",
+    TBD : "HFH Jackson",
+    TBD : "In-Home collection",
+    
+    */
     111111111: "NIH",
     13: "NCI"
 
@@ -2799,27 +2909,46 @@ export const siteLocations = {
         'UCM': [{location: 'UC-DCAM', concept: 777644826}, {location: 'Ingalls Harvey', concept: 145191545},
                 {location: 'UCM Pop-Up', concept: 319518299}, {location: 'Orland Park', concept: 940329442}          
               ],
-        'MFC': [{location: 'Marshfield', concept: 692275326}, {location: 'Lake Hallie', concept: 698283667}, {location: 'Weston', concept: 813701399}, {location: 'Rice Lake', concept: 691714762}, 
-                {location: 'Wisconsin Rapids', concept: 487512085}, {location: 'Colby Abbotsford', concept: 983848564}, {location: 'Minocqua', concept: 261931804}, {location: 'Merrill', concept: 665277300},
-                {location: 'MF Pop-Up', concept: 567969985}
-              ],
+        'MFC': [{location: 'Marshfield', concept: 692275326},
+                {location: 'Lake Hallie', concept: 698283667},
+                {location: 'Weston', concept: 813701399}, 
+                {location: 'Rice Lake', concept: 691714762}, 
+                {location: 'Wisconsin Rapids', concept: 487512085}, 
+                {location: 'Colby Abbotsford', concept: 983848564}, 
+                {location: 'Minocqua', concept: 261931804}, 
+                {location: 'Merrill', concept: 665277300},
+                {location: 'MF Pop-Up', concept: 567969985},
+                {location: 'Stevens Point', concept: 'TBD'},
+                {location: 'Neilsville', concept: 'TBD'}
+        ],
         'HP': [{location: 'HP Research Clinic', concept: 834825425}, 
                 {location: 'HP Park Nicollet', concept: conceptIds.nameToKeyObj.hpPN}],
         // HFH Pop-up
-        'HFHS': [{location: 'HFH K-13 Research Clinic', concept: 736183094}, {location: 'HFH Cancer Pavilion Research Clinic', concept: 886364332},
+        'HFHS': [
+                {location: 'HFH K-13 Research Clinic', concept: 736183094},
+                {location: 'HFH Cancer Pavilion Research Clinic', concept: 886364332},
                 {location: 'HFH Livonia Research Clinic', concept: 706927479},
-                {location: 'HFH Pop-Up', concept: conceptIds.nameToKeyObj.hfhPU}],
+                {location: 'HFH Pop-Up', concept: conceptIds.nameToKeyObj.hfhPU},
+                {location: 'HFH Jackson', concept: 'TBD'},
+                {location: 'In-Home Collection', concept: 'TBD'},
+        ],
         // Bismarck
-        'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449}, {location: 'Fargo South University', concept: 467088902}, {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM}, {location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC}],
-
+        'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449}, 
+                {location: 'Fargo South University', concept: 467088902}, 
+                {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM}, 
+                {location: 'Sioux Falls Edith Center', concept: conceptIds.nameToKeyObj.sfSC},
+                {location: 'Sioux Falls Sanford Center', concept: 'TBD'},
+                {location: 'Fargo Amber Valley', concept: 'TBD'},
+                {location: 'Bemidji Clinic', concept: 'TBD'}
+            ],
         'BSWH': [{location: 'BCC- HWC', concept: 723351427}, 
                 {location: 'FW All Saints', concept: 807443231}, 
                 {location: 'BCC- Fort Worth', concept: 288564244}, 
                 {location: 'BCC- Plano', concept: 475614532}, 
                 {location: 'BCC- Worth St', concept: 809370237}, 
                 {location: 'BCC- Irving', concept: 856158129}, 
-                {location: 'NTX Biorepository', concept: 436956777}],
-
+                {location: 'NTX Biorepository', concept: 436956777}
+            ],
         'NIH': [{location: 'NIH-1', concept: 111111111}, {location: 'NIH-2', concept: 222222222}]
 
     },

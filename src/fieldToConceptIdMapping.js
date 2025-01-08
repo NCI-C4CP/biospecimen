@@ -279,6 +279,12 @@ export const conceptIds = {
     collectionLocationMapping: {
         777644826: 'UC-DCAM',
         692275326: 'Marshfield',
+        /*
+        TBD: 'Sioux Falls Edith Center'
+        TBD: 'Fargo Amber Valley'
+        TBD: 'Bemidji Clinic'
+
+        */
         813701399: 'Weston',
         698283667: 'Lake Hallie',
         834825425: 'HP Research Clinic',
@@ -287,7 +293,13 @@ export const conceptIds = {
         886364332: 'HFH Cancer Pavilion Research Clinic',
         706927479: 'HFH Livonia Research Clinic',
         322059622: "HFH Pop-Up",
-        589224449: 'Sioux Falls Imagenetics',
+        /*
+        TBD: 'Stevens Point',
+        TBD: 'Neillsville',
+        TBD: 'HFH Jackson',
+        TBD: 'In-Home collection',
+        */
+        589224449: 'Sioux Falls Imagenetics', // Remove?
         127626388: "Bismarck Medical Center",
         246137578: 'Sioux Falls Sanford Center',
         145191545: 'Ingalls Harvey',
@@ -325,6 +337,16 @@ export const conceptIds = {
         'hfhLRC': 706927479,
         'hfhPRC': 886364332,
         'hfhPU': 322059622,
+        /*
+        hfhJackson: TBD, 
+        inHomeCollection: TBD,
+        bemidjiClinic: TBD,
+        siouxFallsEdithCenter: TBD,
+        fargoAmberValley: TBD,
+        'stevensPoint': TBD,
+        'neillsville': TBD,
+
+        */
         'sfImag': 589224449,
         'sfFargo': 467088902,
         'sfBM' : 127626388,
