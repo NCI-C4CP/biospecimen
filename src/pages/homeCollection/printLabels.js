@@ -126,7 +126,7 @@ const generateParticipantCsv = async (items) => {
   const columns = ['first_name', 'last_name', 'address_1', 'address_2', 'city', 'state', 'zip_code', 'connect_id'];
   csv += `${columns.join(',')}, \r\n`
   for (let row = 0; row < (items.length); row++) {
-    csv += columns.map(key => items[row][key]).join(',');
+    csv += columns.map(key => items[row][key] || '').join(',');
     csv += '\r\n';
     participantsForKitUpdate.push(items[row]['connect_id']);
   }
