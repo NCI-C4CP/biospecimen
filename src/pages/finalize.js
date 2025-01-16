@@ -1,4 +1,4 @@
-import { removeActiveClass, generateBarCode, visitType, getSiteTubesLists, getWorkflow, updateSpecimen, appState, keyToNameObj, showNotifications } from "./../shared.js";
+import { removeActiveClass, generateBarCode, visitType, getSiteTubesLists, getWorkflow, updateSpecimen, submitSpecimen, appState, keyToNameObj, showNotifications } from "./../shared.js";
 import { addEventReturnToCollectProcess } from "./../events.js";
 import {searchTemplate} from "./dashboard.js";
 import { collectionIdSearchScreenTemplate } from "./siteCollection/collectionIdSearch.js";
@@ -42,7 +42,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                             <div>Collection Setting: Clinical</div>` : ``}
                     </div>
                     <div class="row">
-                        <div>Initials of Team Member Completing Clincial Collection Data Entry: ${specimenData[conceptIds.collection.phlebotomistInitials] || ''}</div>
+                        <div>Initials of Team Member Completing Clinical Collection Data Entry: ${specimenData[conceptIds.collection.phlebotomistInitials] || ''}</div>
                     </div>`
                 }
                 ${bptlCollectionFlag === true ? `<div class="row"> Site: ${keyToNameObj[participantData[conceptIds.healthcareProvider]]} </div>` : ``}
@@ -195,6 +195,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                 specimenData[conceptIds.strayTubesList] = [];
                 await updateSpecimen([specimenData]);
             }
+            await submitSpecimen(specimenData, participantData, siteTubesList);
         } catch (e) {
             console.error(e);
             showNotifications({ title: 'Error finalizing specimen.', body: `There was an error finalizing this specimen. Please try again. ${e}` });

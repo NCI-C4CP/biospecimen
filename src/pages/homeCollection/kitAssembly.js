@@ -311,7 +311,7 @@ const storeAssembledKit = async (kitData) => {
     return false
   }
   else if (collectionUnique.data === 'duplicate supplykit id'){
-    alertTemplate('The supply kit and return kit are already in use.');
+    alertTemplate('This Supply Kit ID is unavailable.');
     return false
   }
   else if (collectionUnique.data === 'duplicate collection id'){
