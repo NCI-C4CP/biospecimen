@@ -294,7 +294,7 @@ export const conceptIds = {
         813412950: 'Neillsville',
         755034888: 'HFH Jackson',
         852689772: 'In-Home collection',
-        589224449: 'Sioux Falls Imagenetics', // Remove?
+        589224449: 'Sioux Falls Imagenetics',
         127626388: "Bismarck Medical Center",
         246137578: 'Sioux Falls Sanford Center',
         145191545: 'Ingalls Harvey',
