@@ -279,6 +279,9 @@ export const conceptIds = {
     collectionLocationMapping: {
         777644826: 'UC-DCAM',
         692275326: 'Marshfield',
+        433070901: 'Sioux Falls Edith Center',
+        769594361: 'Fargo Amber Valley',
+        246153539: 'Bemidji Clinic',
         813701399: 'Weston',
         698283667: 'Lake Hallie',
         834825425: 'HP Research Clinic',
@@ -287,6 +290,10 @@ export const conceptIds = {
         886364332: 'HFH Cancer Pavilion Research Clinic',
         706927479: 'HFH Livonia Research Clinic',
         322059622: "HFH Pop-Up",
+        255636184: 'Stevens Point',
+        813412950: 'Neillsville',
+        755034888: 'HFH Jackson',
+        852689772: 'In-Home collection',
         589224449: 'Sioux Falls Imagenetics',
         127626388: "Bismarck Medical Center",
         246137578: 'Sioux Falls Sanford Center',
@@ -311,7 +318,9 @@ export const conceptIds = {
 		475614532: 'BCC- Plano',
 		809370237: 'BCC- Worth St',
         856158129: 'BCC- Irving',
-        436956777: 'NTX Biorepository'
+        436956777: 'NTX Biorepository',
+        483909879: 'North Garland',
+        962830330: 'Waco - MacArthur'
     },
 
     nameToKeyObj: {
@@ -325,6 +334,11 @@ export const conceptIds = {
         'hfhLRC': 706927479,
         'hfhPRC': 886364332,
         'hfhPU': 322059622,
+        'hfhJackson': 755034888, 
+        'inHomeCollection': 852689772,
+        'bemidjiClinic': 246153539,
+        'siouxFallsEdithCenter': 433070901,
+        'fargoAmberValley': 769594361,
         'sfImag': 589224449,
         'sfFargo': 467088902,
         'sfBM' : 127626388,
@@ -337,6 +351,8 @@ export const conceptIds = {
         'colAbb': 983848564,
         'mino': 261931804,
         'merr': 665277300,
+        'stevensPoint': 255636184,
+        'neillsville': 813412950,
         'nci': 111111111,
         'other': 807835037,
         "ucmPopUp": 319518299,
@@ -349,6 +365,8 @@ export const conceptIds = {
         'bccWorthSt': 809370237,
         'bccIrving': 856158129,
         'ntxBiorepo': 436956777,
+        'northGarland': 483909879,
+        'wacoMacArthur': 962830330,
         'all': 1000
     },
     boxedStatus: 771580890,
