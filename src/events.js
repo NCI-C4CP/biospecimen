@@ -2271,12 +2271,13 @@ const populateBoxReportsTable = (source) => {
     currRow.insertCell(0).innerText = "Tracking Number";
     currRow.insertCell(1).innerText = "Date Shipped";
     currRow.insertCell(2).innerText = "Shipping Location";
-    currRow.insertCell(3).innerText = "Box Id";
-    currRow.insertCell(4).innerText = "View Manifest";
-    currRow.insertCell(5).innerHTML = `Received<span style="display:block;">(Yes/No)</span>`;
-    currRow.insertCell(6).innerText = "Date Received";
-    currRow.insertCell(7).innerText = "Condition";
-    currRow.insertCell(8).innerText = "Comments";
+    currRow.insertCell(3).innerText = "Shipped By";
+    currRow.insertCell(4).innerText = "Box Id";
+    currRow.insertCell(5).innerText = "View Manifest";
+    currRow.insertCell(6).innerHTML = `Received<span style="display:block;">(Yes/No)</span>`;
+    currRow.insertCell(7).innerText = "Date Received";
+    currRow.insertCell(8).innerText = "Condition";
+    currRow.insertCell(9).innerText = "Comments";
 
     for (let i = 0; i < reportPageBoxData.data.length; i++) {
         rowCount = currTable.rows.length;
@@ -2285,6 +2286,7 @@ const populateBoxReportsTable = (source) => {
         const trackingNumber = currBox[conceptIds.shippingTrackingNumber] ?? '';
         const shippedDate = currBox[conceptIds.shippingShipDate] ? retrieveDateFromIsoString(currBox[conceptIds.shippingShipDate]) : '';
         const receivedDate = currBox[conceptIds.siteShipmentDateReceived] ? retrieveDateFromIsoString(currBox[conceptIds.siteShipmentDateReceived]) : '';
+        const shippedBy = currBox[conceptIds.shippedByFirstName] ? `<a href="mailto:${currBox[conceptIds.shippedByFirstName]}">${currBox[conceptIds.shippedByFirstName]}</a>` : '';
         const packagedCondition = currBox[conceptIds.packageCondition] || '';
         const shippingLocation = conceptIdToSiteSpecificLocation[currBox[conceptIds.shippingLocation]];
         const boxId = currBox[conceptIds.shippingBoxId];
@@ -2296,12 +2298,13 @@ const populateBoxReportsTable = (source) => {
         currRow.insertCell(0).innerText = trackingNumber;
         currRow.insertCell(1).innerText = shippedDate;
         currRow.insertCell(2).innerText = shippingLocation;
-        currRow.insertCell(3).innerText = boxId;
-        currRow.insertCell(4).innerHTML = viewManifestButton;
-        currRow.insertCell(5).innerText = isReceived;
-        currRow.insertCell(6).innerText = receivedDate;
-        currRow.insertCell(7).innerHTML = packageConditionValue;
-        currRow.insertCell(8).innerText = packageComments;
+        currRow.insertCell(3).innerHTML = shippedBy;
+        currRow.insertCell(4).innerText = boxId;
+        currRow.insertCell(5).innerHTML = viewManifestButton;
+        currRow.insertCell(6).innerText = isReceived;
+        currRow.insertCell(7).innerText = receivedDate;
+        currRow.insertCell(8).innerHTML = packageConditionValue;
+        currRow.insertCell(9).innerText = packageComments;
         
         addEventViewManifestButton('reportsViewManifest' + i, currBox, source);
     }
