@@ -195,11 +195,12 @@ const confirmAssignment = () => {
           return;
         } 
         else {
-          triggerErrorModal('Error while assigning a kit: ' + assignmentStatus);
+          triggerErrorModal(assignmentStatus, 'danger');
           return;
         }
       } catch (error) {
-        triggerErrorModal('An error occurred:', error);
+        console.error(error);
+        triggerErrorModal('An error occurred:' + error, 'danger');
       } finally {
         confirmAssignmentInAction = false;
       }
@@ -226,6 +227,9 @@ const processConfirmedAssignment = async (assignment) => {
         return true
     }
     else {
+      if(responseJson.logText) {
+        console.error(responseJson.logText);
+      }
         triggerErrorModal(`Unable to assign a kit to the participant. Please check the supply kit and connect the ID.`)
         return responseJson.message;
     }

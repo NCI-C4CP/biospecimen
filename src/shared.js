@@ -3681,11 +3681,12 @@ export const addBoxAndUpdateSiteDetails = async (boxAndSiteData) => {
     }
 }
 
-export const triggerErrorModal = (message) => {
+export const triggerErrorModal = (message, alertType) => {
+    alertType = alertType || 'warning';
     const alertList = document.getElementById("alert_placeholder");
     if (alertList) {
     alertList.innerHTML = `
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <div class="alert alert-${alertType} alert-dismissible fade show" role="alert">
             ${message}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
