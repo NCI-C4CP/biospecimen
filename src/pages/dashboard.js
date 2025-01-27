@@ -43,7 +43,7 @@ export const searchTemplate = (goToSpecimenSearch) => {
                         </div>
                         <div class="form-group">
                             <label class="col-form-label search-label">Date of Birth</label>
-                            <input class="form-control" type="date" id="dob"/>
+                            <input class="form-control" type="date" id="dob" required/>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-outline-primary">Search</button>

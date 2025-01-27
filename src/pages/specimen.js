@@ -55,7 +55,7 @@ export const specimenTemplate = async (data, formData) => {
             // This will require more discussion for a long-term implementation
             let siteLocationArray = siteLocations[workflow][siteAcronym]; // Form of [{location, concept}]
             siteLocationArray = siteLocationArray.filter(loc => 
-                ['River East', 'South Loop', 'Orland Park', 'Henry Ford West Bloomfield Hospital'].indexOf(loc.location) === -1
+                ['River East', 'South Loop', 'Orland Park', 'Henry Ford West Bloomfield Hospital', 'Sioux Falls Imagenetics'].indexOf(loc.location) === -1
                 // 'Henry Ford Medical Center- Fairlane' has inconsistent spacing across environments: play it safe by omitting any combination of "Henry Ford" and "Fairlane"
                 && (!loc.location.includes('Fairlane') || !loc.location.includes('Henry Ford')) 
             );

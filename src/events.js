@@ -1541,10 +1541,11 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
     if (!isFormUpdated) {
         continueToFinalizeScreen ? finalizeTemplate(participantData, biospecimenData) : showTimedNotifications({ title: 'No changes detected', body: 'No changes have been made to the collection data.' });
     } else if (isFinalized) {
+        
         handleFinalizedCollectionUpdate(biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen);
     } else {
         try {
-            await processSpecimenCollectionFormUpdates(biospecimenData, participantData, siteTubesList, continueToFinalizeScreen);
+            await updateSpecimen([biospecimenData]);
             await handleFormSaveAndNavigation(biospecimenData, continueToFinalizeScreen);
         } catch (error) {
             console.error(`error saving specimen ${error}`);
@@ -1571,7 +1572,8 @@ const handleFinalizedCollectionUpdate = async (biospecimenData, participantData,
 
     const onCancel = () => { /* Nothing to do here */ };
     
-    // Manage boxedStatus since specimen is already finalized. If boxedStatus = notBoxed -> no update needed.
+    // Specimen is not already finalized before this point. Manage boxedStatus and finalize.
+    // If boxedStatus = notBoxed -> no update needed.
     // If boxedStatus = partiallyBoxed || boxedStatus = boxed -> setBoxedStatus to partiallyBoxed and add the new tubes to strayTubesList.
     const onContinue = async () => {
         try {
