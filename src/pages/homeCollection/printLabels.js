@@ -123,15 +123,12 @@ const generateParticipantCsvGetter = (name) => {
 const generateParticipantCsv = async (items) => {
   let csv = ``;
   let participantsForKitUpdate = []
-  csv += `first_name, last_name, address_1, address_2, city, state, zip_code, connect_id, \r\n`
+  const columns = ['first_name', 'last_name', 'address_1', 'address_2', 'city', 'state', 'zip_code', 'connect_id'];
+  csv += `${columns.join(',')}, \r\n`
   for (let row = 0; row < (items.length); row++) {
-    let keysAmount = Object.keys(items[row]).length
-    let keysCounter = 0
-    participantsForKitUpdate.push(items[row]['connect_id'])
-    for(let key in items[row]) {
-      csv += items[row][key] + (keysCounter + 1 < keysAmount ? ',' : '\r\n') 
-      keysCounter++
-    }
+    csv += columns.map(key => items[row][key] || '').join(',');
+    csv += '\r\n';
+    participantsForKitUpdate.push(items[row]['connect_id']);
   }
   let link = document.createElement("a");
   link.id = "download-csv";

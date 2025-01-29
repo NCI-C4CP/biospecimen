@@ -135,7 +135,20 @@ const participantStatus = (data, collections) => {
     const mouthwashTubes = siteTubesList?.filter(tube => tube.tubeType === "Mouthwash");
 
 
-    collections = collections.filter(collection => collection[conceptIds.collection.selectedVisit] == conceptIds.baseline.visitId);
+    collections = collections
+        .filter(collection => collection[conceptIds.collection.selectedVisit] == conceptIds.baseline.visitId)
+        .sort((a, b) => {
+            const aVal = a[conceptIds.collection.finalizedTime];
+            const bVal = b[conceptIds.collection.finalizedTime];
+            // Sort from oldest to newest
+            if(aVal > bVal) {
+                return 1;
+            } else if (aVal < bVal) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
 
     collections.forEach(collection => {
         bloodTubes?.forEach(tube => {
@@ -157,7 +170,10 @@ const participantStatus = (data, collections) => {
         });
     });
 
+    // Per [1062](https://github.com/episphere/connect/issues/1062), use the oldest date and collection, not the newest
+
     if(bloodCollected.length > 0) {
+        
         bloodCollection = bloodCollected[0][conceptIds.collection.id];
         bloodTime = bloodCollected[0][conceptIds.collection.collectionTime];
     }
