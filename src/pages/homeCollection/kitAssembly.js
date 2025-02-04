@@ -165,6 +165,8 @@ const processAssembledKit = () => {
           triggerErrorModal('Supply Kit ID number doesn\'t match Return Kit.');
         } else if (collectionCupIdValue !== collectionCardIdValue) {
           triggerErrorModal('Collection Cup ID doesn\'t match Collection Card.');
+        } else if (!/^[A-Z0-9]{9}\s\d{4}/gi.test(collectionCupIdValue)) {
+          triggerErrorModal('Collection Cup and Card IDs must be of the format of nine characters, a space, and four digits.');
         } else {
             kitObj[conceptIds.returnKitTrackingNum] = scannedBarcodeValue;
             kitObj[conceptIds.supplyKitId] = supplyKitIdValue;
@@ -183,6 +185,8 @@ const processAssembledKit = () => {
                     document.getElementById('cardId').value = ``;
                     document.getElementById("showMsg").innerHTML = ``;
                     document.getElementById("showErrorMsg").innerHTML = ``;
+                    // Clear error modal
+                    document.getElementById("alert_placeholder").innerHTML = ``;
                     }
             } catch (error) { 
                 console.error(error);
@@ -300,6 +304,26 @@ const storeAssembledKit = async (kitData) => {
       }
       renderSidePane();
       return true
+    }
+    else if (responseStatus === 'Check Collection ID'){
+      alertTemplate('Check collection ID format.');
+      return false
+    }
+    else if (responseStatus === 'duplicate supplykit id'){
+      alertTemplate('This Supply Kit ID is unavailable.');
+      return false
+    }
+    else if (responseStatus === 'duplicate collection id'){
+      alertTemplate('The collection card and cup ID are already in use.');
+      return false
+    }
+    else if (responseStatus === 'duplicate return kit tracking number'){
+      alertTemplate('This tracking number has already been used.');
+      return false
+    }
+    else if (responseStatus === 'return kit tracking number is for supply kit'){
+      alertTemplate('This tracking number has already been used.');
+      return false
     }
     else {
       alertTemplate(`Failed to save the kit.`);
