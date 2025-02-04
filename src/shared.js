@@ -2931,8 +2931,8 @@ export const siteLocations = {
         'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449}, 
                 {location: 'Fargo South University', concept: 467088902}, 
                 {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM}, 
-                {location: 'Sioux Falls Edith Center', concept: conceptIds.nameToKeyObj.sfSC},
-                {location: 'Sioux Falls Sanford Center', concept: 433070901},
+                {location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC},
+                {location: 'Sioux Falls Edith Center', concept: 433070901},
                 {location: 'Fargo Amber Valley', concept: 769594361},
                 {location: 'Bemidji Clinic', concept: 246153539}
             ],
