@@ -165,7 +165,7 @@ const processAssembledKit = () => {
           triggerErrorModal('Supply Kit ID number doesn\'t match Return Kit.');
         } else if (collectionCupIdValue !== collectionCardIdValue) {
           triggerErrorModal('Collection Cup ID doesn\'t match Collection Card.');
-        } else if (!/^[A-Z0-9]{9}\s\d{4}/gi.test(collectionCupIdValue)) {
+        } else if (!/^[A-Z0-9]{9}\s\d{4}$/i.test(collectionCupIdValue)) {
           triggerErrorModal('Collection Cup and Card IDs must be of the format of nine characters, a space, and four digits.');
         } else {
             kitObj[conceptIds.returnKitTrackingNum] = scannedBarcodeValue;
