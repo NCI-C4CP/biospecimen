@@ -290,6 +290,7 @@ export const conceptIds = {
         886364332: 'HFH Cancer Pavilion Research Clinic',
         706927479: 'HFH Livonia Research Clinic',
         322059622: "HFH Pop-Up",
+        911683679: "HFH Detroit Northwest",
         255636184: 'Stevens Point',
         813412950: 'Neillsville',
         755034888: 'HFH Jackson',

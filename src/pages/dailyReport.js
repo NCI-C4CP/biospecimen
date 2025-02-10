@@ -79,7 +79,8 @@ const renderCollectionLocationList = () => {
                     <li><a class="dropdown-item" data-siteKey="hfhLRC" id="hfhLRC">HFH Livonia Research Clinic</a></li>
                     <li><a class="dropdown-item" data-siteKey="hfhPU" id="hfhPU">HFH Pop-Up</a></li>
                     <li><a class="dropdown-item" data-siteKey="hfhJackson" id="hfhJackson">HFH Jackson</a></li>
-                    <li><a class="dropdown-item" data-siteKey="inHomeCollection" id="inHomeCollection">In-Home Collection</a></li>`:
+                    <li><a class="dropdown-item" data-siteKey="inHomeCollection" id="inHomeCollection">In-Home Collection</a></li>
+                    <li><a class="dropdown-item" data-siteKey="hfhDetroitNorthwest" id="hfhDetroitNorthwest">HFH Detroit Northwest</a></li>`:
                 appState.getState().siteAcronym === 'SFH' ? `
                     <li><a class="dropdown-item" data-siteKey="sfFargo" id="sfFargo">Fargo South University</a></li>
                     <li><a class="dropdown-item" data-siteKey="sfBM" id="sfBM">Bismarck Medical Center</a></li>
