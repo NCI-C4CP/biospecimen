@@ -12,13 +12,11 @@ export const checkInTemplate = async (data, checkOutFlag) => {
     }
 
     const isCheckedIn = checkedIn(data);
-    console.log("🚀 ~ checkInTemplate ~ isCheckedIn:", isCheckedIn)
     const canCheckIn = participantCanCheckIn(data);
     const visit = getCheckedInVisit(data);
 
     const response = await getParticipantCollections(data.token);
     let collections = [];
-    console.log("🚀 ~ checkInTemplate ~ collections:", collections)
     let visitCollections = [];
 
     if (response.data.length > 0) {
@@ -116,10 +114,7 @@ const reloadCheckOutReports = (id) => {
     });
 }
 
-const participantStatus = (data, collections, isCheckedIn) => {
-    console.log("🚀 ~ participantStatus ~ collections:", collections)
-    
-    
+const participantStatus = (data, collections, isCheckedIn) => {    
     let bloodCollection;
     let urineCollection;
     let mouthwashCollection;
@@ -180,8 +175,6 @@ const participantStatus = (data, collections, isCheckedIn) => {
         bloodCollection = bloodCollected[0][conceptIds.collection.id];
         bloodTime = bloodCollected[0][conceptIds.collection.collectionTime];
     }
-    console.log("🚀 ~ participantStatus ~ bloodCollected:", bloodCollected)
-    console.log("🚀 ~ participantStatus ~ bloodCollection:", bloodCollection)
     
     if(urineCollected.length > 0) {
         urineCollection = urineCollected[0][conceptIds.collection.id];
@@ -194,17 +187,13 @@ const participantStatus = (data, collections, isCheckedIn) => {
     }
 
     const baselineSampleStatusInfo = {
-        bloodCollection,
         bloodTime,
-        isBloodCollected: data['878865966'],
-        urineCollection,
+        isBloodCollected: data[conceptIds.baseline.bloodCollected],
         urineTime,
-        isUrineCollected: data['167958071'],
-        mouthwashCollection,
+        isUrineCollected: data[conceptIds.baseline.urineCollected],
         mouthwashTime,
-        isMouthwashCollected: data['684635302']
+        isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected]
     }
-
 
     return `
         <div class="row">
@@ -514,83 +503,66 @@ const participantStatus = (data, collections, isCheckedIn) => {
     
 }
 
-
-// const displayBaselineSampleStatus = (baselineType, baselineSampleStatusInfo) => {
-//     // if blood is collected and with a timestamp and collection id
-//     // use baseline types as concept ids
-//     console.log("bloodUrineMouthwashObj", bloodUrineMouthwashObj)
-
-//     if ("blood" === baselineType) {
-//     return `<div class="row">
-//                 <span class="full-width">${data['878865966'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
-//             </div>
-//             <div class="row">
-//                 <span class="full-width">${data['878865966'] === 353358909 ? 'Collected' : 'Not Collected'}</span>
-//             </div>`;
-//     }
-// }
-
+/**
+ * @param {object} baselineType - ""blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
+*/
 const getBaselineCollectionStatus = (baselineType, baselineSampleStatusInfo) => {
-    const { bloodTime, isBloodCollected, urineTime, isUrineCollected, mouthwashTime, isMouthwashCollected } = baselineSampleStatusInfo;
-
-    if ("blood" === baselineType) { 
-        if (isBloodCollected === 353358909  && bloodTime) {
-            return `Collected`;
-        } else if (isBloodCollected === 104430631 && bloodTime) { 
-            return `In Progress`;
-        } else {
-            return `Not Collected`;
-        }
-    } else if ("urine" === baselineType) {
-        if (isUrineCollected === 353358909  && urineTime) {
-            return `Collected`;
-        } else if (isUrineCollected === 104430631 && urineTime) { 
-            return `In Progress`;
-        } else {
-            return `Not Collected`;
-        }
-    } else if ("mouthwash" === baselineType) {
-        if (isMouthwashCollected === 353358909  && mouthwashTime) {
-            return `Collected`;
-        } else if (isMouthwashCollected === 104430631 && mouthwashTime) { 
-            return `In Progress`;
-        } else {
-            return `Not Collected`;
-        }
-    }
+    return determineBaselineStatus(baselineType, baselineSampleStatusInfo);
 }
 
-
-
+/**
+ * @param {object} baselineType - ""blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {string} template literal for the icon status of the baseline sample - check, hashtag, or x
+*/
 const getBaselineIconStatus = (baselineType, baselineSampleStatusInfo) => {
-    const { bloodTime, isBloodCollected, urineTime, isUrineCollected, mouthwashTime, isMouthwashCollected } = baselineSampleStatusInfo;
+    let status = getBaselineCollectionStatus(baselineType, baselineSampleStatusInfo);
 
-    if (baselineType === 'blood') { 
-        if (isBloodCollected === 353358909  && bloodTime) {
-            return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
-        } else if (isBloodCollected === 104430631 && bloodTime) { 
-            return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
-        } else {
-            return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
-        }
-    } else if (baselineType === 'urine') { 
-        if (isUrineCollected === 353358909  && urineTime) {
-            return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
-        } else if (isUrineCollected === 104430631 && urineTime) { 
-            return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
-        } else {
-            return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
-        }
-    } else if (baselineType === 'mouthwash') {
-        if (isMouthwashCollected === 353358909  && mouthwashTime) {
-            return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
-        } else if (isMouthwashCollected === 104430631 && mouthwashTime) { 
-            return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
-        } else {
-            return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
-        }
+    if (status === "Collected") {
+        return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
+    } else if (status === "In Progress") {
+        return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
+    } else {
+        return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
     }
-}
+};
 
+/**
+ * @param {object} baselineType - ""blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
+*/
+const determineBaselineStatus = (baselineType, baselineSampleStatusInfo) => { 
+    const { 
+        bloodTime, 
+        isBloodCollected, 
+        urineTime, 
+        isUrineCollected, 
+        mouthwashTime, 
+        isMouthwashCollected 
+    } = baselineSampleStatusInfo;
 
+    let isCollected;
+    let collectionTime;
 
+    if (baselineType === "blood") {
+        isCollected = isBloodCollected;
+        collectionTime = bloodTime;
+    } else if (baselineType === "urine") {
+        isCollected = isUrineCollected;
+        collectionTime = urineTime;
+    } else if (baselineType === "mouthwash") {
+        isCollected = isMouthwashCollected;
+        collectionTime = mouthwashTime;
+    }
+
+    if (isCollected === conceptIds.yes && collectionTime) {
+        return `Collected`;
+    } else if (isCollected === conceptIds.no && collectionTime) {
+        return `In Progress`;
+    } else {
+        return `Not Collected`;
+    }
+};
