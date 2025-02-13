@@ -28,6 +28,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             });
         }
     }
+
     let template = `
         </br>
 
