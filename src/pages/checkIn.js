@@ -259,10 +259,10 @@ const participantStatus = (data, collections, isCheckedIn) => {
                         <span class="full-width">Baseline Blood</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineIconStatus("blood", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineCollectionStatus("blood", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${bloodCollection ? bloodCollection : '&nbsp;'}</span>
@@ -278,10 +278,10 @@ const participantStatus = (data, collections, isCheckedIn) => {
                         <span class="full-width">Baseline Mouthwash</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineIconStatus("mouthwash", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("mouthwash", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineCollectionStatus("mouthwash", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("mouthwash", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${mouthwashCollection ? mouthwashCollection : '&nbsp;'}</span>
@@ -297,10 +297,10 @@ const participantStatus = (data, collections, isCheckedIn) => {
                         <span class="full-width">Baseline Urine</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineIconStatus("urine", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineCollectionStatus("urine", baselineSampleStatusInfo)}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${urineCollection ? urineCollection : '&nbsp;'}</span>
@@ -489,7 +489,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
                     <div class="row">
                         <span class="full-width">${data['265193023'] === 615768760 ? data['822499427'] : data['265193023'] === 231311385 ? data['222161762'] : ''}</span>
                     </div>
-                 </div>
+                </div>
             </div>
         </div>
             
@@ -506,9 +506,14 @@ const participantStatus = (data, collections, isCheckedIn) => {
 /**
  * @param {string} baselineType - "blood", "urine", or "mouthwash"
  * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
+ * @returns {object} An object with the template literal for the icon status of the baseline sample and the text. 
+ * 
+ * Ex. {
+            "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+            "text": "Collected"
+        }
 */
-const determineBaselineStatus = (baselineType, baselineSampleStatusInfo) => { 
+const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => { 
     const { 
         bloodTime, 
         isBloodCollected, 
@@ -533,37 +538,19 @@ const determineBaselineStatus = (baselineType, baselineSampleStatusInfo) => {
     }
 
     if (isCollected === conceptIds.yes && collectionTime) {
-        return `Collected`;
+        return {
+            "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+            "text": "Collected"
+        }
     } else if (isCollected === conceptIds.no && collectionTime) {
-        return `In Progress`;
+        return {
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
+            text: "In Progress"
+        }
     } else {
-        return `Not Collected`;
+        return {
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
+            text: "Not Collected"
+        }
     }
 };
-
-/**
- * @param {string} baselineType - "blood", "urine", or "mouthwash"
- * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
-*/
-const getBaselineCollectionStatus = (baselineType, baselineSampleStatusInfo) => {
-    return determineBaselineStatus(baselineType, baselineSampleStatusInfo);
-}
-
-/**
- * @param {string} baselineType - "blood", "urine", or "mouthwash"
- * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {string} template literal for the icon status of the baseline sample - check, hashtag, or x
-*/
-const getBaselineIconStatus = (baselineType, baselineSampleStatusInfo) => {
-    let status = getBaselineCollectionStatus(baselineType, baselineSampleStatusInfo);
-
-    if (status === "Collected") {
-        return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
-    } else if (status === "In Progress") {
-        return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
-    } else {
-        return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
-    }
-};
-
