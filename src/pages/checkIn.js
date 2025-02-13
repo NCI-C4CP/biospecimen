@@ -28,7 +28,6 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             });
         }
     }
-
     let template = `
         </br>
 
@@ -454,13 +453,13 @@ const participantStatus = (data, collections, isCheckedIn) => {
                 <div class="col-md-4">
                     <div class="col-md-12 info-box">
                         <div class="row">
-                            <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? 'Eligible' : 'Not Eligible'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? 'Eligible' : 'Not Eligible'}</span>
                         </div>
                         <div class="row">
-                            <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
                         </div>
                         <div class="row">
-                            <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? data['130371375']['266600170']['787567527'] : '<br/>'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibilityTime] : '<br/>'}</span>
                         </div>
                     </div>
                 </div>
@@ -504,33 +503,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
 }
 
 /**
- * @param {object} baselineType - ""blood", "urine", or "mouthwash"
- * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
-*/
-const getBaselineCollectionStatus = (baselineType, baselineSampleStatusInfo) => {
-    return determineBaselineStatus(baselineType, baselineSampleStatusInfo);
-}
-
-/**
- * @param {object} baselineType - ""blood", "urine", or "mouthwash"
- * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {string} template literal for the icon status of the baseline sample - check, hashtag, or x
-*/
-const getBaselineIconStatus = (baselineType, baselineSampleStatusInfo) => {
-    let status = getBaselineCollectionStatus(baselineType, baselineSampleStatusInfo);
-
-    if (status === "Collected") {
-        return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
-    } else if (status === "In Progress") {
-        return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
-    } else {
-        return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
-    }
-};
-
-/**
- * @param {object} baselineType - ""blood", "urine", or "mouthwash"
+ * @param {string} baselineType - "blood", "urine", or "mouthwash"
  * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
  * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
 */
@@ -566,3 +539,30 @@ const determineBaselineStatus = (baselineType, baselineSampleStatusInfo) => {
         return `Not Collected`;
     }
 };
+
+/**
+ * @param {string} baselineType - "blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {string} baseline status - "Collected", "In Progress", or "Not Collected"
+*/
+const getBaselineCollectionStatus = (baselineType, baselineSampleStatusInfo) => {
+    return determineBaselineStatus(baselineType, baselineSampleStatusInfo);
+}
+
+/**
+ * @param {string} baselineType - "blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {string} template literal for the icon status of the baseline sample - check, hashtag, or x
+*/
+const getBaselineIconStatus = (baselineType, baselineSampleStatusInfo) => {
+    let status = getBaselineCollectionStatus(baselineType, baselineSampleStatusInfo);
+
+    if (status === "Collected") {
+        return `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`;
+    } else if (status === "In Progress") {
+        return `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`;
+    } else {
+        return `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`;
+    }
+};
+
