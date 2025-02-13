@@ -260,6 +260,11 @@ export const conceptIds = {
         mouthwashCollectedTime: 448660695
     },
 
+    paymentRound: 130371375,
+    baseline: 266600170,
+    paymentEligibility: 731498909,
+    paymentEligibilityTime: 787567527,
+
     collectionDetails: 173836415,
 
     clinicalDashboard: {
