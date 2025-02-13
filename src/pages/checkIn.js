@@ -454,13 +454,13 @@ const participantStatus = (data, collections, isCheckedIn) => {
                 <div class="col-md-4">
                     <div class="col-md-12 info-box">
                         <div class="row">
-                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? 'Eligible' : 'Not Eligible'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? 'Eligible' : 'Not Eligible'}</span>
                         </div>
                         <div class="row">
-                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
                         </div>
                         <div class="row">
-                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibility] === conceptIds.yes ? data[conceptIds.paymentRound][conceptIds.baseline][conceptIds.paymentEligibilityTime] : '<br/>'}</span>
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibilityTime] : '<br/>'}</span>
                         </div>
                     </div>
                 </div>
