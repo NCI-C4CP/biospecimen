@@ -509,8 +509,8 @@ const participantStatus = (data, collections, isCheckedIn) => {
  * @returns {object} An object with the template literal for the icon status of the baseline sample and the text. 
  * 
  * Ex. {
-            "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
-            "text": "Collected"
+          "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+          "text": "Collected"
         }
 */
 const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => { 
