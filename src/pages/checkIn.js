@@ -28,7 +28,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             });
         }
     }
-    
+
     let template = `
         </br>
 
@@ -76,7 +76,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             <hr/>
     `;
     
-    template += await participantStatus(data, collections);
+    template += await participantStatus(data, collections, isCheckedIn);
 
 
     if (canCheckIn) {
@@ -114,8 +114,7 @@ const reloadCheckOutReports = (id) => {
     });
 }
 
-const participantStatus = (data, collections) => {
-    
+const participantStatus = (data, collections, isCheckedIn) => {    
     let bloodCollection;
     let urineCollection;
     let mouthwashCollection;
@@ -133,8 +132,7 @@ const participantStatus = (data, collections) => {
     const bloodTubes = siteTubesList?.filter(tube => tube.tubeType === "Blood tube");
     const urineTubes = siteTubesList?.filter(tube => tube.tubeType === "Urine");
     const mouthwashTubes = siteTubesList?.filter(tube => tube.tubeType === "Mouthwash");
-
-
+    
     collections = collections
         .filter(collection => collection[conceptIds.collection.selectedVisit] == conceptIds.baseline.visitId)
         .sort((a, b) => {
@@ -186,6 +184,15 @@ const participantStatus = (data, collections) => {
     if(mouthwashCollected.length > 0) {
         mouthwashCollection = mouthwashCollected[0][conceptIds.collection.id];
         mouthwashTime = mouthwashCollected[0][conceptIds.collection.collectionTime];
+    }
+
+    const baselineSampleStatusInfo = {
+        bloodTime,
+        isBloodCollected: data[conceptIds.baseline.bloodCollected],
+        urineTime,
+        isUrineCollected: data[conceptIds.baseline.urineCollected],
+        mouthwashTime,
+        isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected]
     }
 
     return `
@@ -252,10 +259,10 @@ const participantStatus = (data, collections) => {
                         <span class="full-width">Baseline Blood</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['878865966'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['878865966'] === 353358909 ? 'Collected' : 'Not Collected'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${bloodCollection ? bloodCollection : '&nbsp;'}</span>
@@ -271,10 +278,10 @@ const participantStatus = (data, collections) => {
                         <span class="full-width">Baseline Mouthwash</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['684635302'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("mouthwash", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['684635302'] === 353358909 ? 'Collected' : 'Not Collected'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("mouthwash", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${mouthwashCollection ? mouthwashCollection : '&nbsp;'}</span>
@@ -290,10 +297,10 @@ const participantStatus = (data, collections) => {
                         <span class="full-width">Baseline Urine</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['167958071'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["htmlIcon"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${data['167958071'] === 353358909 ? 'Collected' : 'Not Collected' }</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${urineCollection ? urineCollection : '&nbsp;'}</span>
@@ -436,27 +443,28 @@ const participantStatus = (data, collections) => {
             
         <br/>
 
-        <div class="row">
-            <div class="col-md-12">
-                <h5>Incentives</h5>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="col-md-12 info-box">
-                    <div class="row">
-                        <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? 'Eligible' : 'Not Eligible'}</span>
-                    </div>
-                    <div class="row">
-                        <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
-                    </div>
-                    <div class="row">
-                        <span class="full-width">${data['130371375']['266600170']['731498909'] === 353358909 ? data['130371375']['266600170']['787567527'] : '<br/>'}</span>
-                    </div>
+        ${!isCheckedIn ?  
+            `<div class="row">
+                <div class="col-md-12">
+                    <h5>Incentives</h5>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="col-md-12 info-box">
+                        <div class="row">
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? 'Eligible' : 'Not Eligible'}</span>
+                        </div>
+                        <div class="row">
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? '<i class="fas fa-2x fa-check"></i>' : '<i class="fas fa-2x fa-times"></i>'}</span>
+                        </div>
+                        <div class="row">
+                            <span class="full-width">${data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibility] === conceptIds.yes ? data[conceptIds.paymentRound][conceptIds.baseline.visitId][conceptIds.paymentEligibilityTime] : '<br/>'}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>` : ``}
             
         <br/>
 
@@ -481,7 +489,7 @@ const participantStatus = (data, collections) => {
                     <div class="row">
                         <span class="full-width">${data['265193023'] === 615768760 ? data['822499427'] : data['265193023'] === 231311385 ? data['222161762'] : ''}</span>
                     </div>
-                 </div>
+                </div>
             </div>
         </div>
             
@@ -494,3 +502,55 @@ const participantStatus = (data, collections) => {
     `;
     
 }
+
+/**
+ * @param {string} baselineType - "blood", "urine", or "mouthwash"
+ * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
+ * @returns {object} An object with the template literal for the icon status of the baseline sample and the text. 
+ * 
+ * Ex. {
+          "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+          "text": "Collected"
+        }
+*/
+const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => { 
+    const { 
+        bloodTime, 
+        isBloodCollected, 
+        urineTime, 
+        isUrineCollected, 
+        mouthwashTime, 
+        isMouthwashCollected 
+    } = baselineSampleStatusInfo;
+
+    let isCollected;
+    let collectionTime;
+
+    if (baselineType === "blood") {
+        isCollected = isBloodCollected;
+        collectionTime = bloodTime;
+    } else if (baselineType === "urine") {
+        isCollected = isUrineCollected;
+        collectionTime = urineTime;
+    } else if (baselineType === "mouthwash") {
+        isCollected = isMouthwashCollected;
+        collectionTime = mouthwashTime;
+    }
+
+    if (isCollected === conceptIds.yes && collectionTime) {
+        return {
+            "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+            "text": "Collected"
+        }
+    } else if (isCollected === conceptIds.no && collectionTime) {
+        return {
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
+            text: "In Progress"
+        }
+    } else {
+        return {
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
+            text: "Not Collected"
+        }
+    }
+};
