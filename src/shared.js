@@ -2204,10 +2204,10 @@ export const locationConceptIDToLocationMap = {
     loginSiteName: 'Henry Ford Health System',
     email: 'ConnectBioHFH@hfhs.org',
   },
-  852689772: {
+  911683679: {
     siteSpecificLocation: 'HFH Detroit Northwest',
     siteAcronym: 'HFHS',
-    siteCode: '911683679',
+    siteCode: '548392715',
     siteTeam: 'Henry Ford Connect Study Team',
     loginSiteName: 'Henry Ford Health System',
     email: 'ConnectBioHFH@hfhs.org',
