@@ -67,27 +67,44 @@ const renderCollectionLocationList = () => {
                     <li><a class="dropdown-item" data-siteKey="colAbb" id="colAbb">Colby Abbotsford</a></li>
                     <li><a class="dropdown-item" data-siteKey="mino" id="mino">Minocqua</a></li>
                     <li><a class="dropdown-item" data-siteKey="merr" id="merr">Merrill</a></li>
-                    <li><a class="dropdown-item" data-siteKey="mfPopUp" id="mfPopUp">MF Pop-Up</a></li>`:
-                    appState.getState().siteAcronym === 'HP' ? `
+                    <li><a class="dropdown-item" data-siteKey="mfPopUp" id="mfPopUp">MF Pop-Up</a></li>
+                    <li><a class="dropdown-item" data-siteKey="stevensPoint" id="stevensPoint">Stevens Point</a></li>
+                    <li><a class="dropdown-item" data-siteKey="neillsville" id="neillsville">Neillsville</a></li>`:
+                appState.getState().siteAcronym === 'HP' ? `
                     <li><a class="dropdown-item" data-siteKey="hpRC" id="hpRC">HP Research Clinic</a></li>
                     <li><a class="dropdown-item" data-siteKey="hpPN" id="hpPN">HP Park Nicollet</a></li>`:
                 appState.getState().siteAcronym === 'HFHS' ? `
                     <li><a class="dropdown-item" data-siteKey="hfhKRC" id="hfhKRC">HFH K-13 Research Clinic</a></li>
                     <li><a class="dropdown-item" data-siteKey="hfhPRC" id="hfhPRC">HFH Cancer Pavilion Research Clinic</a></li>
                     <li><a class="dropdown-item" data-siteKey="hfhLRC" id="hfhLRC">HFH Livonia Research Clinic</a></li>
-                    <li><a class="dropdown-item" data-siteKey="hfhPU" id="hfhPU">HFH Pop-Up</a></li>`:
+                    <li><a class="dropdown-item" data-siteKey="hfhPU" id="hfhPU">HFH Pop-Up</a></li>
+                    <li><a class="dropdown-item" data-siteKey="hfhJackson" id="hfhJackson">HFH Jackson</a></li>
+                    <li><a class="dropdown-item" data-siteKey="inHomeCollection" id="inHomeCollection">In-Home Collection</a></li>
+                    <li><a class="dropdown-item" data-siteKey="hfhDetroitNorthwest" id="hfhDetroitNorthwest">HFH Detroit Northwest</a></li>`:
                 appState.getState().siteAcronym === 'SFH' ? `
-                    <li><a class="dropdown-item" data-siteKey="sfImag" id="sfImag">Sioux Falls Imagenetics</a></li>
                     <li><a class="dropdown-item" data-siteKey="sfFargo" id="sfFargo">Fargo South University</a></li>
                     <li><a class="dropdown-item" data-siteKey="sfBM" id="sfBM">Bismarck Medical Center</a></li>
-                    <li><a class="dropdown-item" data-siteKey="sfSC" id="sfSC">Sioux Falls Sanford Center</a></li>`:
+                    <li><a class="dropdown-item" data-siteKey="sfSC" id="sfSC">Sioux Falls Sanford Center</a></li>
+                    <li><a class="dropdown-item" data-siteKey="siouxFallsEdithCenter" id="siouxFallsEdithCenter">Sioux Falls Edith Center</a></li>
+                    <li><a class="dropdown-item" data-siteKey="fargoAmberValley" id="fargoAmberValley">Fargo Amber Valley</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bemidjiClinic" id="bemidjiClinic">Bemidji Clinic</a></li>`:
                 appState.getState().siteAcronym === 'UCM' ? `
                     <li><a class="dropdown-item" data-siteKey="ucDcam" id="ucDcam">UC-DCAM</a></li>
                     <li><a class="dropdown-item" data-siteKey="ingHar" id="ingHar">Ingalls Harvey</a></li>
                     <li><a class="dropdown-item" data-siteKey="rivEas" id="rivEas">River East</a></li>
                     <li><a class="dropdown-item" data-siteKey="soLo" id="soLo">South Loop</a></li>
                     <li><a class="dropdown-item" data-siteKey="ucmPopUp" id="ucmPopUp">UCM Pop-Up</a></li>
-                    <li><a class="dropdown-item" data-siteKey="orPark" id="orPark">Orland Park</a></li>`  :
+                    <li><a class="dropdown-item" data-siteKey="orPark" id="orPark">Orland Park</a></li>`:
+                appState.getState().siteAcronym === 'BSWH' ? `
+                    <li><a class="dropdown-item" data-siteKey="bccHwc" id="bccHwc">BCC- HWC, BC</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccAllSaints" id="bccAllSaints">BCC- All Saints (FW)</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccFortWorth" id="bccFortWorth">BCC- Plano</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccPlano" id="bccPlano">BCC- Worth St</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccWorthSt" id="bccWorthSt">BCC- Irving</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccIrving" id="bccIrving">NTX Biorepository</a></li>
+                    <li><a class="dropdown-item" data-siteKey="ntxBiorepo" id="ntxBiorepo">BCC- Fort Worth</a></li>
+                    <li><a class="dropdown-item" data-siteKey="northGarland" id="northGarland">North Garland</a></li>
+                    <li><a class="dropdown-item" data-siteKey="wacoMacArthur" id="wacoMacArthur">Waco - MacArthur</a></li>`:
                 appState.getState().siteAcronym === 'NIH' ? 
                     `<li><a class="dropdown-item" data-siteKey="nci" id="nci">NIH/NCI</a></li>`:
                     `<li><a class="dropdown-item" data-siteKey="other" id="other">Other</a></li>` 
