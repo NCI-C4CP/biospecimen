@@ -38,6 +38,17 @@ const printLabelsTemplate = (name) => {
                           <button type="submit" class="btn btn-primary" id="generateCsv">Download CSV File</button>
                         </div>
                         </div>
+                        <span> <h3 style="text-align: center; margin: 0 0 1rem;">Replacement kit labels to print</h3> </span>
+                        <div style="text-align: center;  padding-bottom: 25px; "> 
+                          <input required type="text" name="numberToPrintReplacements" id="numberToPrintReplacements"  /> 
+                        </div>
+                        <span> Labels to print: ${ appState.getState().totalReplacementAddressesLength || 0 }  </span>
+                        <br />
+                        <div class="mt-4 mb-4" style="display:inline-block;">
+                          <button type="button" class="btn btn-primary" id="clearReplacementForm" disabled>View All Printed Replacement Labels</button>
+                          <button type="submit" class="btn btn-primary" id="generateReplacementCsv">Download Replacement Kit CSV File</button>
+                        </div>
+                        </div>
                       </div>
                   </div>
                   </div>
@@ -52,13 +63,15 @@ const printLabelsTemplate = (name) => {
   activeHomeCollectionNavbar();
   if (appState.getState().totalAddressesLength === 0) triggerErrorModal('No labels to print');
   generateParticipantCsvGetter(name);
+  generateParticipantReplacementCsvGetter(name);
 };
 
 const initializeTotalAddressesToPrint = async () => {
   try {
     showAnimation();
     const totalAddressCount = await getAddressesToPrintCount();
-    appState.setState({'totalAddressesLength': totalAddressCount.data })
+    const totalReplacementAddressesLength = await getReplacementAddressesToPrintCount();
+    appState.setState({'totalAddressesLength': totalAddressCount.data, 'totalReplacementAddressesLength': totalReplacementAddressesLength.data })
   } catch(err) {
     console.error('Error initializing total addresses to print', err);
   } finally {
@@ -78,9 +91,35 @@ export const getAddressesToPrintCount = async () => {
   return await response.json();
 }
 
+export const getReplacementAddressesToPrintCount = async () => {
+  const idToken = await getIdToken();
+  const response = await fetch(`${baseAPI}api=totalReplacementAddressesToPrintCount`, {
+      method: "GET",
+      headers: {
+          Authorization:"Bearer "+idToken
+      }
+  });
+  return await response.json();
+}
+
 export const getTotalAddressesToPrint = async (limit) => {
   const idToken = await getIdToken();
   let url = `${baseAPI}api=totalAddressesToPrint`;
+  if(limit) {
+    url += `&limit=${limit}`
+  }
+  const response = await fetch(url, {
+      method: "GET",
+      headers: {
+          Authorization:"Bearer "+idToken
+      }
+  });
+  return await response.json();
+}
+
+export const getTotalReplacementAddressesToPrint = async (limit) => {
+  const idToken = await getIdToken();
+  let url = `${baseAPI}api=totalReplacementAddressesToPrint`;
   if(limit) {
     url += `&limit=${limit}`
   }
@@ -120,10 +159,38 @@ const generateParticipantCsvGetter = (name) => {
   }
 };
 
+const generateParticipantReplacementCsvGetter = (name) => {
+  const generateCsvButton = document.getElementById("generateReplacementCsv");
+  if (generateCsvButton) {
+    generateCsvButton.addEventListener("click", async () => {
+      const totalAddressesLength = appState.getState().totaReplacementlAddressesLength;
+        const numberToPrint = document.getElementById("numberToPrint").value;
+        if(!numberToPrint || !totalAddressesLength) {
+          triggerErrorModal(`No labels to print`);
+        } else if (numberToPrint > totalAddressesLength) {
+          triggerErrorModal(`Max labels to print: ${arrayLengthToProcess}`);
+        } else {
+          const totalAddressesRes = await getTotalReplacementAddressesToPrint(numberToPrint);
+          if (totalAddressesRes.code === 200) {
+              const arrayToProcess = totalAddressesRes.data;
+              appState.setState({'totalReplacementAddressesLength': totalAddressesLength - numberToPrint }); // No need for another API call
+              generateParticipantCsv(arrayToProcess);
+              printLabelsTemplate(name);
+              triggerSuccessModal('Success!');                 // Display success message
+          } else {
+            console.error('response', totalAddressesRes);
+            triggerErrorModal(`${totalAddressesRes.code} error getting records: ${totalAddressesRes.message}`);
+          }
+        }
+      });
+  }
+};
+
 const generateParticipantCsv = async (items) => {
   let csv = ``;
   let participantsForKitUpdate = []
-  const columns = ['first_name', 'last_name', 'address_1', 'address_2', 'city', 'state', 'zip_code', 'connect_id'];
+  // @TODO: Also needs visit (baseline, BL1, BL2)
+  const columns = ['first_name', 'last_name', 'address_1', 'address_2', 'city', 'state', 'zip_code', 'connect_id', 'visit'];
   csv += `${columns.join(',')}, \r\n`
   for (let row = 0; row < (items.length); row++) {
     csv += columns.map(key => items[row][key] || '').join(',');
