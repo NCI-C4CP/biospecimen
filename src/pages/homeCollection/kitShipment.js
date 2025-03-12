@@ -128,7 +128,7 @@ const setShippedResponse = async (data) => {
       alert('Skipping user notification for now.');
     } else {
       const requestData = {
-        category: category,
+        category,
         attempt: "1st contact",
         email: returnedPtInfo.prefEmail,
         token: returnedPtInfo.token,
