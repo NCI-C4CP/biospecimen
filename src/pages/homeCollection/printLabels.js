@@ -189,7 +189,6 @@ const generateParticipantReplacementCsvGetter = (name) => {
 const generateParticipantCsv = async (items) => {
   let csv = ``;
   let participantsForKitUpdate = []
-  // @TODO: Also needs visit (baseline, BL1, BL2)
   const columns = ['first_name', 'last_name', 'address_1', 'address_2', 'city', 'state', 'zip_code', 'connect_id', 'visit'];
   csv += `${columns.join(',')}, \r\n`
   for (let row = 0; row < (items.length); row++) {
