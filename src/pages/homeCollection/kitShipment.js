@@ -114,31 +114,42 @@ const setShippedResponse = async (data) => {
     }
   );
   const returnedPtInfo = await processResponse(response);
+  console.log('returnedPtInfo', returnedPtInfo);
   if (returnedPtInfo.status === true) {
     triggerSuccessModal('Shipment confirmed.');
     document.getElementById("scannedBarcode").value = ``;
     document.getElementById("cardBody").innerHTML = ``;
     document.getElementById("showMsg").innerHTML = ``;
-
-    const requestData = {
-      category: "Baseline Mouthwash Home Collection Kit Reminders",
-      attempt: "1st contact",
-      email: returnedPtInfo.prefEmail,
-      token: returnedPtInfo.token,
-      uid: returnedPtInfo.uid,
-      connectId: returnedPtInfo.Connect_ID,
-      preferredLanguage: returnedPtInfo.preferredLanguage,
-      substitutions: {
-        firstName: returnedPtInfo.ptName || "User",
-      },
-    };
-
-    try {
-      await sendInstantNotification(requestData);
-    } catch (e) {
-      console.error(`Error sending email to user ${returnedPtInfo.prefEmail}`, e);
-      throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
+    let category = "Baseline Mouthwash Home Collection Kit Reminders";
+    if(returnedPtInfo.path === conceptIds.bioKitMouthwashBL2) {
+      // category = '@TODO';
+      alert('Skipping user notification for now.');
+    } else if (returnedPtInfo.path === conceptIds.bioKitMouthwashBL1) {
+      // category = '@TODO';
+      alert('Skipping user notification for now.');
+    } else {
+      const requestData = {
+        category: category,
+        attempt: "1st contact",
+        email: returnedPtInfo.prefEmail,
+        token: returnedPtInfo.token,
+        uid: returnedPtInfo.uid,
+        connectId: returnedPtInfo.Connect_ID,
+        preferredLanguage: returnedPtInfo.preferredLanguage,
+        substitutions: {
+          firstName: returnedPtInfo.ptName || "User",
+        },
+      };
+  
+      try {
+        await sendInstantNotification(requestData);
+      } catch (e) {
+        console.error(`Error sending email to user ${returnedPtInfo.prefEmail}`, e);
+        throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
+      }
     }
+
+    
     return true;
 
   } else {

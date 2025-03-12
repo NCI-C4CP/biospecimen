@@ -163,8 +163,8 @@ const generateParticipantReplacementCsvGetter = (name) => {
   const generateCsvButton = document.getElementById("generateReplacementCsv");
   if (generateCsvButton) {
     generateCsvButton.addEventListener("click", async () => {
-      const totalAddressesLength = appState.getState().totaReplacementlAddressesLength;
-        const numberToPrint = document.getElementById("numberToPrint").value;
+      const totalAddressesLength = appState.getState().totalReplacementAddressesLength;
+        const numberToPrint = document.getElementById("numberToPrintReplacements").value;
         if(!numberToPrint || !totalAddressesLength) {
           triggerErrorModal(`No labels to print`);
         } else if (numberToPrint > totalAddressesLength) {
@@ -195,7 +195,7 @@ const generateParticipantCsv = async (items) => {
   for (let row = 0; row < (items.length); row++) {
     csv += columns.map(key => items[row][key] || '').join(',');
     csv += '\r\n';
-    participantsForKitUpdate.push(items[row]['connect_id']);
+    participantsForKitUpdate.push({connect_id: items[row]['connect_id'], visit: items[row].visit});
   }
   let link = document.createElement("a");
   link.id = "download-csv";
@@ -210,7 +210,7 @@ const generateParticipantCsv = async (items) => {
 
 const setKitStatusToParticipant = async (data) => {
   const idToken = await getIdToken();
-  const response = await fetch(`${baseAPI}api=kitStatusToParticipant`, {
+  const response = await fetch(`${baseAPI}api=kitStatusToParticipantV2`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
