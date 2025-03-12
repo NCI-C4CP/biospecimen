@@ -155,7 +155,7 @@ const generateParticipantCsvGetter = (name) => {
             triggerErrorModal(`${totalAddressesRes.code} error getting records: ${totalAddressesRes.message}`);
           }
         }
-      });
+    });
   }
 };
 
