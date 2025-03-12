@@ -122,10 +122,10 @@ const setShippedResponse = async (data) => {
     let category = "Baseline Mouthwash Home Collection Kit Reminders";
     if(returnedPtInfo.path === conceptIds.bioKitMouthwashBL2) {
       // category = '@TODO';
-      alert('Skipping user notification for now.');
+      console.log('Skipping user notification for now.');
     } else if (returnedPtInfo.path === conceptIds.bioKitMouthwashBL1) {
       // category = '@TODO';
-      alert('Skipping user notification for now.');
+      console.log('Skipping user notification for now.');
     } else {
       const requestData = {
         category,
