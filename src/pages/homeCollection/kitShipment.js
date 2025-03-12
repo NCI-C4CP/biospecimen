@@ -114,7 +114,6 @@ const setShippedResponse = async (data) => {
     }
   );
   const returnedPtInfo = await processResponse(response);
-  console.log('returnedPtInfo', returnedPtInfo);
   if (returnedPtInfo.status === true) {
     triggerSuccessModal('Shipment confirmed.');
     document.getElementById("scannedBarcode").value = ``;
