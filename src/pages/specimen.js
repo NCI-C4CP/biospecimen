@@ -1,6 +1,7 @@
 import { addEventBarCodeScanner, collectionSettings, generateBarCode, getWorkflow, removeActiveClass, siteLocations, visitType, getCheckedInVisit, getSiteAcronym, numericInputValidator, getSiteCode, searchSpecimen, collectionInputValidator, addSelectionEventListener, autoTabInputField } from "./../shared.js";
 import { addEventSpecimenLinkForm, addEventClinicalSpecimenLinkForm, addEventClinicalSpecimenLinkForm2, addEventNavBarParticipantCheckIn, addEventBackToSearch } from "./../events.js";
 import { masterSpecimenIDRequirement } from "../tubeValidation.js";
+import { conceptIds } from '../fieldToConceptIdMapping.js';
 
 export const specimenTemplate = async (data, formData) => {
     removeActiveClass('navbar-btn', 'active')
@@ -26,8 +27,9 @@ export const specimenTemplate = async (data, formData) => {
         </br>
         <div class="row">
             <div class="col">
-                <div class="row">${data['996038075']},<span id='399159511'>${data['399159511']}</span></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id=${conceptIds.firstName}>${data[conceptIds.firstName]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
             </div>
         </div>
 
