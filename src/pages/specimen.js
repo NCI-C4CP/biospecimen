@@ -26,8 +26,9 @@ export const specimenTemplate = async (data, formData) => {
         </br>
         <div class="row">
             <div class="col">
-                <div class="row">${data['996038075']},<span id='399159511'>${data['399159511']}</span></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data['996038075']},<span id='399159511'>${data['399159511']}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data['564964481']}/${data['795827569']}/${data['544150384']}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
             </div>
         </div>
 
