@@ -37,7 +37,7 @@ export const specimenTemplate = async (data, formData) => {
 
     template += `<div id="specimenLinkForm" data-participant-token="${data.token}" data-connect-id="${data.Connect_ID}">`;
         
-    if(workflow === 'research') {
+    if (workflow === 'research') {
         let visit = visitType.filter(visit => visit.concept === getCheckedInVisit(data))[0];
             
         template += `
@@ -50,7 +50,7 @@ export const specimenTemplate = async (data, formData) => {
                 
         const siteAcronym = getSiteAcronym();
                 
-        if(siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
+        if (siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
 
             
             // For the purposes of 1008 we are filtering out some locations.
@@ -103,8 +103,7 @@ export const specimenTemplate = async (data, formData) => {
                 </div>
             </div>`;
 
-    } 
-    else if(isSpecimenLinkForm2) {// clinical specimen page 2
+    } else if(isSpecimenLinkForm2) {// clinical specimen page 2
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
                             <div class="column">
@@ -130,8 +129,7 @@ export const specimenTemplate = async (data, formData) => {
                                 <button class="btn btn-outline-primary float-right" data-connect-id="${data.Connect_ID}" type="submit" id="clinicalSpecimenContinueTwo">Submit</button>
                             </div>
                         </div>`
-    } 
-    else {// clinical specimen page 1
+    } else {// clinical specimen page 1
         template += `<div class="form-group row">`
         const siteAcronym = getSiteAcronym();
         template += `<select class="custom-select" id="visit-select">
@@ -153,6 +151,7 @@ export const specimenTemplate = async (data, formData) => {
             </div>
             <div class="form-group row">
                 <input autocomplete="off" type="text" class="form-control col-md-5 offset-4" placeholder="Re-Enter (scan/type) in Accession ID from Blood Tube" id="accessionID2" maxlength="11"/>
+                <div id="accessionId2Error" class="invalid-feedback col-md-5 offset-4 form-helper-text" style="padding-left:0; "></div>
             </div>
             </br>
             <div class="form-group row">
@@ -163,6 +162,7 @@ export const specimenTemplate = async (data, formData) => {
             </div>
             <div class="form-group row">
                 <input autocomplete="off" type="text" class="form-control col-md-5 offset-4" placeholder="Re-Enter (scan/type) in Accession ID from Urine Tube" id="accessionID4" maxlength="11"/>
+                <div id="accessionId4Error" class="invalid-feedback col-md-5 offset-4 form-helper-text" style="padding-left:0; "></div>
             </div>
             
         <div class="form-group row">
@@ -178,32 +178,36 @@ export const specimenTemplate = async (data, formData) => {
 
     document.getElementById('contentBody').innerHTML = template;
      
-    if(workflow === 'research') {
+    if (workflow === 'research') {
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
         
         addSelectionEventListener("collectionLocation", "specimenLink_location");
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
 
         addEventSpecimenLinkForm(formData);
-    } 
-    else if (isSpecimenLinkForm2) {// clinical specimen page 2
+    } else if (isSpecimenLinkForm2) {// clinical specimen page 2
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
 
         addEventClinicalSpecimenLinkForm2(formData);
-    } 
-    else {//clinical specimen page 1
+    } else {//clinical specimen page 1
         autoTabInputField('accessionID1', 'accessionID2')
         autoTabInputField('accessionID2', 'accessionID3')
         autoTabInputField('accessionID3', 'accessionID4')
 
-
+        // const accessionId1Input = document.getElementById('accessionID1');
+        // const accessionId2Input = document.getElementById('accessionID2');
+        // const accessionId3Input = document.getElementById('accessionID3');
+        // const accessionId4Input = document.getElementById('accessionID4');
         document.getElementById('accessionID2').onpaste = e => e.preventDefault();
         document.getElementById('accessionID4').onpaste = e => e.preventDefault();
 
         numericInputValidator(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
 
+        // add form validation on user input for accession IDs 3 and 4
+        confirmInputChecker(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
+        
         addEventClinicalSpecimenLinkForm(formData);
     }
 
@@ -211,3 +215,107 @@ export const specimenTemplate = async (data, formData) => {
     addEventBackToSearch('navBarSearch');
     addEventNavBarParticipantCheckIn();
 }
+
+/**
+ * Adds event listeners to the form fields to make sure matching inputs
+*/
+const confirmInputChecker = () => { 
+    // Todo: Rename variables to be shorter accessionId1InputEl -> accessionId1
+    const accessionId1 = document.getElementById('accessionID1');
+    const accessionId2 = document.getElementById('accessionID2');
+    const accessionId3 = document.getElementById('accessionID3');
+    const accessionId4 = document.getElementById('accessionID4');
+    const accessionId2Error = document.getElementById('accessionId2Error');
+    const accessionId4Error = document.getElementById('accessionId4Error');
+    
+    // Get input fields
+    // get input field values for accession IDs 1 and 2
+    // get input field values for accession IDs 3 and 4
+
+    // LETS START WITH THE FIRST TWO INPUTS
+    // add event listener to accession ID 2 input field using blur event
+    // compare accession ID 2s input value with accession ID 1s input value
+    // if input 2 does not match input 1, display error message on input 2 and add .is-invalid class to input 2 and input 1
+    // - addition: add text error message to only input 2
+    
+    accessionId2.addEventListener('blur', () => { 
+        if (accessionId1.value !== accessionId2.value) {
+            accessionId1.classList.add('is-invalid');
+            accessionId2.classList.add('is-invalid');
+            document.getElementById('accessionId2Error').textContent = 'The blood accession IDs do not match.';
+        } else {
+            accessionId1.classList.remove('is-invalid');
+            accessionId2.classList.remove('is-invalid');
+            document.getElementById('accessionId2Error').textContent = '';
+        }
+    });
+
+    accessionId4.addEventListener('blur', () => { 
+        if (accessionId4.value !== accessionId3.value) {
+            accessionId4.classList.add('is-invalid');
+            accessionId3.classList.add('is-invalid');
+            document.getElementById('accessionId4Error').textContent = 'The urine accession IDs do not match.';
+        } else {
+            accessionId4.classList.remove('is-invalid');
+            accessionId3.classList.remove('is-invalid');
+            document.getElementById('accessionId4Error').textContent = '';
+        }
+    });
+
+    // add blur event handler logic the accession Id inputs for 1 and 2, when user retypes bloor or urine (not reenter input fields)
+    accessionId1.addEventListener('blur', () => { // blur for reenter input 1
+        if (accessionId1.classList.contains('is-invalid')) { // check for invalid-class
+            if (accessionId1.value === accessionId2.value) {
+                accessionId1.classList.remove('is-invalid');
+                accessionId2.classList.remove('is-invalid');
+                document.getElementById('accessionId2Error').textContent = '';
+            }
+        }
+
+        if (accessionId1.value.length > 0 && 
+            accessionId2.value.length > 0 && 
+            accessionId1.value !== accessionId2.value) {
+            accessionId1.classList.add('is-invalid');
+            accessionId2.classList.add('is-invalid');
+            document.getElementById('accessionId2Error').textContent = 'The blood accession IDs do not match.';
+        }
+    });
+
+    accessionId3.addEventListener('blur', () => { // blur for reenter input 1
+        if (accessionId3.classList.contains('is-invalid')) { // check for invalid-class
+            if (accessionId3.value === accessionId4.value) {
+                accessionId3.classList.remove('is-invalid');
+                accessionId4.classList.remove('is-invalid');
+                document.getElementById('accessionId4Error').textContent = '';
+            }
+        }
+        if (accessionId3.value.length > 0 && 
+            accessionId4.value.length > 0 && 
+            accessionId3.value !== accessionId4.value) { 
+            accessionId3.classList.add('is-invalid');
+            accessionId4.classList.add('is-invalid');
+            document.getElementById('accessionId4Error').textContent = 'The urine accession IDs do not match.';
+        }
+    });
+}
+
+
+
+/**
+ * 
+ * @param {Element} accessionInput1 - doc element of input  (Ex. accessionID1)
+ * @param {Element} accessionInput2 - doc element of input  (Ex. accessionID2)
+ * @param {Element} accessionError - accession Error
+ * @param {string} accessionType - blood or urine
+ */
+
+const addAccessionError = (accessionInput1, accessionInput2, accessionError ,accessionType) => { 
+    accessionInput1.classList.add('is-invalid');
+    accessionInput2.classList.add('is-invalid');
+
+    if (accessionError) {
+        accessionError.textContent = `The ${accessionType} accession IDs do not match.`;
+    }
+}
+
+addAccessionError(accessionID1, accessionID2, accessionId2Error ,"blood");
