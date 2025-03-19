@@ -196,17 +196,13 @@ export const specimenTemplate = async (data, formData) => {
         autoTabInputField('accessionID2', 'accessionID3')
         autoTabInputField('accessionID3', 'accessionID4')
 
-        // const accessionId1Input = document.getElementById('accessionID1');
-        // const accessionId2Input = document.getElementById('accessionID2');
-        // const accessionId3Input = document.getElementById('accessionID3');
-        // const accessionId4Input = document.getElementById('accessionID4');
         document.getElementById('accessionID2').onpaste = e => e.preventDefault();
         document.getElementById('accessionID4').onpaste = e => e.preventDefault();
 
         numericInputValidator(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
 
         // add form validation on user input for accession IDs 3 and 4
-        confirmInputChecker(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
+        checkAccessionMatch(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
         
         addEventClinicalSpecimenLinkForm(formData);
     }
@@ -217,105 +213,86 @@ export const specimenTemplate = async (data, formData) => {
 }
 
 /**
- * Adds event listeners to the form fields to make sure matching inputs
+ * Adds event listeners to the form fields to make sure accession inputs are checked and have matching values
 */
-const confirmInputChecker = () => { 
-    // Todo: Rename variables to be shorter accessionId1InputEl -> accessionId1
+const checkAccessionMatch = () => { 
     const accessionId1 = document.getElementById('accessionID1');
     const accessionId2 = document.getElementById('accessionID2');
     const accessionId3 = document.getElementById('accessionID3');
     const accessionId4 = document.getElementById('accessionID4');
     const accessionId2Error = document.getElementById('accessionId2Error');
     const accessionId4Error = document.getElementById('accessionId4Error');
-    
-    // Get input fields
-    // get input field values for accession IDs 1 and 2
-    // get input field values for accession IDs 3 and 4
-
-    // LETS START WITH THE FIRST TWO INPUTS
-    // add event listener to accession ID 2 input field using blur event
-    // compare accession ID 2s input value with accession ID 1s input value
-    // if input 2 does not match input 1, display error message on input 2 and add .is-invalid class to input 2 and input 1
-    // - addition: add text error message to only input 2
-    
+        
     accessionId2.addEventListener('blur', () => { 
         if (accessionId1.value !== accessionId2.value) {
-            accessionId1.classList.add('is-invalid');
-            accessionId2.classList.add('is-invalid');
-            document.getElementById('accessionId2Error').textContent = 'The blood accession IDs do not match.';
+            addAccessionError(accessionId1, accessionId2, accessionId2Error, 'blood');
         } else {
-            accessionId1.classList.remove('is-invalid');
-            accessionId2.classList.remove('is-invalid');
-            document.getElementById('accessionId2Error').textContent = '';
+            removeAccessionError(accessionId1, accessionId2, accessionId2Error);
         }
     });
 
     accessionId4.addEventListener('blur', () => { 
         if (accessionId4.value !== accessionId3.value) {
-            accessionId4.classList.add('is-invalid');
-            accessionId3.classList.add('is-invalid');
-            document.getElementById('accessionId4Error').textContent = 'The urine accession IDs do not match.';
+            addAccessionError(accessionId3, accessionId4, accessionId4Error, 'urine');
         } else {
-            accessionId4.classList.remove('is-invalid');
-            accessionId3.classList.remove('is-invalid');
-            document.getElementById('accessionId4Error').textContent = '';
+            removeAccessionError(accessionId3, accessionId4, accessionId4Error);
         }
     });
 
     // add blur event handler logic the accession Id inputs for 1 and 2, when user retypes bloor or urine (not reenter input fields)
-    accessionId1.addEventListener('blur', () => { // blur for reenter input 1
-        if (accessionId1.classList.contains('is-invalid')) { // check for invalid-class
+    accessionId1.addEventListener('blur', () => {
+        if (accessionId1.classList.contains('is-invalid')) {
             if (accessionId1.value === accessionId2.value) {
-                accessionId1.classList.remove('is-invalid');
-                accessionId2.classList.remove('is-invalid');
-                document.getElementById('accessionId2Error').textContent = '';
+                removeAccessionError(accessionId1, accessionId2, accessionId2Error);
             }
         }
 
         if (accessionId1.value.length > 0 && 
             accessionId2.value.length > 0 && 
             accessionId1.value !== accessionId2.value) {
-            accessionId1.classList.add('is-invalid');
-            accessionId2.classList.add('is-invalid');
-            document.getElementById('accessionId2Error').textContent = 'The blood accession IDs do not match.';
+            addAccessionError(accessionId1, accessionId2, accessionId2Error, 'blood');
         }
     });
 
-    accessionId3.addEventListener('blur', () => { // blur for reenter input 1
-        if (accessionId3.classList.contains('is-invalid')) { // check for invalid-class
+    accessionId3.addEventListener('blur', () => {
+        if (accessionId3.classList.contains('is-invalid')) {
             if (accessionId3.value === accessionId4.value) {
-                accessionId3.classList.remove('is-invalid');
-                accessionId4.classList.remove('is-invalid');
-                document.getElementById('accessionId4Error').textContent = '';
+                removeAccessionError(accessionId3, accessionId4, accessionId4Error);
             }
         }
         if (accessionId3.value.length > 0 && 
             accessionId4.value.length > 0 && 
-            accessionId3.value !== accessionId4.value) { 
-            accessionId3.classList.add('is-invalid');
-            accessionId4.classList.add('is-invalid');
-            document.getElementById('accessionId4Error').textContent = 'The urine accession IDs do not match.';
+            accessionId3.value !== accessionId4.value) {
+            addAccessionError(accessionId3, accessionId4, accessionId4Error, 'urine'); 
         }
     });
-}
-
-
+};
 
 /**
- * 
+ * Adds error class ".is-invalid" and error message to the accession input field
  * @param {Element} accessionInput1 - doc element of input  (Ex. accessionID1)
  * @param {Element} accessionInput2 - doc element of input  (Ex. accessionID2)
- * @param {Element} accessionError - accession Error
+ * @param {Element} accessionError - accession for element error text, where the error message will display
  * @param {string} accessionType - blood or urine
  */
-
-const addAccessionError = (accessionInput1, accessionInput2, accessionError ,accessionType) => { 
+const addAccessionError = (accessionInput1, accessionInput2, accessionError, accessionType) => { 
     accessionInput1.classList.add('is-invalid');
     accessionInput2.classList.add('is-invalid');
 
     if (accessionError) {
         accessionError.textContent = `The ${accessionType} accession IDs do not match.`;
     }
-}
+};
 
-addAccessionError(accessionID1, accessionID2, accessionId2Error ,"blood");
+/**
+ * Removes error class ".is-invalid" and error message from the accession input field
+ * @param {Element} accessionInput1 - doc element of input  (Ex. accessionID1)
+ * @param {Element} accessionInput2 - doc element of input  (Ex. accessionID2)
+ * @param {Element} accessionError - accession for element Error
+*/
+const removeAccessionError = (accessionInput1, accessionInput2, accessionError) => { 
+    accessionInput1.classList.remove('is-invalid');
+    accessionInput2.classList.remove('is-invalid');
+
+    if (accessionError) accessionError.textContent = '';
+};
