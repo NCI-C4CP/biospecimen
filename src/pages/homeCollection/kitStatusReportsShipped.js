@@ -51,6 +51,7 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/Replacement Kit</th>
                         </tr>
                     </thead>   
                     <tbody>
@@ -67,7 +68,7 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
 */
 const createShippedRows = (shippedKitStatusParticipantsArray) => {
     let template = ``;
-    if(!shippedKitStatusParticipantsArray) {
+    if(!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
         return template;
     }
     for (const particpantObj of shippedKitStatusParticipantsArray) {
@@ -91,6 +92,7 @@ const createShippedRows = (shippedKitStatusParticipantsArray) => {
                     <td>${supplyKitTrackingNum}</td>
                     <td>${returnKitTrackingNum}</td>
                     <td>${mouthwashSurveyStatus}</td>
+                    <td>TBD</tc>
                 </tr>`;
     }
     return template;
