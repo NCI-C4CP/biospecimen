@@ -64,7 +64,7 @@ const printLabelsTemplate = (name) => {
   activeHomeCollectionNavbar();
   if (appState.getState().totalAddressesLength === 0) triggerErrorModal('No labels to print');
   generateParticipantCsvGetter(name);
-  if(inDev) {
+  if (inDev) {
     generateParticipantReplacementCsvGetter(name);
   }
 };

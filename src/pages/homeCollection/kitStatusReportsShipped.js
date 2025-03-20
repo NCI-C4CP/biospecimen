@@ -68,7 +68,7 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
 */
 const createShippedRows = (shippedKitStatusParticipantsArray) => {
     let template = ``;
-    if(!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
+    if (!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
         return template;
     }
     for (const particpantObj of shippedKitStatusParticipantsArray) {
