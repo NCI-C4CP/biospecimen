@@ -142,6 +142,10 @@ export const conceptIds = {
     checkInComplete: 135591601,
     clinicalBloodOrUrineCollected: 156605577,
 
+    bioKitMouthwash: 319972665,
+    bioKitMouthwashBL1: 541483796,
+    bioKitMouthwashBL2: 641006239,
+
     // Site EMR API Clinical baseline derivations
     clinicalSiteBloodCollected: 693370086,
     clinicalSiteUrineCollected: 786930107,
