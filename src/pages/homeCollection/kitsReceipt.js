@@ -82,7 +82,7 @@ const kitsReceiptTemplate = async (name) => {
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="time" step="1" id="timeCollectionCard">
+                          <input autocomplete="off" class="col-md-8 form-control" type="time" id="timeCollectionCard">
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="collectionComments">Comments on Card Returned</label>
