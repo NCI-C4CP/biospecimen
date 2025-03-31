@@ -18,6 +18,8 @@ export const kitsReceiptScreen = async (auth) => {
   formSubmit(); 
 }
 
+const defaultPackageCondition = conceptIds.pkgGoodCondition;
+
 const kitsReceiptTemplate = async (name) => {
   let template = ``;
   template += homeCollectionNavbar();
@@ -44,9 +46,9 @@ const kitsReceiptTemplate = async (name) => {
                   <div class="row form-group">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
                        <div style="display:inline-block; max-width:90%;"> 
-                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[]">
+                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]">
                               <option id="select-dashboard" value="">-- Select Package Condition --</option>
-                              <option id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
+                              <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
                               <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
                               <option id="select-pkgImproperPackaging" value=${conceptIds.pkgImproperPackaging}>Improper Packaging</option>
                               <option id="select-pkgCollectionCupDamaged" value=${conceptIds.pkgCollectionCupDamaged}>Collection Cup Damaged</option>
