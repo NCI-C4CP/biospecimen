@@ -200,14 +200,14 @@ const storePackageReceipt = async (data) => {
     triggerSuccessModal("Kit Receipted.");
     document.getElementById("showMsg").innerHTML = "";
     document.getElementById("scannedBarcode").value = "";
-    document.getElementById("packageCondition").value = "";
+    document.getElementById("packageCondition").value = defaultPackageCondition;
     document.getElementById("receivePackageComments").value = "";
     document.getElementById("dateReceived").value = getCurrentDate();
     document.getElementById("collectionComments").value = "";
     
     enableCollectionCardFields();
     enableCollectionCheckBox();
-    document.getElementById("packageCondition").setAttribute("data-selected", "[]");
+    document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     if (document.getElementById("collectionId").value) {
       document.getElementById("collectionId").value = "";
       document.getElementById("dateCollectionCard").value = "";
@@ -216,7 +216,7 @@ const storePackageReceipt = async (data) => {
       document.getElementById("collectionComments").value = "";
       enableCollectionCardFields();
       enableCollectionCheckBox();
-      document.getElementById("packageCondition").setAttribute("data-selected", "[]");
+      document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     }
 
     let requestData = {
