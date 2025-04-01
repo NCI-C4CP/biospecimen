@@ -500,9 +500,11 @@ const inputChangeList = [
         listenerType: "change",
         onlyKitsReceipt: false,
         customHandler: handlePackageConditionChange,
-        reset: (input) => { 
-            input.value = ""; 
-            input.setAttribute("data-selected", "[]");
+        reset: (input) => {
+            const initialValue = input.getAttribute("data-initial-value");
+            const initialValueString = initialValue?.replace(/\[|\]/g, "");
+            input.value = initialValueString || "";
+            input.setAttribute("data-selected", initialValue || "[]");
         },
     },
     {

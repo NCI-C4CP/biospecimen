@@ -46,7 +46,7 @@ const kitsReceiptTemplate = async (name) => {
                   <div class="row form-group">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
                        <div style="display:inline-block; max-width:90%;"> 
-                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]">
+                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
                               <option id="select-dashboard" value="">-- Select Package Condition --</option>
                               <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
                               <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
