@@ -553,9 +553,14 @@ export const addGoToSpecimenLinkEvent = () => {
 };
 
 export const addEventCheckInCompleteForm = (isCheckedIn, checkOutFlag) => {
+    console.log("🚀 ~ addEventCheckInCompleteForm ~ isCheckedIn:", isCheckedIn)
     const form = document.getElementById('checkInCompleteForm');
     form && form.addEventListener('submit', async e => {
         e.preventDefault();
+
+        // const selectVisitConceptId = document.getElementById('visit-select').value;
+        // console.log("🚀 ~ addEventCheckInCompleteForm ~ selectVisitConceptId:", selectVisitConceptId)
+
         try {
             const btnCheckIn = document.getElementById('checkInComplete');
             
@@ -591,7 +596,7 @@ export const addEventCheckInCompleteForm = (isCheckedIn, checkOutFlag) => {
                         }
                     }
                 }
-    
+
                 await handleCheckInModal(data, visitConcept, query);
                 btnCheckIn.disabled = true;
             }
@@ -650,7 +655,7 @@ const handleCheckInWarning = async (visit, data, collection) => {
 
     return userConfirmed;
 }
-
+// TODO HERE~
 const handleCheckInModal = async (data, visitConcept, query) => {
     await checkInParticipant(data, visitConcept);
 
@@ -666,7 +671,9 @@ const handleCheckInModal = async (data, visitConcept, query) => {
     const checkInOnContinue = async () => {
         try {
             const updatedResponse = await findParticipant(query);
+            console.log("🚀 ~ checkInOnContinue ~ updatedResponse:", updatedResponse)
             const updatedData = updatedResponse.data[0];
+            console.log("🚀 ~ checkInOnContinue ~ updatedData:", updatedData)
 
             dismissBiospecimenModal();
             specimenTemplate(updatedData);
@@ -723,11 +730,11 @@ export const addEventSpecimenLinkForm = (formData) => {
     });
 };
 
-export const addEventClinicalSpecimenLinkForm = (formData) => {
+export const addEventClinicalSpecimenLinkForm = (participantData, formData) => {
     const form = document.getElementById('clinicalSpecimenContinue');
     form.addEventListener('click', async (e) => {
         e.preventDefault();
-        clinicalBtnsClicked(formData);
+        clinicalBtnsClicked(participantData, formData);
     });
 };
 
@@ -865,12 +872,16 @@ const btnsClicked = async (connectId, formData) => {
     }
 }
 
-
+// Code can be refactored for input handling
+// add the collection setting as parameter, Add data object with participant Data
 /**
  * Check accession number inputs after clicking 'Submit' button
  * @param {*} formData 
  */
-const clinicalBtnsClicked = async (formData) => { 
+const clinicalBtnsClicked = async (participantData, formData) => { 
+console.log("🚀 ~ clinicalBtnsClicked ~ participantData:", participantData)
+console.log("🚀 ~ clinicalBtnsClicked ~ formData:", formData)
+// console.log("formData[173836415][266600170][592099155]", formData[173836415][266600170][592099155])
 
     removeAllErrors();
     const connectId = document.getElementById('clinicalSpecimenContinue').dataset.connectId;
@@ -881,125 +892,135 @@ const clinicalBtnsClicked = async (formData) => {
     const accessionID3 = document.getElementById('accessionID3');
     const accessionID4 = document.getElementById('accessionID4');
     const selectedVisit = document.getElementById('visit-select').value;
+    // needed to find if specimens are collected for specific visit
+    
     
     let hasError = false;
     let focus = true;
 
-    if (accessionID1 && !accessionID1.value && accessionID3 && !accessionID3.value) {
-        hasError = true;
-        errorMessage('accessionID1', 'Please type Blood/Urine Accession ID from tube.', focus, true);
-        focus = false;
+    // accessionID2, accessionID4, participantName, hasError, confirmVal, selectedVisit, formData, connectId
+    // TODO LATER: !!!
+    const modalContext = { // will be passed into modal functions
+        participantData,
+        accessionID2,
+        accessionID4,
+        participantName,
+        hasError,
+        selectedVisit,
+        formData,
+        connectId,
     }
-    else if (accessionID1 && accessionID1.value && !accessionID2.value && !accessionID2.classList.contains('disabled')) {
-        hasError = true;
-        errorMessage('accessionID2', 'Please re-type Blood Accession ID from tube.', focus, true);
-        focus = false;
-    }
-    else if (accessionID1 && accessionID1.value && accessionID2.value && accessionID1.value !== accessionID2.value) {
-        hasError = true;
-        errorMessage('accessionID2', 'Blood Accession ID doesn\'t match', focus, true);
-        focus = false;
+
+    if (accessionID1 && 
+        !accessionID1.value && 
+        accessionID3 && 
+        !accessionID3.value) { // both input 1 and 3 are empty
+            hasError = true;
+            errorMessage('accessionID1', 'Please type Blood/Urine Accession ID from tube.', focus, true);
+            focus = false;
+    } else if (accessionID1 && 
+        accessionID1.value && 
+        !accessionID2.value && 
+        !accessionID2.classList.contains('disabled')) { // input 1 has value and input 2 no value and is NOT disabled
+            hasError = true;
+            errorMessage('accessionID2', 'Please re-type Blood Accession ID from tube.', focus, true);
+            focus = false;
+    } else if (accessionID2 &&
+        accessionID2.value &&
+        accessionID1 &&
+        !accessionID1.value) { // input 2 has value, input 1 has no value; NEWLY ADDED FOR INPUT 1 BLANK AND INPUT 2 HAS VALUE
+            hasError = true;
+            errorMessage('accessionID1', 'Blood Accession ID doesn\'t match', focus, true);
+            focus = false;
+
+    } else if (accessionID1 && 
+        accessionID1.value && 
+        accessionID2.value && 
+        accessionID1.value !== accessionID2.value) { // input 1 and 2 have values, input 1 and 2 dont match; this only gives the red border to input 2 and not 1
+            hasError = true;
+            errorMessage('accessionID2', 'Blood Accession ID doesn\'t match', focus, true);
+            focus = false;
     }
     
-    if (accessionID3 && accessionID3.value && !accessionID4.value && !accessionID4.classList.contains('disabled')) {
-        hasError = true;
-        errorMessage('accessionID4', 'Please re-type Urine Accession ID from tube.', focus, true);
-        focus = false;
-    }
-    else if (accessionID3 && accessionID3.value && accessionID4.value && accessionID3.value !== accessionID4.value) {
-        hasError = true;
-        errorMessage('accessionID4', 'Urine Accession ID doesn\'t match', focus, true);
-        focus = false;
-    }
-    else if (!selectedVisit) {
-        hasError = true;
-        errorMessage('visit-select', 'Visit Type is not selected', focus, true);
-        focus = false;
+    if (accessionID3 && 
+        accessionID3.value && 
+        !accessionID4.value && 
+        !accessionID4.classList.contains('disabled')) { // input 3, no input 4, input 4 has diasbled class
+            hasError = true;
+            errorMessage('accessionID4', 'Please re-type Urine Accession ID from tube.', focus, true);
+            focus = false;
+    } else if (accessionID3 && 
+        accessionID3.value && 
+        accessionID4.value && 
+        accessionID3.value !== accessionID4.value) { // input 3, no input 4, input 4 has diasbled class
+            hasError = true;
+            errorMessage('accessionID4', 'Urine Accession ID doesn\'t match', focus, true);
+            focus = false;
+    } else if (accessionID4 && 
+        accessionID4.value && 
+        accessionID3 && 
+        !accessionID3.value) {// add check for input 4, no input 3, NEWLY ADDED FOR INPUT 3 BLANK AND INPUT 4 HAS VALUE 
+            hasError = true;
+            errorMessage('accessionID3', 'Urine Accession ID doesn\'t match', focus, true);
+            focus = false;
+            console.log("no match. Input 4 has value, input 3 has no value")
+    } else if (!selectedVisit) { // Can this be separated? 
+            hasError = true;
+            errorMessage('visit-select', 'Visit Type is not selected', focus, true);
+            focus = false;
     }
 
     if (hasError) return;
-    let confirmVal = 'No';
+    // error checking for any missing input fields
+    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.clinical; 
+    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.bloodCollectionSetting:", conceptIds.bloodCollectionSetting)
+    console.log("🚀 ~ clinicalBtnsClicked ~ isBloodCollected:", isBloodCollected)
+    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.clinical;
+    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.urineCollectionSetting:", conceptIds.urineCollectionSetting)
+    console.log("🚀 ~ clinicalBtnsClicked ~ isUrineCollected:", isUrineCollected)
 
-    if (accessionID1 && accessionID1.value && accessionID3 && !accessionID3.value) {
-        const button = document.createElement('button');
-        button.dataset.target = '#biospecimenModal';
-        button.dataset.toggle = 'modal';
-    
-        document.getElementById('root').appendChild(button);
-        button.click();
-        document.getElementById('root').removeChild(button);
-        const header = document.getElementById('biospecimenModalHeader');
-        const body = document.getElementById('biospecimenModalBody');
-        header.innerHTML = `Urine Accession Id is Missing`
-        let template =  `You have not entered a Urine Accession Id. Do you want to continue?`
-        template += `
-        <br />
-        <div style="display:inline-block; margin-top:20px;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank"  data-toggle="modal" id="yesTrigger">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">NO</button>
-            </div>
-        </div>`
-        body.innerHTML = template;
+    // let confirmVal = 'No';
+    // clinicalSpecimensCollectedModal(participantData, conceptIds.bloodCollectionSetting, conceptIds.urineCollectionSetting);
 
+    if (!hasError && accessionID2.value && accessionID4.value) { // both inputs added
+        const collectedModalData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        if (!collectedModalData) return; // if user clicked no on the modal
+        console.log("🚀 ~ clinicalBtnsClicked ~ modalData:", collectedModalData)
+        triggerConfirmationModal(collectedModalData); // this will trigger the confirmation modal
+    } else if (accessionID1 && accessionID1.value && accessionID3 && !accessionID3.value) { // For only blood accession id inputs
+        // this can be refactored to a function
+        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        console.log("🚀 ~ clinicalBtnsClicked ~ confirmCollectedData:", confirmCollectedData)
+        if (!confirmCollectedData) return; // if user clicked no on the modal
+        const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
+        console.log("🚀 ~ clinicalBtnsClicked ~ missingModalData:", typeof missingModalData)
+        if (!missingModalData) return; // if user clicked no on the modal
 
-        const noBtn = document.getElementById('noTrigger')
-        noBtn.addEventListener("click", async e => {
-            confirmVal = 'No'
-        })
+        console.log("missingModalData!!!!!!", missingModalData)
+        // if (missingModalData?.confirmVal === 'No') return; // user clicked no on the modal
+        triggerConfirmationModal(missingModalData); // this will trigger the confirmation modal
 
-        const yesBtn = document.getElementById('yesTrigger')
-        yesBtn.addEventListener("click", async e => {
-            confirmVal = 'Yes'
-            triggerConfirmationModal(accessionID2, accessionID4, participantName, hasError, confirmVal, selectedVisit, formData, connectId)
-        })
+    } else if (accessionID1 && !accessionID1.value && accessionID3 && accessionID3.value) { // For only urine accession id inputs
+        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        console.log("🚀 ~ clinicalBtnsClicked ~ confirmCollectedData:", confirmCollectedData)
+        if (!confirmCollectedData) return; // if user clicked no on the modal
+        const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
+        console.log("🚀 ~ clinicalBtnsClicked ~ missingModalData:", typeof missingModalData)
+        if (!missingModalData) return; // if user clicked no on the modal
 
-    }
-    
-    
-    if (accessionID1 && !accessionID1.value && accessionID3 && accessionID3.value) {
-        const button = document.createElement('button');
-        button.dataset.target = '#biospecimenModal';
-        button.dataset.toggle = 'modal';
-    
-        document.getElementById('root').appendChild(button);
-        button.click();
-        document.getElementById('root').removeChild(button);
-        const header = document.getElementById('biospecimenModalHeader');
-        const body = document.getElementById('biospecimenModalBody');
-        header.innerHTML = `Blood Accession Id is Missing`
-        let template =  `You have not entered a Blood Accession Id. Do you want to continue?`
-        template += `
-        <br />
-        <div style="display:inline-block; margin-top:20px;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">NO</button>
-            </div>
-        </div>`
-        body.innerHTML = template;
-
-        const noBtn = document.getElementById('noTrigger')
-        noBtn.addEventListener("click", async e => {
-            confirmVal = 'No'
-        })
-
-        const yesBtn = document.getElementById('yesTrigger')
-        yesBtn.addEventListener("click", async e => {
-            confirmVal = 'Yes'
-            triggerConfirmationModal(accessionID2, accessionID4, participantName, hasError, confirmVal, selectedVisit, formData, connectId)
-        })
+        console.log("missingModalData!!!!!!", missingModalData)
+        // if (missingModalData?.confirmVal === 'No') return; // user clicked no on the modal
+        triggerConfirmationModal(missingModalData); // 
     }
 
-    if (!hasError && accessionID2.value && accessionID4.value) {
-        confirmationModal(accessionID1, accessionID3, participantName, selectedVisit, formData, connectId)
-    }
-}
+}; // End of ClinicalBtnsClicked ********
 
-const triggerConfirmationModal =  (accessionID2, accessionID4, participantName, hasError, confirmVal, selectedVisit, formData, connectId) => {
-    if (!hasError && confirmVal === 'Yes') {
-        confirmationModal(accessionID2, accessionID4, participantName, selectedVisit, formData, connectId)
-}}
+const triggerConfirmationModal = (modalData) => {
+    console.log("modal data", modalData.context)  
+    const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
+    console.log("invoked",modalData.modalContext)
+    console.log("🚀 ~ confirmationModal ~ modalData:", modalData)
 
-const confirmationModal = (accessionID2, accessionID4, participantName, selectedVisit, formData, connectId) => {
     const button = document.createElement('button');
     button.dataset.target = '#modalShowMoreData';
     button.dataset.toggle = 'modal';
@@ -1020,6 +1041,7 @@ const confirmationModal = (accessionID2, accessionID4, participantName, selected
         </div>
     </div>`
     body.innerHTML = template;
+
     const noBtn = document.getElementById('cancel');
     noBtn.addEventListener("click", async e => {
         return
@@ -1030,6 +1052,31 @@ const confirmationModal = (accessionID2, accessionID4, participantName, selected
         (accessionID2.value) ? await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId) :
         await redirectSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId)
     }) 
+}
+
+/**
+ * Displays a modal to notify user that both blood and urine was collected, or either a blood or a urine was collected.
+ * @param {Object} participantData - Participant data object.
+ * @param {Number} bloodCollectionSetting - Blood collection setting concept id.
+ * @param {Number} urineCollectionSetting - Urine collection setting concept id.
+*/
+const clinicalSpecimensCollectedModal = (modalContext, bloodCollectionSetting, urineCollectionSetting) => {
+    console.log("🚀 ~ clinicalSpecimensCollectedModal ~ urineCollectionSetting:", urineCollectionSetting)
+    console.log("🚀 ~ clinicalSpecimensCollectedModal ~ bloodCollectionSetting:", bloodCollectionSetting)
+
+    const { participantData } = modalContext;
+
+    // need selected visit for obtaining correct data from participantData
+    const selectedVisit = document.getElementById('visit-select').value;
+    // make into a single function that handles both, or blood, or urine
+
+    // Either of these two should be clinical concept Id (664882224)
+    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[bloodCollectionSetting] === conceptIds.clinical; 
+    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[urineCollectionSetting] === conceptIds.clinical;
+
+    return displayClinicalSpecimenCollectedModal(modalContext,isBloodCollected, isUrineCollected)
+
+    
 }
 
 const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
@@ -2775,4 +2822,111 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
         }
     }
     return false;
+}
+
+/**
+ * displays a modal to confirm if the user wants to continue with collected blood and/or urine specimens
+ * @param {object} modalContext - context object containing information about the modal
+ * @param {boolean} isBloodCollected - flag indicating if blood specimen is collected
+ * @param {boolean} isUrineCollected - flag indicating if urine specimen is collected
+ * @returns {Promise} - resolves with the modalContext if user clicks "Yes", otherwise resolves with null
+*/
+
+const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, isUrineCollected) => {
+    console.log("isBloodCollected, isUrineCollected", isBloodCollected, isUrineCollected)
+    const button = document.createElement('button');
+    button.dataset.target = '#biospecimenModal';
+    button.dataset.toggle = 'modal';
+    document.getElementById('root').appendChild(button);
+    button.click();
+    document.getElementById('root').removeChild(button);
+    const header = document.getElementById('biospecimenModalHeader');
+    const body = document.getElementById('biospecimenModalBody');
+    const modalButtons = `
+    <br />
+    <div style="display:inline-block; margin-top:20px;">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">NO</button>
+        </div>
+    </div>`;
+
+    if (isBloodCollected && isUrineCollected) {
+        header.innerHTML = `Blood and Urine Specimens Already Collected`
+        body.innerHTML = "This participant already has a blood and urine specimens collected for this timepoint. Do you wish to continue?" + modalButtons
+    } else if (isBloodCollected) { 
+        header.innerHTML = `Blood Specimen Already Collected`
+        body.innerHTML = "This participant already has a blood specimen collected for this timepoint. Do you wish to continue?" + modalButtons
+    } else if (isUrineCollected) { 
+        header.innerHTML = `Urine Specimen Already Collected`
+        body.innerHTML = "This participant already has a urine specimen collected for this timepoint. Do you wish to continue?" + modalButtons
+    }
+    
+    return new Promise((resolve) => {
+        const noBtn = document.getElementById('noTrigger');
+        noBtn.addEventListener("click", () => {
+            resolve(null);
+        });
+        const yesBtn = document.getElementById('yesTrigger');
+        yesBtn.addEventListener("click", () => {
+            resolve({ modalContext });
+        });
+    })
+};
+
+// This will be called when user clicks "Yes" and there is a missing urine or blood smaple
+const displayClinicalSpecimenMissingModal = (modalData) => { 
+    
+    const { accessionID2, accessionID4, participantName, hasError, selectedVisit, formData, connectId } = modalData?.modalContext;
+    // let confirmVal = modalData?.modalContext?.confirmVal;
+    // if (modalData?.modalContext?.confirmVal === 'No') return;
+    // if (confirmVal === 'No') return;
+    console.log("accessionID2", accessionID2, "--", "accessionID2.value", accessionID2?.value)
+    console.log("accessionID4", accessionID4, "--", "accessionID4.value", accessionID4?.value)
+
+    // determine if accedsionID2 or accessionID4 is missing
+    // based on what is missing, display appropriate modal content
+
+    const button = document.createElement('button');
+    button.dataset.target = '#biospecimenModalExtra';
+    button.dataset.toggle = 'modal';
+
+    document.getElementById('root').appendChild(button);
+    button.click();
+    document.getElementById('root').removeChild(button);
+
+
+    const header = document.getElementById('biospecimenModalExtraHeader');
+    const body = document.getElementById('biospecimenModalBodyExtraBody');
+    let template;
+
+    if (accessionID2 && accessionID2.value) {
+        header.innerHTML = 'Urine Accession Id is Missing';
+        template = 'You have not entered a Urine Accession Id. Do you want to continue?';
+    } else if (accessionID4 && accessionID4.value) {
+        header.innerHTML = 'Blood Accession Id is Missing';
+        template = 'You have not entered a Blood Accession Id. Do you want to continue?';
+    } else {
+        return;
+    }
+
+    template += `
+        <br />
+        <div style="display:inline-block; margin-top:20px;">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">NO</button>
+            </div>
+        </div>`;
+    body.innerHTML = template;
+    
+    return new Promise ((resolve) => {
+        const noBtn = document.getElementById('noTrigger_Modal2');
+        noBtn.addEventListener("click", async e => {
+            resolve(null);
+        });
+
+        const yesBtn = document.getElementById('yesTrigger_Modal2');
+        yesBtn.addEventListener("click", async e => {
+            resolve(modalData);
+        });
+    })
 }
