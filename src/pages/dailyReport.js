@@ -98,13 +98,14 @@ const renderCollectionLocationList = () => {
                 appState.getState().siteAcronym === 'BSWH' ? `
                     <li><a class="dropdown-item" data-siteKey="bccHwc" id="bccHwc">BCC- HWC, BC</a></li>
                     <li><a class="dropdown-item" data-siteKey="bccAllSaints" id="bccAllSaints">BCC- All Saints (FW)</a></li>
-                    <li><a class="dropdown-item" data-siteKey="bccFortWorth" id="bccFortWorth">BCC- Plano</a></li>
-                    <li><a class="dropdown-item" data-siteKey="bccPlano" id="bccPlano">BCC- Worth St</a></li>
-                    <li><a class="dropdown-item" data-siteKey="bccWorthSt" id="bccWorthSt">BCC- Irving</a></li>
-                    <li><a class="dropdown-item" data-siteKey="bccIrving" id="bccIrving">NTX Biorepository</a></li>
-                    <li><a class="dropdown-item" data-siteKey="ntxBiorepo" id="ntxBiorepo">BCC- Fort Worth</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccFortWorth" id="bccFortWorth">BCC- Worth St</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccPlano" id="bccPlano">BCC- Plano</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccWorthSt" id="bccWorthSt">BCC- Fort Worth</a></li>
+                    <li><a class="dropdown-item" data-siteKey="bccIrving" id="bccIrving">BCC- Irving</a></li>
+                    <li><a class="dropdown-item" data-siteKey="ntxBiorepo" id="ntxBiorepo">NTX Biorepository</a></li>
                     <li><a class="dropdown-item" data-siteKey="northGarland" id="northGarland">North Garland</a></li>
-                    <li><a class="dropdown-item" data-siteKey="wacoMacArthur" id="wacoMacArthur">Waco - MacArthur</a></li>`:
+                    <li><a class="dropdown-item" data-siteKey="wacoMacArthur" id="wacoMacArthur">Waco - MacArthur</a></li>
+                    <li><a class="dropdown-item" data-siteKey="irving" id="irving">Irving</a></li>`:
                 appState.getState().siteAcronym === 'NIH' ? 
                     `<li><a class="dropdown-item" data-siteKey="nci" id="nci">NIH/NCI</a></li>`:
                     `<li><a class="dropdown-item" data-siteKey="other" id="other">Other</a></li>` 
