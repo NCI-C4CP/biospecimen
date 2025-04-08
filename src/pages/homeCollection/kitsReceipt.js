@@ -1,8 +1,8 @@
 import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails, appState } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
-import { displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation } from "../siteCollection/sitePackageReceipt.js";
+import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation } from "../siteCollection/sitePackageReceipt.js";
 
 const contentBody = document.getElementById("contentBody");
 
@@ -139,11 +139,21 @@ const formSubmit = () => {
       e.preventDefault();
       const modalHeaderEl = document.getElementById("modalHeader");
       const modalBodyEl = document.getElementById("modalBody");
+      // const dateReceived = document.getElementById("dateReceived")?.value;
+      // const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
+
+      // const isValidCollectionDate = dateCollectionCard <= dateReceived;
       const isPackageInfoValid = validatePackageInformation(true);
 
+      // if (!isValidCollectionDate && appState.getState().collectionDateChecked !== true) {
+      //   displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl);
+      //   console.log("error with collection date");
+      //   appState.setState({ collectionDateChecked: true });
+      //   console.log(appState.getState());
       if (isPackageInfoValid) {
         displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl, true);
       } else {
+        // console.log('isPackageInfoValid pressed!');
         displayInvalidPackageInformationModal(modalHeaderEl, modalBodyEl);
       }
   });
@@ -174,6 +184,8 @@ export const confirmKitReceipt = () => {
         document.getElementById('collectionCheckBox').checked === true ? 
         kitObj[conceptIds.collectionCardFlag] = true : kitObj[conceptIds.collectionCardFlag] = false;
         kitObj[conceptIds.collectionAddtnlNotes] = document.getElementById('collectionComments').value;
+        kitObj["collectionDateChecked"] = kitObj[conceptIds.collectionDateTimeStamp] && appState.getState().lastRequestedCollectionDateTimeStamp === kitObj[conceptIds.collectionDateTimeStamp];
+        console.log("collectionDateChecked", appState.getState().lastRequestedCollectionDateTimeStamp, kitObj[conceptIds.collectionDateTimeStamp], kitObj["collectionDateChecked"]);
       }
       window.removeEventListener("beforeunload", handleBeforeUnload);
       setupLeavingPageMessage();
@@ -195,6 +207,7 @@ const storePackageReceipt = async (data) => {
   });
   hideAnimation();
 
+  console.log("data", data, appState.getState());
   const returnedPtInfo = await processResponse(response);
   if (returnedPtInfo.status === true) {
     triggerSuccessModal("Kit Receipted.");
@@ -254,6 +267,11 @@ const storePackageReceipt = async (data) => {
 
   } else if (returnedPtInfo.status === "Check Collection ID") {
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
+  } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
+    displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
+    console.log("error with collection date");
+    appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
+    console.log(appState.getState());
   } else {
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }

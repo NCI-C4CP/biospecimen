@@ -730,3 +730,27 @@ const handleUnsavedChangesListeners = (hasUnsavedChanges) => {
     toggleClearFormBtnListener(hasUnsavedChanges);
     toggleBeforeUnloadListener(hasUnsavedChanges);
 };
+
+export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage) => {
+    modalHeaderEl.innerHTML = `
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    `;
+    modalBodyEl.innerHTML = `
+        <div class="row">
+            <div class="col">
+                <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                </div>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem;">
+                   ${errorMessage}
+                </p>
+            </div>
+        </div>
+        <div class="row" style="display:flex; justify-content:center;">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" target="_blank">Close</button>
+        </div>
+        </div>
+    `;
+};
