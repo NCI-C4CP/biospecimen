@@ -3419,6 +3419,13 @@ export const checkAlertState = (alertState, createBoxSuccessAlertEl, createBoxEr
 
 export const delay = ms => new Promise(res => setTimeout(res, ms));
 
+export const escapeHTML = (str) => {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    console.log(div);
+    return div.innerHTML;
+};
+
 export const convertConceptIdToPackageCondition = (packagedCondition, packageConditionConversion) => {
   let listConditions = ''
   if(!packagedCondition) return listConditions
@@ -3451,7 +3458,7 @@ export const checkDuplicateTrackingIdFromDb = async (boxes) => {
         let trackingId = document.getElementById(`${boxId}trackingId`).value;
         let numBoxesShipped = await getNumPages(5, {trackingId});
         if (numBoxesShipped > 0) {
-            isExistingTrackingId = trackingId;
+            isExistingTrackingId = escapeHTML(trackingId);
             break;
         }
     }
