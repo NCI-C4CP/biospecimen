@@ -193,6 +193,7 @@ const storePackageReceipt = async (data) => {
   });
   hideAnimation();
 
+
   const returnedPtInfo = await processResponse(response);
   if (returnedPtInfo.status === true) {
     triggerSuccessModal("Kit Receipted.");
@@ -237,10 +238,36 @@ const storePackageReceipt = async (data) => {
         return;
       }
 
+      switch(returnedPtInfo.path) {
+        case conceptIds.bioKitMouthwashBL2: {
+          requestData.category = "BL R2 Mouthwash Sample Survey Reminders";
+          break;
+        }
+        case conceptIds.bioKitMouthwashBL1: {
+          requestData.category = "BL R1 Mouthwash Sample Survey Reminders";
+          break;
+        }
+        default: {
+          requestData.category = "Baseline Mouthwash Sample Survey Reminders";
+        }
+      }
       requestData.category = "Baseline Mouthwash Sample Survey Reminders";
       requestData.substitutions.loginDetails = loginDetails;
     } else {
-      requestData.category = "Mouthwash Home Collection Acknowledgement";
+      switch(returnedPtInfo.path) {
+        case conceptIds.bioKitMouthwashBL2: {
+          requestData.category = "R2 Mouthwash Home Collection Acknowledgement";
+          break;
+        }
+        case conceptIds.bioKitMouthwashBL1: {
+          requestData.category = "R1 Mouthwash Home Collection Acknowledgement";
+          break;
+        }
+        default: {
+          requestData.category = "Mouthwash Home Collection Acknowledgement";
+        }
+      }
+      
     }
 
     try {

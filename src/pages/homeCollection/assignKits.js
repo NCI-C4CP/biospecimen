@@ -78,6 +78,17 @@ const assignKitsTemplate = async (name) => {
       </div>
   </div>`;
 
+  template += `
+        <div class="modal fade" id="modalShowMoreData" data-keyboard="false" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                <div class="modal-content sub-div-shadow">
+                    <div class="modal-header" id="modalHeader"></div>
+                    <div class="modal-body" id="modalBody"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
   document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
   contentBody.innerHTML = template;
 
@@ -134,6 +145,11 @@ const populateSidePaneRows = () => {
           data-zipCode= '${participant.zip_code}'
           data-connectId= '${participant.connect_id}'
           id="selectParticipants">Select</button>
+          <button type="button" class="btn btn-link undeliverableRow" 
+            data-connectId= '${participant.connect_id}'
+            id="undeliverablePtAddr"
+            data-toggle="modal" data-target="#modalShowMoreData"
+          >Undeliverable Address</button>
         </ul>`;
     })
     selectParticipants();
@@ -151,7 +167,77 @@ const selectParticipants = () => {
         document.getElementById('Connect_ID').value = selectPtBtn.getAttribute('data-connectId')
       });
     });
-}}
+  }
+  const undeliverableRow = Array.from(document.getElementsByClassName('undeliverableRow'));
+  if (undeliverableRow) {
+    Array.from(undeliverableRow).forEach(function(undeliverableBtn) {
+      undeliverableBtn.addEventListener('click', async () => {
+        const connectId = undeliverableBtn.getAttribute('data-connectId');
+        // Confirmation dialog
+        const modalHeaderEl = document.getElementById("modalHeader");
+        const modalBodyEl = document.getElementById("modalBody");
+        modalHeaderEl && (modalHeaderEl.innerHTML = `
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        `);
+        modalBodyEl && (modalBodyEl.innerHTML = `
+          <div class="row">
+              <div class="col">
+                  <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                      <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                  </div>
+                  <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                      <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Package Condition</span> 
+                      Undeliverable Address was selected for Connect ID ${connectId}. Confirm that you wish to report this address as undeliverable.
+                  </p>
+              </div>
+          </div>
+          <div class="row" style="display:flex; justify-content:center;">
+              <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
+          </div>
+      `);
+      clickConfirmButton();
+      });
+    });
+  }
+}
+
+const clickConfirmButton = () => {
+    const confirmButton = document.getElementById("confirmButton");
+    if(!confirmButton) {
+      return;
+    }
+    const connectId = +confirmButton.getAttribute('data-connect-id');
+    confirmButton.addEventListener("click", async () => {
+        showAnimation();
+        const idToken = await getIdToken();
+        const response = await fetch(`${baseAPI}api=markParticipantAddressUndeliverable`, {
+          method: "POST",
+          body: JSON.stringify({Connect_ID: connectId}),
+          headers: {
+            Authorization: "Bearer " + idToken,
+            "Content-Type": "application/json",
+          },
+        });
+        const processedResponse = await response.json();
+        const data = processedResponse.data;
+        
+        if(data?.success === 'true') {
+            triggerSuccessModal("Participant address marked as undeliverable");
+            const filteredParticipants = appState.getState().participants.filter((participant) => {
+              return participant['connect_id'] !== connectId;
+            });
+            appState.setState({ participants: filteredParticipants });
+            populateSidePaneRows();
+        } else {
+          console.error('Response with error', response);
+          triggerErrorModal("Error updating participant.");
+        }
+        hideAnimation();
+    });  
+};
 
 const confirmAssignment = () => {
   const confirmAssignmentBtn = document.getElementById('confirmAssignment');

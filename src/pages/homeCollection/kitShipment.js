@@ -121,33 +121,30 @@ const setShippedResponse = async (data) => {
     document.getElementById("showMsg").innerHTML = ``;
     let category = "Baseline Mouthwash Home Collection Kit Reminders";
     if(returnedPtInfo.path === conceptIds.bioKitMouthwashBL2) {
-      // category = '@TODO';
-      console.log('Skipping user notification for now.');
+      category = 'BL R2 Mouthwash Home Collection Kit Reminders';
     } else if (returnedPtInfo.path === conceptIds.bioKitMouthwashBL1) {
-      // category = '@TODO';
-      console.log('Skipping user notification for now.');
-    } else {
-      const requestData = {
-        category,
-        attempt: "1st contact",
-        email: returnedPtInfo.prefEmail,
-        token: returnedPtInfo.token,
-        uid: returnedPtInfo.uid,
-        connectId: returnedPtInfo.Connect_ID,
-        preferredLanguage: returnedPtInfo.preferredLanguage,
-        substitutions: {
-          firstName: returnedPtInfo.ptName || "User",
-        },
-      };
-  
-      try {
-        await sendInstantNotification(requestData);
-      } catch (e) {
-        console.error(`Error sending email to user ${returnedPtInfo.prefEmail}`, e);
-        throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
-      }
+      category = 'BL R1 Mouthwash Home Collection Kit Reminders';
     }
 
+    const requestData = {
+      category,
+      attempt: "1st contact",
+      email: returnedPtInfo.prefEmail,
+      token: returnedPtInfo.token,
+      uid: returnedPtInfo.uid,
+      connectId: returnedPtInfo.Connect_ID,
+      preferredLanguage: returnedPtInfo.preferredLanguage,
+      substitutions: {
+        firstName: returnedPtInfo.ptName || "User",
+      },
+    };
+
+    try {
+      await sendInstantNotification(requestData);
+    } catch (e) {
+      console.error(`Error sending email to user ${returnedPtInfo.prefEmail}`, e);
+      throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
+    }
     
     return true;
 
