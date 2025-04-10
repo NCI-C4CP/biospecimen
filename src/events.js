@@ -558,8 +558,6 @@ export const addEventCheckInCompleteForm = (isCheckedIn, checkOutFlag) => {
     form && form.addEventListener('submit', async e => {
         e.preventDefault();
 
-        // const selectVisitConceptId = document.getElementById('visit-select').value;
-        // console.log("🚀 ~ addEventCheckInCompleteForm ~ selectVisitConceptId:", selectVisitConceptId)
 
         try {
             const btnCheckIn = document.getElementById('checkInComplete');
@@ -592,12 +590,30 @@ export const addEventCheckInCompleteForm = (isCheckedIn, checkOutFlag) => {
                             let collection = response.data.filter(res => res[conceptIds.collection.selectedVisit] == visit.concept);
                             if (collection.length === 0) continue;
                             const confirmContinueCheckIn = await handleCheckInWarning(visit, data, collection);
+                            console.log("🚀 ~ addEventCheckInCompleteForm ~ confirmContinueCheckIn:", confirmContinueCheckIn)
                             if (!confirmContinueCheckIn) return;
                         }
                     }
                 }
 
-                await handleCheckInModal(data, visitConcept, query);
+                // Need to add condition to not run this if the user has no collection for a specific visit
+                console.log("!data?.[conceptIds.collectionDetails]?.visitConcept", !data?.[conceptIds.collectionDetails], "visit concept ---", visitConcept, "combined", data?.[conceptIds.collectionDetails]?.[visitConcept], "data?.[conceptIds.collectionDetails]",data?.[conceptIds.collectionDetails])
+                // if (!data?.[conceptIds.collectionDetails]?.visitConcept) {
+                // }
+                // return;
+                console.log("data", data);
+                console.log("[conceptIds.collectionDetails]", [conceptIds.collectionDetails])
+                console.log("visitConcept", visitConcept)
+                // console.log("data?.[conceptIds.collectionDetails]", data?.[conceptIds.collectionDetails])
+                console.log("data?.[conceptIds.collectionDetails]?.visitConcept", data?.[conceptIds.collectionDetails]?.[visitConcept])
+                if (data?.[conceptIds.collectionDetails]?.[visitConcept]) { // This function will run if there is a collection for a selected visit
+                    const confirmCollectedModal = await displayResearchSpecimenCollectedModal(data);
+                    console.log("🚀 ~ addEventCheckInCompleteForm ~ confirmCollectedModal:", confirmCollectedModal)
+                    if (!confirmCollectedModal) return;
+                }
+                // return;
+
+                await handleCheckInModal(data, visitConcept, query); 
                 btnCheckIn.disabled = true;
             }
         } catch (error) {
@@ -611,6 +627,7 @@ export const addEventCheckInCompleteForm = (isCheckedIn, checkOutFlag) => {
  * Checks if the participant has any specimen collected (clinical blood or clinical urine) under baseline from the dashboard or collected clinical blood or urine derivations from the site EMR API. If participant has either a clinical blood or urine dashboard variable or other blood/urine derived variables from the site EMR API, show a notification and return true.
  * @param {Object} participantData - participant document data from find participant query
  * @returns {Boolean} - true if participant has any clinical blood or urine collected derivations, false otherwise
+ * // TODDO - Add flexibility for collection type, add option other than baseline and for follow up, etc.
 */
 const checkClinicalBloodOrUrineCollected = (participantData) => {
     const collectionDetailsBaseline = participantData?.[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId];
@@ -655,7 +672,7 @@ const handleCheckInWarning = async (visit, data, collection) => {
 
     return userConfirmed;
 }
-// TODO HERE~
+
 const handleCheckInModal = async (data, visitConcept, query) => {
     await checkInParticipant(data, visitConcept);
 
@@ -681,7 +698,6 @@ const handleCheckInModal = async (data, visitConcept, query) => {
             showNotifications({ title: 'Error', body: 'There was an error checking in the participant. Please try again.' });
         }
     };
-
     showNotificationsCancelOrContinue(checkInMessage, 10000, checkInOnCancel, checkInOnContinue);
 }
 
@@ -889,7 +905,15 @@ console.log("🚀 ~ clinicalBtnsClicked ~ formData:", formData)
     const accessionID2 = document.getElementById('accessionID2');
     const accessionID3 = document.getElementById('accessionID3');
     const accessionID4 = document.getElementById('accessionID4');
-    const selectedVisit = document.getElementById('visit-select').value;   
+    const selectedVisit = document.getElementById('visit-select').value;
+    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.clinical;
+    console.log("🚀 ~ clinicalBtnsClicked ~ isClinicalBloodCollected:", isBloodCollected)
+    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.clinical;
+    console.log("🚀 ~ clinicalBtnsClicked ~ isClinicalUrineCollected:", isUrineCollected)
+    // const isResearchBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.research;
+    // console.log("🚀 ~ clinicalBtnsClicked ~ isResearchBloodCollected:", isResearchBloodCollected)
+    // const isResearchUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.research;
+    // console.log("🚀 ~ clinicalBtnsClicked ~ isResearchUrineCollected:", isResearchUrineCollected)
     
     let hasError = false;
     let focus = true;
@@ -966,20 +990,20 @@ console.log("🚀 ~ clinicalBtnsClicked ~ formData:", formData)
 
     if (hasError) return;
     // error checking for any missing input fields
-    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.clinical; 
-    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.bloodCollectionSetting:", conceptIds.bloodCollectionSetting)
-    console.log("🚀 ~ clinicalBtnsClicked ~ isBloodCollected:", isBloodCollected)
-    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.clinical;
-    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.urineCollectionSetting:", conceptIds.urineCollectionSetting)
-    console.log("🚀 ~ clinicalBtnsClicked ~ isUrineCollected:", isUrineCollected)
+    // const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.clinical; 
+    // console.log("🚀 ~ clinicalBtnsClicked ~ isBloodCollected:", isBloodCollected)
+    // const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.clinical;
+    // console.log("🚀 ~ clinicalBtnsClicked ~ isUrineCollected:", isUrineCollected)
+    
 
     // let confirmVal = 'No';
     // clinicalSpecimensCollectedModal(participantData, conceptIds.bloodCollectionSetting, conceptIds.urineCollectionSetting);
 
     if (!hasError && accessionID2.value && accessionID4.value) { // both inputs added
         const collectedModalData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
-        if (!collectedModalData) return; // if user clicked no on the modal
         console.log("🚀 ~ clinicalBtnsClicked ~ modalData:", collectedModalData)
+        if (!collectedModalData) return; // if user clicked no on the modal
+
         triggerConfirmationModal(collectedModalData); // this will trigger the confirmation modal
     } else if (accessionID1 && accessionID1.value && accessionID3 && !accessionID3.value) { // For only blood accession id inputs
         // this can be refactored to a function
@@ -1004,9 +1028,8 @@ console.log("🚀 ~ clinicalBtnsClicked ~ formData:", formData)
 
         console.log("missingModalData!!!!!!", missingModalData)
         // if (missingModalData?.confirmVal === 'No') return; // user clicked no on the modal
-        triggerConfirmationModal(missingModalData); // 
+        triggerConfirmationModal(missingModalData);
     }
-
 };
 
 const triggerConfirmationModal = (modalData) => {
@@ -1045,11 +1068,11 @@ const triggerConfirmationModal = (modalData) => {
     yesBtn.addEventListener("click", async e => {
         if (accessionID2.value) {
             showAnimation();
-            await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId)
+            await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
             hideAnimation();
         } else {
             showAnimation();
-            await redirectSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId)
+            await redirectSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
             hideAnimation();
         }
     }) 
@@ -2804,13 +2827,14 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 /**
  * displays a modal to confirm if the user wants to continue with collected blood and/or urine specimens
  * @param {object} modalContext - context object containing information about the modal
- * @param {boolean} isBloodCollected - flag indicating if blood specimen is collected
- * @param {boolean} isUrineCollected - flag indicating if urine specimen is collected
- * @returns {Promise} - resolves with the modalContext if user clicks "Yes", otherwise resolves with null
+ * @param {boolean} isBloodCollected - flag indicating if blood specimen from clinical is collected
+ * @param {boolean} isUrineCollected - flag indicating if urine specimen from clinical is collected
+ * @returns {Promise} - resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
 */
 
 const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, isUrineCollected) => {
     console.log("isBloodCollected, isUrineCollected", isBloodCollected, isUrineCollected)
+    if (!isBloodCollected && !isUrineCollected) return Promise.resolve({ modalContext });
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModal';
     button.dataset.toggle = 'modal';
@@ -2840,6 +2864,7 @@ const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, i
     
     return new Promise((resolve) => {
         const noBtn = document.getElementById('noTrigger');
+        console.log("🚀 ~ returnnewPromise ~ noBtn:", noBtn)
         noBtn.addEventListener("click", () => {
             resolve(null);
         });
@@ -2850,23 +2875,80 @@ const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, i
     })
 };
 
+// Takes in participantData
+const displayResearchSpecimenCollectedModal = async (participantData) => {
+
+    console.log("participantData", participantData)
+    const selectVisitConceptId = document.getElementById('visit-select').value;
+    console.log("🚀 ~ addEventCheckInCompleteForm ~ selectVisitConceptId:", selectVisitConceptId)
+    
+    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.bloodCollectionSetting] === conceptIds.research; 
+    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.bloodCollectionSetting:", conceptIds.bloodCollectionSetting)
+    console.log("🚀 ~ clinicalBtnsClicked ~ isBloodCollected:", isBloodCollected)
+    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.urineCollectionSetting] === conceptIds.research;
+    console.log("🚀 ~ displayResearchSpecimenCollectedModal ~ isUrineCollected:", isUrineCollected)
+    console.log("🚀 ~ clinicalBtnsClicked ~ conceptIds.urineCollectionSetting:", conceptIds.urineCollectionSetting)
+    const isMouthWashCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting] === conceptIds.research;
+    console.log("🚀 ~ displayResearchSpecimenCollectedModal ~ conceptIds.mouthwashCollectionSetting:", conceptIds.mouthwashCollectionSetting)
+    console.log("🚀 ~ displayResearchSpecimenCollectedModal ~ isMouthWashCollected:", isMouthWashCollected)
+    if (!isBloodCollected && !isUrineCollected && !isMouthWashCollected) { 
+        return;
+    }
+    
+    // Modal template
+    const button = document.createElement('button');
+    button.dataset.target = '#biospecimenCollected';
+    button.dataset.toggle = 'modal';
+    document.getElementById('root').appendChild(button);
+    button.click();
+    document.getElementById('root').removeChild(button);
+
+    
+
+    const header = document.getElementById('biospecimenModalHeaderCollected');
+    const body = document.getElementById('biospecimenModalBodyCollected');
+    console.log("🚀 ~ displayResearchSpecimenCollectedModal ~ body:", body)
+    let template;
+
+    if (isBloodCollected ||
+        isUrineCollected ||
+        isMouthWashCollected) {
+            header.innerHTML = 'Samples Already Collected';
+            template = 'This participant already has samples collected for this timepoint. Do you wish to continue with check-in?';
+    } 
+
+    template += `
+        <br />
+        <div style="display:inline-block; margin-top:20px;">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">NO</button>
+            </div>
+        </div>`;
+    body.innerHTML = template;
+
+    return new Promise ((resolve) => {
+        const noBtn = document.getElementById('noTrigger_Modal2');
+        noBtn.addEventListener("click", () => {
+            resolve(null);
+        });
+
+        const yesBtn = document.getElementById('yesTrigger_Modal2');
+        yesBtn.addEventListener("click", () => {
+            resolve(true);
+        });
+    })
+}
+
 
 /**
  * Displays a modal to confirm if the user wants to continue with missing blood and/or urine specimens
  * @param {object} modalData - data object containing information about the modal
- * returns {Promise} - resolves with the modalData if user clicks "Yes", otherwise resolves with null
+ * @returns {Promise} - resolves with the modalData if user clicks "Yes", otherwise resolves with null
 */
 const displayClinicalSpecimenMissingModal = (modalData) => { 
-    
-    const { accessionID2, accessionID4, participantName, hasError, selectedVisit, formData, connectId } = modalData?.modalContext;
-    // let confirmVal = modalData?.modalContext?.confirmVal;
-    // if (modalData?.modalContext?.confirmVal === 'No') return;
-    // if (confirmVal === 'No') return;
+    const { accessionID2, accessionID4 } = modalData?.modalContext;
     console.log("accessionID2", accessionID2, "--", "accessionID2.value", accessionID2?.value)
     console.log("accessionID4", accessionID4, "--", "accessionID4.value", accessionID4?.value)
-
-    // determine if accedsionID2 or accessionID4 is missing
-    // based on what is missing, display appropriate modal content
 
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModalExtra';
@@ -2901,12 +2983,12 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
     
     return new Promise ((resolve) => {
         const noBtn = document.getElementById('noTrigger_Modal2');
-        noBtn.addEventListener("click", async e => {
+        noBtn.addEventListener("click", () => {
             resolve(null);
         });
 
         const yesBtn = document.getElementById('yesTrigger_Modal2');
-        yesBtn.addEventListener("click", async e => {
+        yesBtn.addEventListener("click", () => {
             resolve(modalData);
         });
     })
