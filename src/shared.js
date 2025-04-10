@@ -3422,7 +3422,6 @@ export const delay = ms => new Promise(res => setTimeout(res, ms));
 export const escapeHTML = (str) => {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
-    console.log(div);
     return div.innerHTML;
 };
 
