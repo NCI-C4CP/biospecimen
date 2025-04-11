@@ -4,6 +4,15 @@ import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from '../../fieldToConceptIdMapping.js';
 
+const escapeHtml = (unsafe) => {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 const contentBody = document.getElementById("contentBody");
 
 export const assignKitsScreen = async (auth) => {
@@ -172,7 +181,7 @@ const selectParticipants = () => {
   if (undeliverableRow) {
     Array.from(undeliverableRow).forEach(function(undeliverableBtn) {
       undeliverableBtn.addEventListener('click', async () => {
-        const connectId = undeliverableBtn.getAttribute('data-connectId');
+        const connectId = escapeHtml(undeliverableBtn.getAttribute('data-connectId'));
         // Confirmation dialog
         const modalHeaderEl = document.getElementById("modalHeader");
         const modalBodyEl = document.getElementById("modalBody");
