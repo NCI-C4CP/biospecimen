@@ -27,7 +27,7 @@ export const specimenTemplate = async (data, formData) => {
         </br>
         <div class="row">
             <div class="col">
-                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id=${conceptIds.firstName}>${data[conceptIds.firstName]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span></p></div>
                 <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
                 <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
             </div>
