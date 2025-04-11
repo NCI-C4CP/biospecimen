@@ -251,7 +251,6 @@ const storePackageReceipt = async (data) => {
           requestData.category = "Baseline Mouthwash Sample Survey Reminders";
         }
       }
-      requestData.category = "Baseline Mouthwash Sample Survey Reminders";
       requestData.substitutions.loginDetails = loginDetails;
     } else {
       switch(returnedPtInfo.path) {
