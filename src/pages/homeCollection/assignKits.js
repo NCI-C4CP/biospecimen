@@ -197,7 +197,7 @@ const selectParticipants = () => {
                       <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                   </div>
                   <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
-                      <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Package Condition</span> 
+                      <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Address Status Confirmation</span> 
                       Undeliverable Address was selected for Connect ID ${connectId}. Confirm that you wish to report this address as undeliverable.
                   </p>
               </div>
