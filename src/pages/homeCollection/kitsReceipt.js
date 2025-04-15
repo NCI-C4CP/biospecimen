@@ -268,6 +268,8 @@ const storePackageReceipt = async (data) => {
   } else if (returnedPtInfo.status === "Check Collection ID") {
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
   } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
+    const modalHeaderEl = document.getElementById("modalHeader");
+    const modalBodyEl = document.getElementById("modalBody");
     displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
     console.log("error with collection date");
     appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
