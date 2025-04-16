@@ -20,7 +20,6 @@ export const printLabelsScreen = async (auth) => {
 const printLabelsTemplate = (name) => {
   let template = ``;
   template += homeCollectionNavbar();
-  let inDev = isDev();
   template += `<div class="row align-center welcome-screen-div">
                   <div class="col">
                   <div id="alert_placeholder"></div>
@@ -39,7 +38,7 @@ const printLabelsTemplate = (name) => {
                           <button type="submit" class="btn btn-primary" id="generateCsv">Download CSV File</button>
                         </div>
                         </div>
-                        ${inDev ? `<span> <h3 style="text-align: center; margin: 0 0 1rem;">Replacement kit labels to print</h3> </span>
+                        <span> <h3 style="text-align: center; margin: 0 0 1rem;">Replacement kit labels to print</h3> </span>
                         <div style="text-align: center;  padding-bottom: 25px; "> 
                           <input required type="text" name="numberToPrintReplacements" id="numberToPrintReplacements"  /> 
                         </div>
@@ -48,7 +47,7 @@ const printLabelsTemplate = (name) => {
                         <div class="mt-4 mb-4" style="display:inline-block;">
                           <button type="button" class="btn btn-primary" id="clearReplacementForm" disabled>View All Printed Replacement Labels</button>
                           <button type="submit" class="btn btn-primary" id="generateReplacementCsv">Download Replacement Kit CSV File</button>
-                        </div>` : ``}
+                        </div>
                         </div>
                       </div>
                   </div>
