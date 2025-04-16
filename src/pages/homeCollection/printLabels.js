@@ -64,9 +64,8 @@ const printLabelsTemplate = (name) => {
   activeHomeCollectionNavbar();
   if (appState.getState().totalAddressesLength === 0) triggerErrorModal('No labels to print');
   generateParticipantCsvGetter(name);
-  if (inDev) {
-    generateParticipantReplacementCsvGetter(name);
-  }
+  generateParticipantReplacementCsvGetter(name);
+
 };
 
 const initializeTotalAddressesToPrint = async () => {
@@ -208,6 +207,7 @@ const generateParticipantCsv = async (items) => {
   document.body.removeChild(link);
   const response = await setKitStatusToParticipant(participantsForKitUpdate);
   if (!response) triggerErrorModal('Error while updating participant(s) kit status.')
+  if(response.code !== 200) triggerErrorModal(`${response.code} Error while updating participant(s) kit status: ${response.message}`);
 }
 
 const setKitStatusToParticipant = async (data) => {
