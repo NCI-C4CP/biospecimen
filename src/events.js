@@ -2834,7 +2834,7 @@ const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, i
     <br />
     <div style="display:inline-block; margin-top:20px;">
         <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">NO</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">No</button>
         </div>
     </div>`;
 
@@ -2906,7 +2906,7 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
         <br />
         <div style="display:inline-block; margin-top:20px;">
             <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">NO</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
             </div>
         </div>`;
     body.innerHTML = template;
@@ -2958,7 +2958,7 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
         <br />
         <div style="display:inline-block; margin-top:20px;">
             <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">NO</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
             </div>
         </div>`;
     body.innerHTML = template;
