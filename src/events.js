@@ -2989,7 +2989,6 @@ export const checkAccessionMatch = () => {
         
     accessionId2.addEventListener('blur', () => { 
         if (accessionId1.value !== accessionId2.value) {
-            console.log('BLUR input 2')
             errorMessage('accessionID2', 'Blood Accession ID doesn\'t match', focus, true);
         } else {
             removeSingleError('accessionID2')
@@ -2998,7 +2997,6 @@ export const checkAccessionMatch = () => {
     });
 
     accessionId4.addEventListener('blur', () => {
-        console.log('BLUR input 4')
         if (accessionId4.value !== accessionId3.value) {
             errorMessage('accessionID4', 'Urine Accession ID doesn\'t match', focus, true);
         } else {
@@ -3009,7 +3007,6 @@ export const checkAccessionMatch = () => {
 
     // add blur event handler logic the accession Id inputs for 1 and 2, when user retypes blood or urine (not re-enter input fields)
     accessionId1.addEventListener('blur', () => {
-        console.log('BLUR input 1')
         if (accessionId1.value === accessionId2.value) {
             removeSingleError('accessionID1')
             removeSingleError('accessionID2')
@@ -3025,7 +3022,6 @@ export const checkAccessionMatch = () => {
     });
 
     accessionId3.addEventListener('blur', () => {
-        console.log('BLUR input 3')
         if (accessionId3.value === accessionId4.value) {
             removeSingleError('accessionID3')
             removeSingleError('accessionID4')
