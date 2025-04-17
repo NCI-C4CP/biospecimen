@@ -3005,7 +3005,7 @@ export const checkAccessionMatch = () => {
         }
     });
 
-    // add blur event handler logic the accession Id inputs for 1 and 2, when user retypes bloor or urine (not reenter input fields)
+    // add blur event handler logic the accession Id inputs for 1 and 2, when user retypes blood or urine (not re-enter input fields)
     accessionId1.addEventListener('blur', () => {
         if (accessionId1.value === accessionId2.value) {
             removeSingleError('accessionID1')
