@@ -2176,7 +2176,7 @@ export const locationConceptIDToLocationMap = {
     email: 'ConnectBioHFH@hfhs.org',
   },
   838480167: {
-    siteSpecificLocation: 'Henry Ford Medical Center-Fairlane', //
+    siteSpecificLocation: 'Henry Ford Medical Center-Fairlane',
     siteAcronym: 'HFHS',
     siteCode: '548392715',
     siteTeam: 'Henry Ford Connect Study Team',
