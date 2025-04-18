@@ -235,6 +235,7 @@ const clickConfirmButton = () => {
         
         if(data?.success === 'true') {
             triggerSuccessModal("Participant address marked as undeliverable");
+            clearForm();
             const filteredParticipants = appState.getState().participants.filter((participant) => {
               return participant['connect_id'] !== connectId;
             });
@@ -247,6 +248,17 @@ const clickConfirmButton = () => {
         hideAnimation();
     });  
 };
+
+const clearForm = () => {
+  document.getElementById('fullName').value = ``;
+  document.getElementById('address').value = ``;
+  document.getElementById('Connect_ID').value = ``;
+  document.getElementById('scannedBarcode').value = ``;
+  document.getElementById('scannedBarcode2').value = ``;
+  document.getElementById('scanSupplyKit').value = ``;
+  document.getElementById("showMsg").innerHTML = ``;
+
+}
 
 const confirmAssignment = () => {
   const confirmAssignmentBtn = document.getElementById('confirmAssignment');
@@ -274,14 +286,7 @@ const confirmAssignment = () => {
         const assignmentStatus = await processConfirmedAssignment(participantObj);
 
         if (assignmentStatus === true) {
-          document.getElementById('fullName').value = ``;
-          document.getElementById('address').value = ``;
-          document.getElementById('Connect_ID').value = ``;
-          document.getElementById('scannedBarcode').value = ``;
-          document.getElementById('scannedBarcode2').value = ``;
-          document.getElementById('scanSupplyKit').value = ``;
-          document.getElementById("showMsg").innerHTML = ``;
-
+          clearForm();
           const filteredParticipants = appState.getState().participants.filter((participant) => {
             return participant['connect_id'] !== parseInt(participantObj['Connect_ID']);
           });
