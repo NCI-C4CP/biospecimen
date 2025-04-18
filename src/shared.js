@@ -2135,6 +2135,8 @@ export const siteSpecificLocation = {
   "BCC- Worth St": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "BCC- Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "NTX Biorepository": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
+  "North Garland": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
+  "Waco - MacArthur": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
