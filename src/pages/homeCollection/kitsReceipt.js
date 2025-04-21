@@ -1,8 +1,8 @@
 import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails, appState } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
-import { displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation } from "../siteCollection/sitePackageReceipt.js";
+import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation } from "../siteCollection/sitePackageReceipt.js";
 
 const contentBody = document.getElementById("contentBody");
 
@@ -17,6 +17,8 @@ export const kitsReceiptScreen = async (auth) => {
   addFormInputListenersOnLoad(true);
   formSubmit(); 
 }
+
+const defaultPackageCondition = conceptIds.pkgGoodCondition;
 
 const kitsReceiptTemplate = async (name) => {
   let template = ``;
@@ -44,9 +46,9 @@ const kitsReceiptTemplate = async (name) => {
                   <div class="row form-group">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
                        <div style="display:inline-block; max-width:90%;"> 
-                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[]">
+                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
                               <option id="select-dashboard" value="">-- Select Package Condition --</option>
-                              <option id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
+                              <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
                               <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
                               <option id="select-pkgImproperPackaging" value=${conceptIds.pkgImproperPackaging}>Improper Packaging</option>
                               <option id="select-pkgCollectionCupDamaged" value=${conceptIds.pkgCollectionCupDamaged}>Collection Cup Damaged</option>
@@ -78,11 +80,11 @@ const kitsReceiptTemplate = async (name) => {
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
+                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard" onkeydown="event.preventDefault()">
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="time" step="1" id="timeCollectionCard">
+                          <input autocomplete="off" class="col-md-8 form-control" type="time" id="timeCollectionCard">
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="collectionComments">Comments on Card Returned</label>
@@ -172,6 +174,7 @@ export const confirmKitReceipt = () => {
         document.getElementById('collectionCheckBox').checked === true ? 
         kitObj[conceptIds.collectionCardFlag] = true : kitObj[conceptIds.collectionCardFlag] = false;
         kitObj[conceptIds.collectionAddtnlNotes] = document.getElementById('collectionComments').value;
+        kitObj["collectionDateChecked"] = kitObj[conceptIds.collectionDateTimeStamp] && appState.getState().lastRequestedCollectionDateTimeStamp === kitObj[conceptIds.collectionDateTimeStamp];
       }
       window.removeEventListener("beforeunload", handleBeforeUnload);
       setupLeavingPageMessage();
@@ -193,20 +196,19 @@ const storePackageReceipt = async (data) => {
   });
   hideAnimation();
 
-
   const returnedPtInfo = await processResponse(response);
   if (returnedPtInfo.status === true) {
     triggerSuccessModal("Kit Receipted.");
     document.getElementById("showMsg").innerHTML = "";
     document.getElementById("scannedBarcode").value = "";
-    document.getElementById("packageCondition").value = "";
+    document.getElementById("packageCondition").value = defaultPackageCondition;
     document.getElementById("receivePackageComments").value = "";
     document.getElementById("dateReceived").value = getCurrentDate();
     document.getElementById("collectionComments").value = "";
     
     enableCollectionCardFields();
     enableCollectionCheckBox();
-    document.getElementById("packageCondition").setAttribute("data-selected", "[]");
+    document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     if (document.getElementById("collectionId").value) {
       document.getElementById("collectionId").value = "";
       document.getElementById("dateCollectionCard").value = "";
@@ -215,7 +217,7 @@ const storePackageReceipt = async (data) => {
       document.getElementById("collectionComments").value = "";
       enableCollectionCardFields();
       enableCollectionCheckBox();
-      document.getElementById("packageCondition").setAttribute("data-selected", "[]");
+      document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     }
 
     let requestData = {
@@ -278,6 +280,11 @@ const storePackageReceipt = async (data) => {
 
   } else if (returnedPtInfo.status === "Check Collection ID") {
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
+  } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
+    const modalHeaderEl = document.getElementById("modalHeader");
+    const modalBodyEl = document.getElementById("modalBody");
+    displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
+    appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
   } else {
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }
