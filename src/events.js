@@ -2832,7 +2832,7 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
  * @returns {Promise<object|null>} - Resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
  */
 const displayClinicalSpecimenCollectedModal = (modalContext) => { 
-    const { bloodCollectionSetting, urineCollectionSetting, mouthwashCollectionSetting } = modalContext?.samplesCollected; 
+    const { bloodCollectionSetting, urineCollectionSetting, mouthwashCollectionSetting } = modalContext.samplesCollected; 
 
     if (!bloodCollectionSetting && !urineCollectionSetting && !mouthwashCollectionSetting) return Promise.resolve({ modalContext });
 
@@ -2868,6 +2868,7 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
         if (specimenTexts.length > 2) { 
             const leadingSpecimens = specimenTexts.slice(0, -1).join(', ');
             const lastSpecimen = specimenTexts[specimenTexts.length - 1];
+            
             return `${leadingSpecimens}, and ${lastSpecimen}`;
         } else if (specimenTexts.length === 2) {
             return `${specimenTexts[0]} and ${specimenTexts[1]}`;
@@ -2905,9 +2906,9 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
 const displayResearchSpecimenCollectedModal = async (participantData) => {
 
     const selectVisitConceptId = document.getElementById('visit-select').value;
-    const bloodCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.bloodCollectionSetting]
-    const urineCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.urineCollectionSetting]
-    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting]
+    const bloodCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.bloodCollectionSetting];
+    const urineCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.urineCollectionSetting];
+    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting];
 
     if (
         !bloodCollectionSetting 
