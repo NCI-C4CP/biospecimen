@@ -878,6 +878,8 @@ const btnsClicked = async (connectId, formData) => {
  * @param {*} formData 
  */
 const clinicalBtnsClicked = async (participantData, formData) => { 
+    console.log("🚀 ~ clinicalBtnsClicked ~ formData):", formData)
+    console.log("🚀 ~ clinicalBtnsClicked ~ participantData:", participantData)
     removeAllErrors();
     const connectId = document.getElementById('clinicalSpecimenContinue').dataset.connectId;
     const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
@@ -888,21 +890,27 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     const accessionID4 = document.getElementById('accessionID4');
     const selectedVisit = document.getElementById('visit-select').value;
 
-    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting] === conceptIds.clinical;
-    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting] === conceptIds.clinical;
+    const bloodCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.bloodCollectionSetting];
+    const urineCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.urineCollectionSetting];
+    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectedVisit]?.[conceptIds.mouthwashCollectionSetting];
     
     let hasError = false;
     let focus = true;
 
     const modalContext = {
-        participantData,
+        // participantData,
         accessionID2,
         accessionID4,
         participantName,
-        hasError,
+        // hasError,
         selectedVisit,
         formData,
         connectId,
+        samplesCollected: { // values are collection type concept ids (research, clinical, home) or undefined
+            bloodCollectionSetting,
+            urineCollectionSetting,
+            mouthwashCollectionSetting
+        }
     }
 
     // Logic to display input error messages
@@ -985,7 +993,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
         && accessionID2.value 
         && accessionID4.value
     ) {
-        const collectedModalData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        const collectedModalData = await displayClinicalSpecimenCollectedModal(modalContext);
         if (!collectedModalData) return;
 
         triggerConfirmationModal(collectedModalData);
@@ -995,7 +1003,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
         && accessionID3 
         && !accessionID3.value
     ) {
-        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext);
         if (!confirmCollectedData) return;
 
         const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
@@ -1008,7 +1016,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
         && accessionID3 
         && accessionID3.value
     ) {
-        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext, isBloodCollected, isUrineCollected);
+        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext);
         if (!confirmCollectedData) return;
 
         const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
@@ -1020,6 +1028,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 
 const triggerConfirmationModal = (modalData) => {
     const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
+    console.log("🚀 ~ triggerConfirmationModal ~ formData:", formData)
 
     const button = document.createElement('button');
     button.dataset.target = '#modalShowMoreData';
@@ -2810,15 +2819,19 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 }
 
 /**
- * For Clinical dashboard, displays a modal to confirm if the user wants to continue with collected blood and/or urine specimens
+ * For Clinical dashboard, displays a modal to confirm if the user wants to continue 
+ * despite a participant already collected specimens (blood, urine, mouthwash)
+ * 
  * @param {object} modalContext - context object containing information about the modal
  * @param {boolean} isBloodCollected - flag indicating if blood specimen from clinical is collected
  * @param {boolean} isUrineCollected - flag indicating if urine specimen from clinical is collected
  * @returns {Promise<object|null>} - resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
 */
 
-const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, isUrineCollected) => {
-    if (!isBloodCollected && !isUrineCollected) return Promise.resolve({ modalContext });
+const displayClinicalSpecimenCollectedModal = (modalContext) => { 
+    const { bloodCollectionSetting, urineCollectionSetting, mouthwashCollectionSetting } = modalContext?.samplesCollected; 
+
+    if (!bloodCollectionSetting && !urineCollectionSetting && !mouthwashCollectionSetting) return Promise.resolve({ modalContext });
 
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModal';
@@ -2831,22 +2844,41 @@ const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, i
     const body = document.getElementById('biospecimenModalBody');
 
     const modalButtons = `
-    <br />
-    <div style="display:inline-block; margin-top:20px;">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">No</button>
-        </div>
-    </div>`;
+                        <br />
+                        <div style="display:inline-block; margin-top:20px;">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">No</button>
+                            </div>
+                        </div>
+                        `;
 
-    if (isBloodCollected && isUrineCollected) {
-        header.innerHTML = `Blood and Urine Specimens Already Collected`
-        body.innerHTML = "This participant already has a blood and urine specimens collected for this timepoint. Do you wish to continue?" + modalButtons
-    } else if (isBloodCollected) { 
-        header.innerHTML = `Blood Specimen Already Collected`
-        body.innerHTML = "This participant already has a blood specimen collected for this timepoint. Do you wish to continue?" + modalButtons
-    } else if (isUrineCollected) { 
-        header.innerHTML = `Urine Specimen Already Collected`
-        body.innerHTML = "This participant already has a urine specimen collected for this timepoint. Do you wish to continue?" + modalButtons
+    function formatCollectedSpecimenList () {
+        const specimens = [
+            { collectionSetting: bloodCollectionSetting, text: 'blood' },
+            { collectionSetting: urineCollectionSetting, text: 'urine' },
+            { collectionSetting: mouthwashCollectionSetting, text: 'mouthwash' },
+        ];
+
+        const collectedSpecimens = specimens.filter(specimen => specimen.collectionSetting !== undefined)
+        const specimenTexts = collectedSpecimens.map(specimen => specimen.text);
+
+        if (specimenTexts.length > 2) { 
+            const leadingSpecimens = specimenTexts.slice(0, -1).join(', ');
+            const lastSpecimen = specimenTexts[specimenTexts.length - 1];
+            return `${leadingSpecimens}, and ${lastSpecimen}`;
+        } else if (specimenTexts.length === 2) {
+            return `${specimenTexts[0]} and ${specimenTexts[1]}`;
+        } else {
+            return specimenTexts[0];
+        }
+    }
+
+    if (bloodCollectionSetting && urineCollectionSetting && mouthwashCollectionSetting) {
+        header.innerHTML = `A Blood, Urine and Mouthwash Sample was Already Collected`;
+        body.innerHTML = `This participant already has a ${formatCollectedSpecimenList()} specimen collected for this timepoint. Do you wish to continue?` + modalButtons
+    } else {
+        header.innerHTML = `A Sample was Already Collected`;
+        body.innerHTML = `This participant already has a ${formatCollectedSpecimenList()} for this timepoint. Do you wish to continue?` + modalButtons;
     }
     
     return new Promise((resolve) => {
@@ -2869,14 +2901,14 @@ const displayClinicalSpecimenCollectedModal = (modalContext, isBloodCollected, i
 const displayResearchSpecimenCollectedModal = async (participantData) => {
 
     const selectVisitConceptId = document.getElementById('visit-select').value;
-    const isBloodCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.bloodCollectionSetting] === conceptIds.research; 
-    const isUrineCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.urineCollectionSetting] === conceptIds.research;
-    const isMouthWashCollected = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting] === conceptIds.research;
+    const bloodCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.bloodCollectionSetting]
+    const urineCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.urineCollectionSetting]
+    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting]
 
     if (
-        !isBloodCollected 
-        && !isUrineCollected 
-        && !isMouthWashCollected
+        !bloodCollectionSetting 
+        && !urineCollectionSetting 
+        && !mouthwashCollectionSetting
     ) { 
         return new Promise ((resolve) => resolve(null));
     }
@@ -2894,9 +2926,9 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
     let template;
 
     if (
-        isBloodCollected 
-        || isUrineCollected 
-        || isMouthWashCollected
+        bloodCollectionSetting 
+        || urineCollectionSetting 
+        || mouthwashCollectionSetting
     ) {
         header.innerHTML = 'Samples Already Collected';
         template = 'This participant already has samples collected for this timepoint. Do you wish to continue with check-in?';
