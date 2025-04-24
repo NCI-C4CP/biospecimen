@@ -2906,9 +2906,9 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
 const displayResearchSpecimenCollectedModal = async (participantData) => {
 
     const selectVisitConceptId = document.getElementById('visit-select').value;
-    const bloodCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.bloodCollectionSetting];
-    const urineCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.urineCollectionSetting];
-    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails][selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting];
+    const bloodCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.bloodCollectionSetting];
+    const urineCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.urineCollectionSetting];
+    const mouthwashCollectionSetting = participantData[conceptIds.collectionDetails]?.[selectVisitConceptId]?.[conceptIds.mouthwashCollectionSetting];
 
     if (
         !bloodCollectionSetting 
