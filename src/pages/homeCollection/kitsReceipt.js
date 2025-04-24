@@ -197,6 +197,16 @@ const storePackageReceipt = async (data) => {
   hideAnimation();
 
   const returnedPtInfo = await processResponse(response);
+  if (returnedPtInfo.status !== "Check collection date, possible invalid entry") {
+    const modalElement = document.getElementById('modalShowMoreData');
+    modalElement.removeAttribute('aria-modal');
+    modalElement.setAttribute('aria-hidden', true);
+    modalElement.classList.remove("show");
+    modalElement.style.display = "none";
+    const backdrop = document.querySelector('.modal-backdrop');
+    backdrop.classList.remove("show");
+    document.body.classList.remove("modal-open");
+  }
   if (returnedPtInfo.status === true) {
     triggerSuccessModal("Kit Receipted.");
     document.getElementById("showMsg").innerHTML = "";
