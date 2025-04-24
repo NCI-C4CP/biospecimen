@@ -2878,7 +2878,7 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
         body.innerHTML = `This participant already has a ${formatCollectedSpecimenList()} specimen collected for this timepoint. Do you wish to continue?` + modalButtons
     } else {
         header.innerHTML = `A Sample was Already Collected`;
-        body.innerHTML = `This participant already has a ${formatCollectedSpecimenList()} for this timepoint. Do you wish to continue?` + modalButtons;
+        body.innerHTML = `This participant already has a ${formatCollectedSpecimenList()} specimen collected for this timepoint. Do you wish to continue?` + modalButtons;
     }
     
     return new Promise((resolve) => {
