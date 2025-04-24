@@ -898,20 +898,20 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     let focus = true;
 
     const modalContext = {
-        // participantData,
         accessionID2,
         accessionID4,
         participantName,
-        // hasError,
         selectedVisit,
         formData,
         connectId,
-        samplesCollected: { // values are collection type concept ids (research, clinical, home) or undefined
+        samplesCollected: {
             bloodCollectionSetting,
             urineCollectionSetting,
             mouthwashCollectionSetting
         }
     }
+
+    console.log("🚀 ~ clinicalBtnsClicked ~ modalContext:", modalContext)
 
     // Logic to display input error messages
     if (
@@ -2819,12 +2819,20 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 }
 
 /**
- * For Clinical dashboard, displays a modal to confirm if the user wants to continue 
+ * For Clinical dashboard, displays a modal to confirm if the user wants to continue
  * despite a participant already collected specimens (blood, urine, mouthwash)
  * 
  * @param {object} modalContext - context object containing information about the modal
- * @param {boolean} isBloodCollected - flag indicating if blood specimen from clinical is collected
- * @param {boolean} isUrineCollected - flag indicating if urine specimen from clinical is collected
+ * @property {HTMLElement} modalContext.accessionID2 - the blood accession ID confirm input
+ * @property {HTMLElement} modalContext.accessionID4 - the urine accession ID confirm input
+ * @property {string} modalContext.participantName - the participant's first name
+ * @property {string} modalContext.selectedVisit - the selected visit concept ID [Ex. 266600170 - baseine visit]
+ * @property {object} modalContext.formData - an object from the participant's data [Ex. { conceptIds.healthcareProvider: 13, siteAcronym: "NIH" } 
+ * @property {string} modalContext.connectID - the participant's connect ID
+ * @property {object} modalContext.samplesCollected - an object containing the samples collected for the participant
+ * @property {number|undefined} modalContext.samplesCollected.bloodCollectionSetting - the concept ID for blood collection setting (research, clinical) or undefined
+ * @property {number|undefined} modalContext.samplesCollected.urineCollectionSetting - the concept ID for urine collection setting (research, clinical) or undefined
+ * @property {number|undefined} modalContext.samplesCollected.mouthwashCollectionSetting - the concept ID for mouthwash collection setting (research, home) or undefined
  * @returns {Promise<object|null>} - resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
 */
 
