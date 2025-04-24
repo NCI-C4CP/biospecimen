@@ -878,8 +878,6 @@ const btnsClicked = async (connectId, formData) => {
  * @param {*} formData 
  */
 const clinicalBtnsClicked = async (participantData, formData) => { 
-    console.log("🚀 ~ clinicalBtnsClicked ~ formData):", formData)
-    console.log("🚀 ~ clinicalBtnsClicked ~ participantData:", participantData)
     removeAllErrors();
     const connectId = document.getElementById('clinicalSpecimenContinue').dataset.connectId;
     const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
@@ -910,8 +908,6 @@ const clinicalBtnsClicked = async (participantData, formData) => {
             mouthwashCollectionSetting
         }
     }
-
-    console.log("🚀 ~ clinicalBtnsClicked ~ modalContext:", modalContext)
 
     // Logic to display input error messages
     if (
@@ -1028,7 +1024,6 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 
 const triggerConfirmationModal = (modalData) => {
     const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
-    console.log("🚀 ~ triggerConfirmationModal ~ formData:", formData)
 
     const button = document.createElement('button');
     button.dataset.target = '#modalShowMoreData';
@@ -2820,22 +2815,22 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 
 /**
  * For Clinical dashboard, displays a modal to confirm if the user wants to continue
- * despite a participant already collected specimens (blood, urine, mouthwash)
+ * despite the participant already having collected specimens (blood, urine, mouthwash)
  * 
- * @param {object} modalContext - context object containing information about the modal
- * @property {HTMLElement} modalContext.accessionID2 - the blood accession ID confirm input
- * @property {HTMLElement} modalContext.accessionID4 - the urine accession ID confirm input
- * @property {string} modalContext.participantName - the participant's first name
- * @property {string} modalContext.selectedVisit - the selected visit concept ID [Ex. 266600170 - baseine visit]
- * @property {object} modalContext.formData - an object from the participant's data [Ex. { conceptIds.healthcareProvider: 13, siteAcronym: "NIH" } 
- * @property {string} modalContext.connectID - the participant's connect ID
- * @property {object} modalContext.samplesCollected - an object containing the samples collected for the participant
- * @property {number|undefined} modalContext.samplesCollected.bloodCollectionSetting - the concept ID for blood collection setting (research, clinical) or undefined
- * @property {number|undefined} modalContext.samplesCollected.urineCollectionSetting - the concept ID for urine collection setting (research, clinical) or undefined
- * @property {number|undefined} modalContext.samplesCollected.mouthwashCollectionSetting - the concept ID for mouthwash collection setting (research, home) or undefined
- * @returns {Promise<object|null>} - resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
-*/
-
+ * @param {object} modalContext - Modal data including specimen collection info
+ * @param {HTMLElement} modalContext.accessionID2 - The blood accession ID confirm input
+ * @param {HTMLElement} modalContext.accessionID4 - The urine accession ID confirm input
+ * @param {string} modalContext.participantName - The participant's first name
+ * @param {string} modalContext.selectedVisit - The selected visit concept ID [Ex. 266600170 - baseline visit]
+ * @param {object} modalContext.formData - An object from the participant's data [ Ex. { conceptIds.healthcareProvider: 13, siteAcronym: "NIH" } ]
+ * @param {string} modalContext.connectID - The participant's Connect ID
+ * @param {object} modalContext.samplesCollected - An object containing the samples collected for the participant
+ * @param {number|undefined} modalContext.samplesCollected.bloodCollectionSetting - The concept ID for blood collection setting (research, clinical) or undefined
+ * @param {number|undefined} modalContext.samplesCollected.urineCollectionSetting - The concept ID for urine collection setting (research, clinical) or undefined
+ * @param {number|undefined} modalContext.samplesCollected.mouthwashCollectionSetting - The concept ID for mouthwash collection setting (research, home) or undefined
+ * 
+ * @returns {Promise<object|null>} - Resolves with the modalContext if user clicks "Yes" or from no collected specimens, otherwise resolves with null
+ */
 const displayClinicalSpecimenCollectedModal = (modalContext) => { 
     const { bloodCollectionSetting, urineCollectionSetting, mouthwashCollectionSetting } = modalContext?.samplesCollected; 
 
@@ -2902,7 +2897,8 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
 };
 
 /**
- *  * For Research dashboard, displays a modal to confirm if the user wants to continue with any collected samples (blood, urine, mouthwash)
+ * For Research dashboard, displays a modal to confirm if the user wants to continue with any collected samples (blood, urine, mouthwash)
+ * 
  * @param {object} participantData - a data object document from the participants collection
  * @returns {Promise<null|boolean>} - resolves with true if user clicks "Yes", otherwise resolves with null
  */
