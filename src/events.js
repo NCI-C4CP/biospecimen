@@ -984,25 +984,24 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 
     if (hasError) return;
 
-    // Logic to trigger modals
-    if (!hasError 
-        && accessionID2.value 
-        && accessionID4.value
-    ) {
-        const collectedModalData = await displayClinicalSpecimenCollectedModal(modalContext);
-        if (!collectedModalData) return;
+    // Modal triggers
+    const collectedModalResult = await displayClinicalSpecimenCollectedModal(modalContext);
+    if (!collectedModalResult) return;
 
-        triggerConfirmationModal(collectedModalData);
+    if (!hasError 
+        && accessionID2
+        && accessionID2.value 
+        && accessionID4
+        && accessionID4.value
+    ) { // all accession IDs are entered
+        triggerConfirmationModal(collectedModalResult);
     } else if (
         accessionID1 
         && accessionID1.value 
         && accessionID3 
         && !accessionID3.value
-    ) {
-        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext);
-        if (!confirmCollectedData) return;
-
-        const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
+    ) { // blood accession ID is entered, urine accession ID is not
+        const missingModalData = await displayClinicalSpecimenMissingModal(collectedModalResult);
         if (!missingModalData) return;
 
         triggerConfirmationModal(missingModalData);
@@ -1011,11 +1010,8 @@ const clinicalBtnsClicked = async (participantData, formData) => {
         && !accessionID1.value 
         && accessionID3 
         && accessionID3.value
-    ) {
-        const confirmCollectedData = await displayClinicalSpecimenCollectedModal(modalContext);
-        if (!confirmCollectedData) return;
-
-        const missingModalData = await displayClinicalSpecimenMissingModal(confirmCollectedData);
+    ) { // urine accession ID is entered, blood accession ID is not
+        const missingModalData = await displayClinicalSpecimenMissingModal(collectedModalResult);
         if (!missingModalData) return;
 
         triggerConfirmationModal(missingModalData);
@@ -2814,8 +2810,9 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 }
 
 /**
- * For Clinical dashboard, displays a modal to confirm if the user wants to continue
- * despite the participant already having collected specimens (blood, urine, mouthwash)
+ * For Clinical dashboard, determines whether to show a confirmation modal based on collected specimens for the participant's selected visit.
+ * If any specimens (blood, urine, mouthwash) are collected, show a modal to confirm if the user wants to continue with the collected specimens.
+ * If no specimens are collected, resolve with the modalContext.
  * 
  * @param {object} modalContext - Modal data including specimen collection info
  * @param {HTMLElement} modalContext.accessionID2 - The blood accession ID confirm input
@@ -2834,7 +2831,11 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
 const displayClinicalSpecimenCollectedModal = (modalContext) => { 
     const { bloodCollectionSetting, urineCollectionSetting, mouthwashCollectionSetting } = modalContext.samplesCollected; 
 
-    if (!bloodCollectionSetting && !urineCollectionSetting && !mouthwashCollectionSetting) return Promise.resolve({ modalContext });
+    if (!bloodCollectionSetting 
+        && !urineCollectionSetting 
+        && !mouthwashCollectionSetting) {
+            return Promise.resolve({ modalContext });
+        }
 
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModal';
@@ -2915,7 +2916,7 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
         && !urineCollectionSetting 
         && !mouthwashCollectionSetting
     ) { 
-        return new Promise ((resolve) => resolve(null));
+        return null;
     }
     
     const button = document.createElement('button');
@@ -2930,14 +2931,8 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
 
     let template;
 
-    if (
-        bloodCollectionSetting 
-        || urineCollectionSetting 
-        || mouthwashCollectionSetting
-    ) {
-        header.innerHTML = 'Samples Already Collected';
-        template = 'This participant already has samples collected for this timepoint. Do you wish to continue with check-in?';
-    } 
+    header.innerHTML = 'Samples Already Collected';
+    template = 'This participant already has samples collected for this timepoint. Do you wish to continue with check-in?';
 
     template += `
         <br />
@@ -2963,7 +2958,7 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
 
 
 /**
- * Displays a modal to confirm if the user wants to continue with missing blood and/or urine specimens
+ * Displays a modal to confirm if the user wants to continue with missing blood and/or urine specimens inputs on the Specimen Link page
  * @param {object} modalData - data object containing information about the modal
  * @returns {Promise <object|null>} - resolves with the modalData if user clicks "Yes", otherwise resolves with null
 */
