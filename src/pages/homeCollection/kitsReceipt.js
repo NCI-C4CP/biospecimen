@@ -168,7 +168,7 @@ export const confirmKitReceipt = () => {
         const dateCollectionCard = document.getElementById('dateCollectionCard').value;
         const timeCollectionCard = document.getElementById('timeCollectionCard').value;
         if(dateCollectionCard && timeCollectionCard) {
-          kitObj[conceptIds.collectionDateTimeStamp] = dateCollectionCard + 'T' + timeCollectionCard + ':00';
+          kitObj[conceptIds.collectionDateTimeStamp] = dateCollectionCard + 'T' + timeCollectionCard + ':00.000Z';
         }
         
         document.getElementById('collectionCheckBox').checked === true ? 
