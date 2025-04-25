@@ -479,3 +479,7 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 #appVersion {
     font-size: 0.8rem;
 }
+
+.specimenLinkParticipantInfo {
+    font-size: 1.15rem;
+}

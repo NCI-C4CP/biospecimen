@@ -1,6 +1,7 @@
-import { addEventBarCodeScanner, collectionSettings, generateBarCode, getWorkflow, removeActiveClass, siteLocations, visitType, getCheckedInVisit, getSiteAcronym, numericInputValidator, getSiteCode, searchSpecimen, collectionInputValidator, addSelectionEventListener, autoTabInputField } from "./../shared.js";
-import { addEventSpecimenLinkForm, addEventClinicalSpecimenLinkForm, addEventClinicalSpecimenLinkForm2, addEventNavBarParticipantCheckIn, addEventBackToSearch } from "./../events.js";
+import { addEventBarCodeScanner, collectionSettings, generateBarCode, getWorkflow, removeActiveClass, siteLocations, visitType, getCheckedInVisit, getSiteAcronym, numericInputValidator, getSiteCode, searchSpecimen, collectionInputValidator, addSelectionEventListener, autoTabInputField, errorMessage, removeAllErrors, removeSingleError } from "./../shared.js";
+import { addEventSpecimenLinkForm, addEventClinicalSpecimenLinkForm, addEventClinicalSpecimenLinkForm2, addEventNavBarParticipantCheckIn, addEventBackToSearch, checkAccessionMatch } from "./../events.js";
 import { masterSpecimenIDRequirement } from "../tubeValidation.js";
+import { conceptIds } from '../fieldToConceptIdMapping.js';
 
 export const specimenTemplate = async (data, formData) => {
     removeActiveClass('navbar-btn', 'active')
@@ -26,8 +27,9 @@ export const specimenTemplate = async (data, formData) => {
         </br>
         <div class="row">
             <div class="col">
-                <div class="row">${data['996038075']},<span id='399159511'>${data['399159511']}</span></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
             </div>
         </div>
 
@@ -35,7 +37,7 @@ export const specimenTemplate = async (data, formData) => {
 
     template += `<div id="specimenLinkForm" data-participant-token="${data.token}" data-connect-id="${data.Connect_ID}">`;
         
-    if(workflow === 'research') {
+    if (workflow === 'research') {
         let visit = visitType.filter(visit => visit.concept === getCheckedInVisit(data))[0];
             
         template += `
@@ -48,7 +50,7 @@ export const specimenTemplate = async (data, formData) => {
                 
         const siteAcronym = getSiteAcronym();
                 
-        if(siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
+        if (siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
 
             
             // For the purposes of 1008 we are filtering out some locations.
@@ -101,8 +103,7 @@ export const specimenTemplate = async (data, formData) => {
                 </div>
             </div>`;
 
-    } 
-    else if(isSpecimenLinkForm2) {// clinical specimen page 2
+    } else if(isSpecimenLinkForm2) {// clinical specimen page 2
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
                             <div class="column">
@@ -128,8 +129,7 @@ export const specimenTemplate = async (data, formData) => {
                                 <button class="btn btn-outline-primary float-right" data-connect-id="${data.Connect_ID}" type="submit" id="clinicalSpecimenContinueTwo">Submit</button>
                             </div>
                         </div>`
-    } 
-    else {// clinical specimen page 1
+    } else {// clinical specimen page 1
         template += `<div class="form-group row">`
         const siteAcronym = getSiteAcronym();
         template += `<select class="custom-select" id="visit-select">
@@ -176,33 +176,31 @@ export const specimenTemplate = async (data, formData) => {
 
     document.getElementById('contentBody').innerHTML = template;
      
-    if(workflow === 'research') {
+    if (workflow === 'research') {
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
         
         addSelectionEventListener("collectionLocation", "specimenLink_location");
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
 
         addEventSpecimenLinkForm(formData);
-    } 
-    else if (isSpecimenLinkForm2) {// clinical specimen page 2
+    } else if (isSpecimenLinkForm2) {// clinical specimen page 2
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
 
         addEventClinicalSpecimenLinkForm2(formData);
-    } 
-    else {//clinical specimen page 1
+    } else {//clinical specimen page 1
         autoTabInputField('accessionID1', 'accessionID2')
         autoTabInputField('accessionID2', 'accessionID3')
         autoTabInputField('accessionID3', 'accessionID4')
-
 
         document.getElementById('accessionID2').onpaste = e => e.preventDefault();
         document.getElementById('accessionID4').onpaste = e => e.preventDefault();
 
         numericInputValidator(['accessionID1', 'accessionID2', 'accessionID3', 'accessionID4']);
-
-        addEventClinicalSpecimenLinkForm(formData);
+        checkAccessionMatch();
+        
+        addEventClinicalSpecimenLinkForm(data, formData);
     }
 
     generateBarCode('connectIdBarCode', data.Connect_ID);

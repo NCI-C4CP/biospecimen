@@ -329,7 +329,8 @@ export const conceptIds = {
         856158129: 'BCC- Irving',
         436956777: 'NTX Biorepository',
         483909879: 'North Garland',
-        962830330: 'Waco - MacArthur'
+        962830330: 'Waco - MacArthur',
+        397883980: 'Irving',
     },
 
     nameToKeyObj: {
@@ -376,6 +377,7 @@ export const conceptIds = {
         'ntxBiorepo': 436956777,
         'northGarland': 483909879,
         'wacoMacArthur': 962830330,
+        'irving': 397883980,
         'all': 1000
     },
     boxedStatus: 771580890,
