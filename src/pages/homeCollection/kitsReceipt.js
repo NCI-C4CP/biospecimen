@@ -304,7 +304,7 @@ const closeConfirmPackageReceiptModal = () => {
   modalElement.style.display = "none";
 
   const backdrop = document.querySelector(".modal-backdrop");
-  backdrop.classList.remove("show");
+  backdrop.remove();
 
   document.body.classList.remove("modal-open");
 }
