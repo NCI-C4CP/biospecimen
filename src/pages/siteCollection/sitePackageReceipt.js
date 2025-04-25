@@ -666,7 +666,7 @@ const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl) => {
             <span>Confirm package receipt</span>
             <br >
             <div style="display:inline-block;">
-                <button type="submit" class="btn btn-primary" data-dismiss="modal" id="confirmReceipt" target="_blank">Confirm</button>
+                <button type="submit" class="btn btn-primary" id="confirmReceipt" target="_blank">Confirm</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
             </div>
         </div>

@@ -168,7 +168,7 @@ export const confirmKitReceipt = () => {
         const dateCollectionCard = document.getElementById('dateCollectionCard').value;
         const timeCollectionCard = document.getElementById('timeCollectionCard').value;
         if(dateCollectionCard && timeCollectionCard) {
-          kitObj[conceptIds.collectionDateTimeStamp] = dateCollectionCard + 'T' + timeCollectionCard;
+          kitObj[conceptIds.collectionDateTimeStamp] = dateCollectionCard + 'T' + timeCollectionCard + ':00.000Z';
         }
         
         document.getElementById('collectionCheckBox').checked === true ? 
@@ -198,6 +198,7 @@ const storePackageReceipt = async (data) => {
 
   const returnedPtInfo = await processResponse(response);
   if (returnedPtInfo.status === true) {
+    closeConfirmPackageReceiptModal();
     triggerSuccessModal("Kit Receipted.");
     document.getElementById("showMsg").innerHTML = "";
     document.getElementById("scannedBarcode").value = "";
@@ -279,6 +280,7 @@ const storePackageReceipt = async (data) => {
     }
 
   } else if (returnedPtInfo.status === "Check Collection ID") {
+    closeConfirmPackageReceiptModal();
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
   } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
     const modalHeaderEl = document.getElementById("modalHeader");
@@ -286,9 +288,26 @@ const storePackageReceipt = async (data) => {
     displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
     appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
   } else {
+    closeConfirmPackageReceiptModal();
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }
 };
+
+const closeConfirmPackageReceiptModal = () => {
+  const confirmReceiptBtn = document.getElementById('confirmReceipt');
+  confirmReceiptBtn.blur();
+
+  const modalElement = document.getElementById('modalShowMoreData');
+  modalElement.removeAttribute("aria-modal");
+  modalElement.setAttribute("aria-hidden", true);
+  modalElement.classList.remove("show");
+  modalElement.style.display = "none";
+
+  const backdrop = document.querySelector(".modal-backdrop");
+  backdrop.classList.remove("show");
+
+  document.body.classList.remove("modal-open");
+}
 
 const enableCollectionCardFields = () => {
     document.getElementById('collectionId').disabled = false;
