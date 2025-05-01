@@ -117,7 +117,7 @@ const confirmPackageReceipt = () => {
   const confirmReceiptEle = document.getElementById('confirmReceipt');
   if (confirmReceiptEle) {
       confirmReceiptEle.addEventListener('click',  async () => { 
-        try {
+          try {
               let receiptedPackageObj = {};
               let packageConditions = [];
               const scannedBarcode = document.getElementById('scannedBarcode').value.trim();
