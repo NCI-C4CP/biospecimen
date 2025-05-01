@@ -51,6 +51,7 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/<wbr />2nd/<wbr />3rd Kit</th>
                         </tr>
                     </thead>   
                     <tbody>
@@ -67,19 +68,20 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
 */
 const createShippedRows = (shippedKitStatusParticipantsArray) => {
     let template = ``;
-    if (!shippedKitStatusParticipantsArray) {
+    if (!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
         return template;
     }
-    for (const particpantObj of shippedKitStatusParticipantsArray) {
+    for (const participantObj of shippedKitStatusParticipantsArray) {
 
-    const connectID = particpantObj["Connect_ID"];
-    const healthcareProvider = keyToNameObj[particpantObj[conceptIds.healthcareProvider]];
-    const mouthwashShippedDate = convertISODateTime(particpantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
-    const supplyKitId = particpantObj[conceptIds.supplyKitId];
-    const collectionCardId = particpantObj[conceptIds.collectionCardId];
-    const supplyKitTrackingNum = particpantObj[conceptIds.supplyKitTrackingNum];
-    const returnKitTrackingNum = particpantObj[conceptIds.returnKitTrackingNum];
-    const mouthwashSurveyStatus = convertSurveyCompletionStatus(particpantObj[conceptIds.mouthwashSurveyCompletionStatus]);
+    const connectID = participantObj["Connect_ID"];
+    const healthcareProvider = keyToNameObj[participantObj[conceptIds.healthcareProvider]];
+    const mouthwashShippedDate = convertISODateTime(participantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
+    const supplyKitId = participantObj[conceptIds.supplyKitId];
+    const collectionCardId = participantObj[conceptIds.collectionCardId];
+    const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
+    const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
+    const kitIteration = participantObj['kitIteration'];
+    const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
 
     template += `
                 <tr class="row-color-enrollment-dark participantRow">
@@ -91,6 +93,7 @@ const createShippedRows = (shippedKitStatusParticipantsArray) => {
                     <td>${supplyKitTrackingNum}</td>
                     <td>${returnKitTrackingNum}</td>
                     <td>${mouthwashSurveyStatus}</td>
+                    <td>${kitIteration}</tc>
                 </tr>`;
     }
     return template;

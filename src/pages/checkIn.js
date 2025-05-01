@@ -76,7 +76,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             <hr/>
     `;
     
-    template += await participantStatus(data, collections, isCheckedIn);
+    template += participantStatus(data, collections, isCheckedIn);
 
 
     if (canCheckIn) {
@@ -114,7 +114,7 @@ const reloadCheckOutReports = (id) => {
     });
 }
 
-const participantStatus = (data, collections, isCheckedIn) => {    
+const participantStatus = (data, collections, isCheckedIn) => {
     let bloodCollection;
     let urineCollection;
     let mouthwashCollection;
