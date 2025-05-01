@@ -293,7 +293,7 @@ const storePackageReceipt = async (data) => {
   }
 };
 
-export const closeConfirmPackageReceiptModal = () => {
+const closeConfirmPackageReceiptModal = () => {
   const confirmReceiptBtn = document.getElementById('confirmReceipt');
   confirmReceiptBtn.blur();
 

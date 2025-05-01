@@ -3,7 +3,7 @@ import { nonUserNavBar } from "../../navbar.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
 import { conceptIds as fieldMapping, packageConditionConversion } from "../../fieldToConceptIdMapping.js";
-import { closeConfirmPackageReceiptModal, confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
+import { confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
 
 let hasUnsavedChanges = false;
 
@@ -117,7 +117,6 @@ const confirmPackageReceipt = () => {
   const confirmReceiptEle = document.getElementById('confirmReceipt');
   if (confirmReceiptEle) {
       confirmReceiptEle.addEventListener('click',  async () => { 
-        closeConfirmPackageReceiptModal();
         try {
               let receiptedPackageObj = {};
               let packageConditions = [];
@@ -655,7 +654,7 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
     clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt);
 }
 
-const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl) => {
+const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitReceipt) => {
     modalHeaderEl.innerHTML = `
         <h5>Confirmation</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -667,7 +666,7 @@ const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl) => {
             <span>Confirm package receipt</span>
             <br >
             <div style="display:inline-block;">
-                <button type="submit" class="btn btn-primary" id="confirmReceipt" target="_blank">Confirm</button>
+                <button type="submit" class="btn btn-primary" ${isKitReceipt ? "" : "data-dismiss=\"modal\""} id="confirmReceipt" target="_blank">Confirm</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
             </div>
         </div>
@@ -688,7 +687,7 @@ const displaySelectedPackageConditionList = (parseSelectPackageConditionsList) =
 const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
     const confirmPackageConditionButtondocument = document.getElementById("confirmPackageConditionButton");
     confirmPackageConditionButtondocument.addEventListener("click", () => {
-        displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl);
+        displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
         if (isKitReceipt) { 
             confirmKitReceipt(); 
         } else { 
