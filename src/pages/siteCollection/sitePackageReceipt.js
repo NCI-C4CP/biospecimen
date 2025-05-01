@@ -3,7 +3,7 @@ import { nonUserNavBar } from "../../navbar.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
 import { conceptIds as fieldMapping, packageConditionConversion } from "../../fieldToConceptIdMapping.js";
-import { confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
+import { closeConfirmPackageReceiptModal, confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
 
 let hasUnsavedChanges = false;
 
@@ -117,7 +117,8 @@ const confirmPackageReceipt = () => {
   const confirmReceiptEle = document.getElementById('confirmReceipt');
   if (confirmReceiptEle) {
       confirmReceiptEle.addEventListener('click',  async () => { 
-          try {
+        closeConfirmPackageReceiptModal();
+        try {
               let receiptedPackageObj = {};
               let packageConditions = [];
               const scannedBarcode = document.getElementById('scannedBarcode').value.trim();
