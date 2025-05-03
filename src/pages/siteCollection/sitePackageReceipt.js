@@ -666,7 +666,7 @@ const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitRecei
             <span>Confirm package receipt</span>
             <br >
             <div style="display:inline-block;">
-                <button type="submit" class="btn btn-primary" ${isKitReceipt ? "" : "data-dismiss=\"modal\""} id="confirmReceipt" target="_blank">Confirm</button>
+                <button type="submit" class="btn btn-primary" data-dismiss="modal" id="confirmReceipt" target="_blank">Confirm</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
             </div>
         </div>
@@ -750,7 +750,6 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
         </div>
         <div class="row" style="display:flex; justify-content:center;">
             <button type="button" class="btn btn-secondary" data-dismiss="modal" target="_blank">Close</button>
-        </div>
         </div>
     `;
 };
