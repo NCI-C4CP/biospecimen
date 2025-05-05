@@ -198,7 +198,6 @@ const storePackageReceipt = async (data) => {
 
   const returnedPtInfo = await processResponse(response);
   if (returnedPtInfo.status === true) {
-    closeConfirmPackageReceiptModal();
     triggerSuccessModal("Kit Receipted.");
     document.getElementById("showMsg").innerHTML = "";
     document.getElementById("scannedBarcode").value = "";
@@ -280,33 +279,31 @@ const storePackageReceipt = async (data) => {
     }
 
   } else if (returnedPtInfo.status === "Check Collection ID") {
-    closeConfirmPackageReceiptModal();
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
   } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
     const modalHeaderEl = document.getElementById("modalHeader");
     const modalBodyEl = document.getElementById("modalBody");
+
+    openModal();
     displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
     appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
   } else {
-    closeConfirmPackageReceiptModal();
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }
 };
 
-const closeConfirmPackageReceiptModal = () => {
-  const confirmReceiptBtn = document.getElementById('confirmReceipt');
-  confirmReceiptBtn.blur();
+const openModal = () => {
+  const openModalButton = document.createElement('button');
 
-  const modalElement = document.getElementById('modalShowMoreData');
-  modalElement.removeAttribute("aria-modal");
-  modalElement.setAttribute("aria-hidden", true);
-  modalElement.classList.remove("show");
-  modalElement.style.display = "none";
+  openModalButton.style.display = 'none';
+  openModalButton.setAttribute('data-target', '#modalShowMoreData');
+  openModalButton.setAttribute('data-toggle', 'modal');
+  openModalButton.id = 'openShowMoreDataModalButton';
 
-  const backdrop = document.querySelector(".modal-backdrop");
-  backdrop?.remove();
+  document.body.appendChild(openModalButton);
+  document.getElementById('openShowMoreDataModalButton').click();
 
-  document.body.classList.remove("modal-open");
+  openModalButton.remove();
 }
 
 const enableCollectionCardFields = () => {
