@@ -1,4 +1,4 @@
-import { userAuthorization, removeActiveClass, hideAnimation, showAnimation, getDailyParticipant, convertISODateTime, convertISODateTimeToLocal, restrictNonBiospecimenUser, getDataAttributes, appState } from "./../shared.js"
+import { userAuthorization, removeActiveClass, hideAnimation, showAnimation, getDailyParticipant, convertISODateTimeToLocal, restrictNonBiospecimenUser, getDataAttributes, appState, escapeHTML } from "./../shared.js"
 import { homeNavBar, reportSideNavBar } from '../navbar.js';
 import { conceptIds as fieldToConceptIdMapping } from "../fieldToConceptIdMapping.js";
 
@@ -172,18 +172,17 @@ const reInitalizeDailyReportTable = async (dropdownText, siteKey, dailyData) => 
 }
 
 
-const dropdownTrigger = (sitekeyName) => {
-    let a = document.getElementById('dropdownSites');
-    let dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
-    let tempSiteName = a.innerHTML = sitekeyName;
+const dropdownTrigger = () => {
+    const dropdownSites = document.getElementById('dropdownSites');
+    const dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
+
     if (dropdownMenuButton) {
         dropdownMenuButton.addEventListener('click', (e) => {
-            if (sitekeyName === `Filter by Collection Location` || sitekeyName === tempSiteName) {
-                a.innerHTML = e.target.textContent;
-                const sitekey = getDataAttributes(e.target)
-                const dailyReportsData = appState.getState().dailyReportsData;
-                reInitalizeDailyReportTable(e.target.textContent, sitekey, dailyReportsData);
-            }
-        })
+            const newSite = dropdownSites.innerHTML = escapeHTML(e.target.textContent);
+            const sitekey = getDataAttributes(e.target)
+            const dailyReportsData = appState.getState().dailyReportsData;
+
+            reInitalizeDailyReportTable(newSite, sitekey, dailyReportsData);
+        });
     }
 }
