@@ -1744,17 +1744,15 @@ export const getLocationsInstitute = async () => {
         let currJSON = arr[i];
         locations = locations.concat(currJSON[conceptIds.shippingLocation]);
     }
-    
-    if (siteAcronym === 'BSWH') locations.sort((a, b) => a.localeCompare(b));
 
     logAPICallEndDev('getLocationsInstitute');
-    // For the purposes of 1008 we are filtering out some locations.
-    // This will require more discussion for a long-term implementation
-    locations = locations.filter(loc => 
-        ['River East', 'South Loop', 'Orland Park', 'Henry Ford West Bloomfield Hospital', 'Henry Ford Medical Center- Fairlane', 'Sioux Falls Imagenetics'].indexOf(loc) === -1
-        // 'Henry Ford Medical Center- Fairlane' has inconsistent spacing across environments: play it safe by omitting any combination of "Henry Ford" and "Fairlane"
-        && (!loc.includes('Fairlane') || !loc.includes('Henry Ford')) 
-    );
+
+    locations = locations.filter(loc => deprecatedShippingLocations.indexOf(loc) === -1);
+
+    if (['BSWH', 'SFH', 'HFHS'].includes(siteAcronym)) {
+            return locations.sort((a, b) => a.localeCompare(b));
+    }
+
     return locations;
 }
 
@@ -2176,7 +2174,7 @@ export const locationConceptIDToLocationMap = {
     email: 'ConnectBioHFH@hfhs.org',
   },
   838480167: {
-    siteSpecificLocation: 'Henry Ford Medical Center-Fairlane',
+    siteSpecificLocation: 'Henry Ford Medical Center- Fairlane',
     siteAcronym: 'HFHS',
     siteCode: '548392715',
     siteTeam: 'Henry Ford Connect Study Team',
@@ -2735,6 +2733,38 @@ export const keyToLocationObj =
 
 }
 
+// add locations to remove shipping locations from shipping dashboard dropdown
+const deprecatedShippingLocations = [
+    // UChicago(UCM)
+    'River East',
+    'South Loop',
+    'Orland Park',
+    // HFHS
+    'Henry Ford West Bloomfield Hospital',
+    'Henry Ford Medical Center- Fairlane',
+    'Henry Ford Main Campus',
+    'HFH Livonia Research Clinic',
+    // SFH
+    'Sioux Falls Imagenetics',
+    'Sanford South University',
+    'Bismarck Medical Center',
+    'Fargo South University',
+];
+
+// add locations to remove collection locations from research dashboard dropdown
+export const deprecatedResearchCollectionLocations = [
+    // UChicago (UCM)
+    'River East',
+    'South Loop',
+    'Orland Park',
+    // HFHS
+    'HFH Livonia Research Clinic',
+    // SFH
+    'Sioux Falls Imagenetics', 
+    'Bismarck Medical Center', 
+    'Fargo South University'
+]
+
 export const verificationConversion = {
     '875007964': 'Not Yet Verified',
     '197316935': 'Verified',
@@ -2953,9 +2983,9 @@ export const siteLocations = {
                 {location: 'HFH Detroit Northwest', concept: 911683679},
         ],
         // Bismarck
-        'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449}, 
-                {location: 'Fargo South University', concept: 467088902}, 
-                {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM}, 
+        'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449},
+                {location: 'Fargo South University', concept: 467088902},
+                {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM},
                 {location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC},
                 {location: 'Sioux Falls Edith Center', concept: 433070901},
                 {location: 'Fargo Amber Valley', concept: 769594361},
