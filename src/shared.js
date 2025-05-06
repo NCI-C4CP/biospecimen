@@ -2735,7 +2735,7 @@ export const keyToLocationObj =
 
 // add locations to remove shipping locations from shipping dashboard dropdown
 const deprecatedShippingLocations = [
-    // UChicago(UCM)
+    // UChicago (UCM)
     'River East',
     'South Loop',
     'Orland Park',
