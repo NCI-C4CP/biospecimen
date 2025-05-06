@@ -61,7 +61,7 @@ const printLabelsTemplate = (name) => {
   document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
   contentBody.innerHTML = template;
   activeHomeCollectionNavbar();
-  if (appState.getState().totalAddressesLength === 0) triggerErrorModal('No labels to print');
+  if (appState.getState().totalAddressesLength === 0 && !appState.getState().totalReplacementAddressesLength) triggerErrorModal('No labels to print');
   generateParticipantCsvGetter(name);
   generateParticipantReplacementCsvGetter(name);
 
