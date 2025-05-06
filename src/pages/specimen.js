@@ -61,7 +61,7 @@ export const specimenTemplate = async (data, formData) => {
                     <option value='none'>Please Select Location</option>
             `;
 
-            if (['BSWH','SFH','HFHS'].includes(siteAcronym)) { // sort collection locations with these site acronyms
+            if (['BSWH', 'SFH', 'HFHS'].includes(siteAcronym)) { // sort collection locations with these site acronyms
                 const sortedLocations = siteLocationArray.sort((a, b) => a.location.localeCompare(b.location));
 
                 sortedLocations.forEach(site => {
