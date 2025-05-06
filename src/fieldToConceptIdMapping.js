@@ -146,6 +146,11 @@ export const conceptIds = {
     bioKitMouthwashBL1: 541483796,
     bioKitMouthwashBL2: 641006239,
 
+    kitLevel: 426588510,
+    initialKit: 663273321,
+    replacementKit1: 389478821,
+    replacementKit2: 772116457,
+
     // Site EMR API Clinical baseline derivations
     clinicalSiteBloodCollected: 693370086,
     clinicalSiteUrineCollected: 786930107,
