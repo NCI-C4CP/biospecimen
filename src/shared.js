@@ -1747,7 +1747,7 @@ export const getLocationsInstitute = async () => {
 
     logAPICallEndDev('getLocationsInstitute');
 
-    locations = locations.filter(loc => deprecatedShippingLocations.indexOf(loc) === -1);
+    locations = locations.filter(loc => !deprecatedShippingLocations.includes(loc));
 
     if (['BSWH', 'SFH', 'HFHS'].includes(siteAcronym)) {
             return locations.sort((a, b) => a.localeCompare(b));

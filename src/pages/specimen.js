@@ -53,7 +53,7 @@ export const specimenTemplate = async (data, formData) => {
         if (siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
             let siteLocationArray = siteLocations[workflow][siteAcronym]; // Form of [{location, concept}]
 
-            siteLocationArray = siteLocationArray.filter(loc => deprecatedResearchCollectionLocations.indexOf(loc.location) === -1);
+            siteLocationArray = siteLocationArray.filter(loc => !deprecatedResearchCollectionLocations.includes(loc.location));
             
             template += `
                 <label class="col-md-4 col-form-label" for="collectionLocation">Select Collection Location</label>
