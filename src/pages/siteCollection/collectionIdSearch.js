@@ -71,13 +71,19 @@ const collectionIdSearchBPTL = () => {
             
             if (!validateSpecimenAndParticipantResponse(specimenData, participantData, isBPTL)) return;
             
-            localStorage.setItem('workflow', specimenData[fieldToConceptIdMapping.collectionType] === fieldToConceptIdMapping.clinical ? `clinical` : `research`); // Note: this has been in the codebase. Not sure it's necessary.
+            try {
+                localStorage.setItem('workflow', specimenData[fieldToConceptIdMapping.collectionType] === fieldToConceptIdMapping.clinical ? `clinical` : `research`); // Note: this has been in the codebase. Not sure it's necessary.
 
-            // Boolean flag: true; is passed down to finalizeTemplate & to distinguish collection id search from bptl and biospecimen."
-            finalizeTemplate(participantData, specimenData, true);
+                // Boolean flag: true; is passed down to finalizeTemplate & to distinguish collection id search from bptl and biospecimen."
+                finalizeTemplate(participantData, specimenData, true);
+            } catch (err) {
+                console.error('Error in displaying finalize screen for collection %s', masterSpecimenId, err);
+                showNotifications({ title: 'Error: Display error', body: `Error: Unable to display finalize screen for collection ${masterSpecimenId}.` });
+            }
+            
 
-        } catch {
-            console.error(`Error in collectionIdSearchBPTL: Couldn't find collection ${masterSpecimenId}.`);
+        } catch (err) {
+            console.error(`Error in collectionIdSearchBPTL: Couldn't find collection ${masterSpecimenId}.`, err);
             showNotifications({ title: 'Error: Not found', body: `Error: Couldn't find collection ${masterSpecimenId}.` });
         } finally {
             hideAnimation();
