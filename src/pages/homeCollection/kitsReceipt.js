@@ -80,7 +80,7 @@ const kitsReceiptTemplate = async (name) => {
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard" onkeydown="event.preventDefault()">
+                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
@@ -118,6 +118,17 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
   activeHomeCollectionNavbar();
   checkTrackingNumberSource();
   performCollectionIdcheck();
+  preventManualEntry();
+};
+
+const preventManualEntry = () => {
+  document.getElementById("dateCollectionCard").addEventListener("keydown", (event) => {
+    const key = event.key;
+    const code = event.code;
+    if (key !== "Tab" && key !== "Enter" && code !== "Space") {
+      event.preventDefault();
+    }
+  });
 };
 
 const performCollectionIdcheck = () => {
