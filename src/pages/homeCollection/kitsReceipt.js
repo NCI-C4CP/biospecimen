@@ -123,8 +123,7 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
 
 const preventManualEntry = () => {
   document.getElementById("dateCollectionCard").addEventListener("keydown", (event) => {
-    const key = event.key;
-    const code = event.code;
+    const { key, code } = event;
     if (key !== "Tab" && key !== "Enter" && code !== "Space") {
       event.preventDefault();
     }
