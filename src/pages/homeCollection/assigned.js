@@ -1,17 +1,17 @@
-import { getIdToken, findParticipant, showAnimation, hideAnimation, getParticipantsByKitStatus} from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, getParticipantsByKitStatus, escapeHTML } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { kitStatusSelectionDropdown } from "./kitStatusReports.js";
-import { nonUserNavBar, unAuthorizedUser } from "./../../navbar.js";
+import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 
-export const assignedScreen = async (auth, route) => {
+export const assignedScreen = async (auth) => {
   const user = auth.currentUser;
   if (!user) return;
   const username = user.displayName ? user.displayName : user.email;
-  assignedTemplate(username, auth, route);
+  assignedTemplate(username);
 };
 
-const assignedTemplate = async (name, auth, route) => {
+const assignedTemplate = async (name) => {
   showAnimation();
   const response = await getParticipantsByKitStatus("assigned");
   hideAnimation();
@@ -183,8 +183,8 @@ const saveAssignedRow = (i) => {
   let cancelButton = document.getElementById(`cancel-assign-button-${i}`);
 
   saveButton.addEventListener("click", (e) => {
-    let supplyKitIdValue = document.getElementById(`supply-kit-id-text-${i}`).value;
-    let uspsNumberValue = document.getElementById(`usps-number-text-${i}`).value;
+    let supplyKitIdValue = escapeHTML(document.getElementById(`supply-kit-id-text-${i}`).value);
+    let uspsNumberValue = escapeHTML(document.getElementById(`usps-number-text-${i}`).value);
 
     if (uspsNumberValue === `` || supplyKitIdValue === ``) {
       let alertList = document.getElementById("alert_placeholder");
