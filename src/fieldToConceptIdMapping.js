@@ -336,6 +336,9 @@ export const conceptIds = {
         483909879: 'North Garland',
         962830330: 'Waco - MacArthur',
         397883980: 'Irving',
+        117840593: 'Temple CDM',
+        574104518: 'Temple Roney'
+
     },
 
     nameToKeyObj: {
@@ -383,6 +386,8 @@ export const conceptIds = {
         'northGarland': 483909879,
         'wacoMacArthur': 962830330,
         'irving': 397883980,
+        'templeCDM': 117840593,
+        'templeRoney': 574104518,
         'all': 1000
     },
     boxedStatus: 771580890,
