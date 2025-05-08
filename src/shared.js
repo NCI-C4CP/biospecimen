@@ -3221,6 +3221,11 @@ export const getSiteTubesLists = (biospecimenData) => {
     if (+new Date() >= +new Date('2024-02-20T00:00:00.000')) {
         siteTubesList = siteTubesList.filter((tube) => tube.id !== '0005');
     }
+
+    if (getWorkflow() === 'research') {
+        siteTubesList = siteTubesList.filter((tube) => !['0003'].includes(tube.id)); // removes heparin tube (0003) from collection data entry
+    }
+
     return siteTubesList;
 }
 
