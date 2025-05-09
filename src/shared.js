@@ -2138,6 +2138,8 @@ export const siteSpecificLocation = {
   "North Garland": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Waco - MacArthur": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple CDM": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple Roney": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
@@ -2520,6 +2522,22 @@ export const locationConceptIDToLocationMap = {
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
     },
+    117840593: {
+        siteSpecificLocation: 'Temple CDM',
+        siteAcronym: 'BSWH',
+        siteCode: '472940358',
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
+    574104518: {
+        siteSpecificLocation: 'Temple Roney',
+        siteAcronym: 'BSWH',
+        siteCode: '472940358',
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
     111111111: {
         siteSpecificLocation: 'Main Campus',
         siteAcronym: 'NIH',
@@ -2587,6 +2605,8 @@ export const conceptIdToSiteSpecificLocation = {
   436956777: "NTX Biorepository",
   483909879: "North Garland",
   962830330: "Waco - MacArthur",
+  117840593: "Temple CDM",
+  574104518: "Temple Roney"
 }
 
 export const siteSpecificLocationToConceptId = {
@@ -2638,6 +2658,8 @@ export const siteSpecificLocationToConceptId = {
   "NTX Biorepository": 436956777,
   "North Garland": 483909879,
   "Waco - MacArthur": 962830330,
+  "Temple CDM": 117840593,
+  "Temple Roney": 574104518
 }
 
 export const conceptIdToHealthProviderAbbrObj = {
@@ -2970,7 +2992,9 @@ export const siteLocations = {
                 {location: 'NTX Biorepository', concept: 436956777},
                 {location: 'North Garland', concept: 483909879},
                 {location: 'Waco - MacArthur', concept: 962830330},
-                {location: 'Irving', concept: 397883980}
+                {location: 'Irving', concept: 397883980},
+                {location: 'Temple CDM', concept: 117840593},
+                {location: 'Temple Roney', concept: 574104518}
             ],
         'NIH': [{location: 'NIH-1', concept: 111111111}, {location: 'NIH-2', concept: 222222222}]
 
