@@ -49,7 +49,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
             </div>
             ${specimenData[conceptIds.collection.selectedVisit] ? `
                 <div class="ml-auto form-group">
-                    Visit: ${visitType.filter(visit => visit.concept == specimenData[conceptIds.collection.selectedVisit])[0].visitType}
+                    Visit: ${visitType.filter(visit => visit.concept == specimenData[conceptIds.collection.selectedVisit])[0]?.visitType}
                 </div>
             ` : ``
             }
@@ -70,25 +70,25 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                 </thead>
                 <tbody>`
                 const siteTubesList = getSiteTubesLists(specimenData)
-                siteTubesList.forEach((obj) => {
+                siteTubesList?.forEach((obj) => {
 
-                    const notCollectedOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].tubeNotCollectedOptions;
+                    const notCollectedOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0]?.tubeNotCollectedOptions;
                     let deviationSelections = [];
 
                     if(obj.deviationOptions) {
                         obj.deviationOptions.forEach(option => {
-                            if(specimenData[obj.concept][conceptIds.collection.tube.deviation][option.concept] === conceptIds.yes) deviationSelections.push(option.label);
+                            if(specimenData[obj.concept]?.[conceptIds.collection.tube.deviation]?.[option.concept] === conceptIds.yes) deviationSelections.push(option.label);
                         });
                     }
                     template += `
                         <tr style="vertical-align: top;">
                             <td>${obj.specimenType}</td>
-                            <td>${obj.collectionChkBox === true ? `${specimenData[`${obj.concept}`][conceptIds.collection.tube.isCollected] === conceptIds.yes ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'}` : ``}</td>
-                            ${getWorkflow() === 'research' ? `<td>${specimenData[`${obj.concept}`][conceptIds.collection.tube.selectReasonNotCollected] ? notCollectedOptions.filter(option => option.concept == specimenData[`${obj.concept}`][conceptIds.collection.tube.selectReasonNotCollected])[0].label : ''}</td>` : ''}
-                            <td>${specimenData[`${obj.concept}`][conceptIds.collection.tube.isCollected] === conceptIds.yes && specimenData[`${obj.concept}`][conceptIds.collection.tube.scannedId] ? `${specimenData[`${obj.concept}`][conceptIds.collection.tube.scannedId]}` : '' }</td>
-                            <td>${obj.deviationChkBox === true ? `${specimenData[`${obj.concept}`][conceptIds.collection.tube.isDeviated] === conceptIds.yes ? 'Yes' : 'No'}`: ``}</td>
+                            <td>${obj.collectionChkBox === true ? `${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.isCollected] === conceptIds.yes ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'}` : ``}</td>
+                            ${getWorkflow() === 'research' ? `<td>${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected] ? notCollectedOptions.filter(option => option.concept == specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected])?.[0]?.label : ''}</td>` : ''}
+                            <td>${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.isCollected] === conceptIds.yes && specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.scannedId] ? `${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.scannedId]}` : '' }</td>
+                            <td>${obj.deviationChkBox === true ? `${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.isDeviated] === conceptIds.yes ? 'Yes' : 'No'}`: ``}</td>
                             <td class="deviation-type-width">${deviationSelections ? getDeviationSelections(deviationSelections) : ''}</td>
-                            <td class="deviation-comments-width">${specimenData[`${obj.concept}`][conceptIds.collection.tube.deviationComments] ? specimenData[`${obj.concept}`][conceptIds.collection.tube.deviationComments] : specimenData[`${obj.concept}`][conceptIds.collection.tube.optionalNotCollectedDetails] ? specimenData[`${obj.concept}`][conceptIds.collection.tube.optionalNotCollectedDetails] : ''}</td>
+                            <td class="deviation-comments-width">${specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.deviationComments] ? specimenData[`${obj.concept}`][conceptIds.collection.tube.deviationComments] : specimenData[`${obj.concept}`]?.[conceptIds.collection.tube.optionalNotCollectedDetails] ? specimenData[`${obj.concept}`][conceptIds.collection.tube.optionalNotCollectedDetails] : ''}</td>
                         </tr>
                     `
                 });
