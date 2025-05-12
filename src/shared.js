@@ -153,10 +153,9 @@ export const getUserProfile = async (uid) => {
 }
 
 export const sendInstantNotification = async (requestData) => {
-  const catPtStr = `${requestData.category}- ${requestData.connectId}`;
+  const catPtStr = `${requestData.category}-${requestData.connectId}`;
   const isNotificationHandled = appState.getState().handledNotifications?.[catPtStr];
   if (isNotificationHandled) return true;
-
 
   appState.setState((prevState) => ({
     ...prevState,
