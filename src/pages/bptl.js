@@ -6,7 +6,6 @@ import {
   errorMessage,
   removeAllErrors,
 } from "./../shared.js";
-import { kitAssemblyScreen } from "./homeCollection/kitAssembly.js";
 import { nonUserNavBar, unAuthorizedUser } from "./../navbar.js";
 
 export const bptlScreen = async (auth, route) => {
