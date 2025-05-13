@@ -261,8 +261,6 @@ const storeAssembledKit = async (kitData) => {
 
     const responseStatus = await processResponse(response);
 
-    console.log('responseStatus', responseStatus);
-
     if (responseStatus === true) {
       alertTemplate(`Kit saved successfully!`, `success`);
       const existingKitData = JSON.parse(localStorage.getItem('tmpKitData'));
