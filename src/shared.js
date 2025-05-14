@@ -2070,8 +2070,7 @@ export const healthProviderAbbrToConceptIdObj = {
     "henryFordHealth": 548392715,
     "marshfieldClinic": 303349821,
     "uOfChicagoMed": 809703864,
-    "nci": 13,
-    "BSWH": 472940358,
+    "bswh": 472940358,
     "allResults": 1000
 }
 
@@ -2128,18 +2127,18 @@ export const siteSpecificLocation = {
   "River East": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
   "South Loop": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
   "Orland Park": {"siteAcronym":"UCM", "siteCode": healthProviderAbbrToConceptIdObj.uOfChicagoMed, "loginSiteName": "University of Chicago Medicine"},
-  "BCC- HWC": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "FW All Saints": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "BCC- Fort Worth": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "BCC- Plano": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "BCC- Worth St": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "BCC- Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "NTX Biorepository": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "North Garland": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "Waco - MacArthur": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "Temple CDM": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
-  "Temple Roney": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.BSWH, "loginSiteName": "Baylor Scott & White Health"},
+  "BCC- HWC": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "FW All Saints": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "BCC- Fort Worth": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "BCC- Plano": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "BCC- Worth St": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "BCC- Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "NTX Biorepository": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "North Garland": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Waco - MacArthur": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple CDM": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple Roney": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
@@ -2946,64 +2945,77 @@ export const disableInput = (id, disable) => {
 }
 
 export const siteLocations = {
-    'research': {
-        'UCM': [{location: 'UC-DCAM', concept: 777644826}, {location: 'Ingalls Harvey', concept: 145191545},
-                {location: 'UCM Pop-Up', concept: 319518299}, {location: 'Orland Park', concept: 940329442}          
-              ],
-        'MFC': [{location: 'Marshfield', concept: 692275326},
-                {location: 'Lake Hallie', concept: 698283667},
-                {location: 'Weston', concept: 813701399}, 
-                {location: 'Rice Lake', concept: 691714762}, 
-                {location: 'Wisconsin Rapids', concept: 487512085}, 
-                {location: 'Colby Abbotsford', concept: 983848564}, 
-                {location: 'Minocqua', concept: 261931804}, 
-                {location: 'Merrill', concept: 665277300},
-                {location: 'MF Pop-Up', concept: 567969985},
-                {location: 'Stevens Point', concept: 255636184},
-                {location: 'Neilsville', concept: 813412950}
+    research: {
+        UCM: [
+                { location: 'UC-DCAM', concept: conceptIds.nameToKeyObj.ucDcam }, 
+                { location: 'Ingalls Harvey', concept: conceptIds.nameToKeyObj.ingHar },
+                { location: 'UCM Pop-Up', concept: conceptIds.nameToKeyObj.ucmPopUp }, 
+                { location: 'Orland Park', concept: conceptIds.nameToKeyObj.orPark }          
         ],
-        'HP': [{location: 'HP Research Clinic', concept: 834825425}, 
-                {location: 'HP Park Nicollet', concept: conceptIds.nameToKeyObj.hpPN}],
-        // HFH Pop-up
-        'HFHS': [
-                {location: 'HFH K-13 Research Clinic', concept: 736183094},
-                {location: 'HFH Cancer Pavilion Research Clinic', concept: 886364332},
-                {location: 'HFH Livonia Research Clinic', concept: 706927479},
-                {location: 'HFH Pop-Up', concept: conceptIds.nameToKeyObj.hfhPU},
-                {location: 'HFH Jackson', concept: 755034888},
-                {location: 'In-Home Collection', concept: 852689772},
-                {location: 'HFH Detroit Northwest', concept: 911683679},
+        MFC: [
+                { location: 'Marshfield', concept: conceptIds.nameToKeyObj.marshfield },
+                { location: 'Lake Hallie', concept: conceptIds.nameToKeyObj.lakeHallie },
+                { location: 'Weston', concept: conceptIds.nameToKeyObj.weston }, 
+                { location: 'Rice Lake', concept: conceptIds.nameToKeyObj.riLa }, 
+                { location: 'Wisconsin Rapids', concept: conceptIds.nameToKeyObj.wisRapids }, 
+                { location: 'Colby Abbotsford', concept: conceptIds.nameToKeyObj.colAbb }, 
+                { location: 'Minocqua', concept: conceptIds.nameToKeyObj.mino }, 
+                { location: 'Merrill', concept: conceptIds.nameToKeyObj.merr },
+                { location: 'MF Pop-Up', concept: conceptIds.nameToKeyObj.mfPopUp },
+                { location: 'Stevens Point', concept: conceptIds.nameToKeyObj.stevensPoint },
+                { location: 'Neilsville', concept: conceptIds.nameToKeyObj.neillsville}
         ],
-        // Bismarck
-        'SFH': [{location: 'Sioux Falls Imagenetics', concept: 589224449}, 
-                {location: 'Fargo South University', concept: 467088902}, 
-                {location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM}, 
-                {location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC},
-                {location: 'Sioux Falls Edith Center', concept: 433070901},
-                {location: 'Fargo Amber Valley', concept: 769594361},
-                {location: 'Bemidji Clinic', concept: 246153539}
-            ],
-        'BSWH': [{location: 'BCC- HWC', concept: 723351427}, 
-                {location: 'FW All Saints', concept: 807443231}, 
-                {location: 'BCC- Fort Worth', concept: 288564244}, 
-                {location: 'BCC- Plano', concept: 475614532}, 
-                {location: 'BCC- Worth St', concept: 809370237}, 
-                {location: 'BCC- Irving', concept: 856158129}, 
-                {location: 'NTX Biorepository', concept: 436956777},
-                {location: 'North Garland', concept: 483909879},
-                {location: 'Waco - MacArthur', concept: 962830330},
-                {location: 'Irving', concept: 397883980},
-                {location: 'Temple CDM', concept: 117840593},
-                {location: 'Temple Roney', concept: 574104518}
-            ],
-        'NIH': [{location: 'NIH-1', concept: 111111111}, {location: 'NIH-2', concept: 222222222}]
-
+        HP: [
+                {location: 'HP Research Clinic', concept: conceptIds.nameToKeyObj.hpRC}, 
+                {location: 'HP Park Nicollet', concept: conceptIds.nameToKeyObj.hpPN}
+        ],
+        HFHS: [
+                { location: 'HFH K-13 Research Clinic', concept: conceptIds.nameToKeyObj.hfhKRC },
+                { location: 'HFH Cancer Pavilion Research Clinic', concept: conceptIds.nameToKeyObj.hfhPRC },
+                { location: 'HFH Livonia Research Clinic', concept: conceptIds.nameToKeyObj.hfhLRC },
+                { location: 'HFH Pop-Up', concept: conceptIds.nameToKeyObj.hfhPU },
+                { location: 'HFH Jackson', concept: conceptIds.nameToKeyObj.hfhJackson },
+                { location: 'In-Home Collection', concept: conceptIds.nameToKeyObj.inHomeCollection },
+                { location: 'HFH Detroit Northwest', concept: conceptIds.nameToKeyObj.hfhDetroitNorthwest },
+        ],
+        SFH: [
+                { location: 'Sioux Falls Imagenetics', concept: conceptIds.nameToKeyObj.sfImag }, 
+                { location: 'Fargo South University', concept: conceptIds.nameToKeyObj.sfFargo }, 
+                { location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM }, 
+                { location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC },
+                { location: 'Sioux Falls Edith Center', concept: conceptIds.nameToKeyObj.siouxFallsEdithCenter },
+                { location: 'Fargo Amber Valley', concept: conceptIds.nameToKeyObj.fargoAmberValley},
+                { location: 'Bemidji Clinic', concept: conceptIds.nameToKeyObj.bemidjiClinic}
+        ],
+        BSWH: [
+                { location: 'BCC- HWC', concept: conceptIds.nameToKeyObj.bccHwc }, 
+                { location: 'FW All Saints', concept: conceptIds.nameToKeyObj.fwAllSaints }, 
+                { location: 'BCC- Fort Worth', concept: conceptIds.nameToKeyObj.bccFortWorth }, 
+                { location: 'BCC- Plano', concept: conceptIds.nameToKeyObj.bccPlano }, 
+                { location: 'BCC- Worth St', concept: conceptIds.nameToKeyObj.bccWorthSt }, 
+                { location: 'BCC- Irving', concept: conceptIds.nameToKeyObj.bccIrving }, 
+                { location: 'NTX Biorepository', concept: conceptIds.nameToKeyObj.ntxBiorepo },
+                { location: 'North Garland', concept: conceptIds.nameToKeyObj.northGarland },
+                { location: 'Waco - MacArthur', concept: conceptIds.nameToKeyObj.wacoMacArthur },
+                { location: 'Irving', concept: conceptIds.nameToKeyObj.irving },
+                { location: 'Temple CDM', concept: conceptIds.nameToKeyObj.templeCDM },
+                { location: 'Temple Roney', concept: conceptIds.nameToKeyObj.templeRoney }
+        ],
+        NIH: [
+                { location: 'NIH-1', concept: conceptIds.nameToKeyObj.nci }, 
+                { location: 'NIH-2', concept: conceptIds.nameToKeyObj.nciFrederick }
+        ]
     },
-    'clinical': {
-        'KPHI': [{location:'KPHI RRL', concept: 531313956}],
-        'UCM': [{location: 'River East', concept: 489380324}, {location: 'South Loop', concept: 120264574}]
+    clinical: {
+        KPHI: [ 
+                { location:'KPHI RRL', concept: conceptIds.nameToKeyObj.kpHawaii}
+        ],
+        UCM: [
+                { location: 'River East', concept: conceptIds.nameToKeyObj.rivEas },
+                { location: 'South Loop', concept: conceptIds.nameToKeyObj.soLo }
+        ],
     }
-}
+};
 
 export const allStates = {
     "Alabama":1,
