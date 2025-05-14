@@ -2966,11 +2966,11 @@ export const siteLocations = {
                 { location: 'Merrill', concept: conceptIds.nameToKeyObj.merr },
                 { location: 'MF Pop-Up', concept: conceptIds.nameToKeyObj.mfPopUp },
                 { location: 'Stevens Point', concept: conceptIds.nameToKeyObj.stevensPoint },
-                { location: 'Neilsville', concept: conceptIds.nameToKeyObj.neillsville}
+                { location: 'Neilsville', concept: conceptIds.nameToKeyObj.neillsville },
         ],
         HP: [
-                {location: 'HP Research Clinic', concept: conceptIds.nameToKeyObj.hpRC}, 
-                {location: 'HP Park Nicollet', concept: conceptIds.nameToKeyObj.hpPN}
+                {location: 'HP Research Clinic', concept: conceptIds.nameToKeyObj.hpRC }, 
+                {location: 'HP Park Nicollet', concept: conceptIds.nameToKeyObj.hpPN },
         ],
         HFHS: [
                 { location: 'HFH K-13 Research Clinic', concept: conceptIds.nameToKeyObj.hfhKRC },
@@ -2987,8 +2987,8 @@ export const siteLocations = {
                 { location: 'Bismarck Medical Center', concept: conceptIds.nameToKeyObj.sfBM }, 
                 { location: 'Sioux Falls Sanford Center', concept: conceptIds.nameToKeyObj.sfSC },
                 { location: 'Sioux Falls Edith Center', concept: conceptIds.nameToKeyObj.siouxFallsEdithCenter },
-                { location: 'Fargo Amber Valley', concept: conceptIds.nameToKeyObj.fargoAmberValley},
-                { location: 'Bemidji Clinic', concept: conceptIds.nameToKeyObj.bemidjiClinic}
+                { location: 'Fargo Amber Valley', concept: conceptIds.nameToKeyObj.fargoAmberValley },
+                { location: 'Bemidji Clinic', concept: conceptIds.nameToKeyObj.bemidjiClinic },
         ],
         BSWH: [
                 { location: 'BCC- HWC', concept: conceptIds.nameToKeyObj.bccHwc }, 
@@ -3002,16 +3002,16 @@ export const siteLocations = {
                 { location: 'Waco - MacArthur', concept: conceptIds.nameToKeyObj.wacoMacArthur },
                 { location: 'Irving', concept: conceptIds.nameToKeyObj.irving },
                 { location: 'Temple CDM', concept: conceptIds.nameToKeyObj.templeCDM },
-                { location: 'Temple Roney', concept: conceptIds.nameToKeyObj.templeRoney }
+                { location: 'Temple Roney', concept: conceptIds.nameToKeyObj.templeRoney },
         ],
         NIH: [
                 { location: 'NIH-1', concept: conceptIds.nameToKeyObj.nci }, 
-                { location: 'NIH-2', concept: conceptIds.nameToKeyObj.nciFrederick }
+                { location: 'NIH-2', concept: conceptIds.nameToKeyObj.nciFrederick },
         ]
     },
     clinical: {
         KPHI: [ 
-                { location:'KPHI RRL', concept: conceptIds.nameToKeyObj.kpHawaii}
+                { location:'KPHI RRL', concept: conceptIds.nameToKeyObj.kpHawaii },
         ],
         UCM: [
                 { location: 'River East', concept: conceptIds.nameToKeyObj.rivEas },
