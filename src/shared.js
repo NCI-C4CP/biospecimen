@@ -2514,7 +2514,7 @@ export const locationConceptIDToLocationMap = {
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
     },
-    397883980: {
+    [conceptIds.nameToKeyObj.irving]: {
         siteSpecificLocation: 'Irving',
         siteAcronym: 'BSWH',
         siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
@@ -2605,6 +2605,7 @@ export const conceptIdToSiteSpecificLocation = {
   436956777: "NTX Biorepository",
   483909879: "North Garland",
   962830330: "Waco - MacArthur",
+  [conceptIds.nameToKeyObj.irving]: "Irving",
   [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
   [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney"
 }
@@ -2658,6 +2659,7 @@ export const siteSpecificLocationToConceptId = {
   "NTX Biorepository": 436956777,
   "North Garland": 483909879,
   "Waco - MacArthur": 962830330,
+  "Irving": conceptIds.nameToKeyObj.irving,
   "Temple CDM": conceptIds.nameToKeyObj.templeCDM,
   "Temple Roney": conceptIds.nameToKeyObj.templeRoney
 }
@@ -2751,7 +2753,7 @@ export const keyToLocationObj =
     436956777: "NTX Biorepository",
     483909879: "North Garland",
     962830330: "Waco - MacArthur",
-    397883980: "Irving",
+    [conceptIds.nameToKeyObj.irving]: "Irving",
     [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
     [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
     111111111: "NIH",
