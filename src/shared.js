@@ -2143,6 +2143,7 @@ export const siteSpecificLocation = {
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
 
+// TODO: Replace other hardcoded concept Ids
 export const locationConceptIDToLocationMap = {
   834825425: {
     siteSpecificLocation: 'HP Research Clinic',
@@ -2444,7 +2445,7 @@ export const locationConceptIDToLocationMap = {
     723351427: {
         siteSpecificLocation: 'BCC- HWC',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2452,7 +2453,7 @@ export const locationConceptIDToLocationMap = {
     807443231: {
         siteSpecificLocation: 'FW All Saints',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2460,7 +2461,7 @@ export const locationConceptIDToLocationMap = {
     288564244: {
         siteSpecificLocation: 'BCC- Fort Worth',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2468,7 +2469,7 @@ export const locationConceptIDToLocationMap = {
     475614532: {
         siteSpecificLocation: 'BCC- Plano',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2476,7 +2477,7 @@ export const locationConceptIDToLocationMap = {
     809370237: {
         siteSpecificLocation: 'BCC- Worth St',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2484,7 +2485,7 @@ export const locationConceptIDToLocationMap = {
     856158129: {
         siteSpecificLocation: 'BCC- Irving',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org',
@@ -2492,7 +2493,7 @@ export const locationConceptIDToLocationMap = {
     436956777: {
         siteSpecificLocation: 'NTX Biorepository',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2500,7 +2501,7 @@ export const locationConceptIDToLocationMap = {
     483909879: {
         siteSpecificLocation: 'North Garland',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2508,7 +2509,7 @@ export const locationConceptIDToLocationMap = {
     962830330: {
         siteSpecificLocation: 'Waco - MacArthur',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2516,20 +2517,20 @@ export const locationConceptIDToLocationMap = {
     397883980: {
         siteSpecificLocation: 'Irving',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
     },
-    117840593: {
+    [conceptIds.nameToKeyObj.templeCDM]: {
         siteSpecificLocation: 'Temple CDM',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
     },
-    574104518: {
+    [conceptIds.nameToKeyObj.templeRoney]: {
         siteSpecificLocation: 'Temple Roney',
         siteAcronym: 'BSWH',
         siteCode: '472940358',
@@ -2604,8 +2605,8 @@ export const conceptIdToSiteSpecificLocation = {
   436956777: "NTX Biorepository",
   483909879: "North Garland",
   962830330: "Waco - MacArthur",
-  117840593: "Temple CDM",
-  574104518: "Temple Roney"
+  [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
+  [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney"
 }
 
 export const siteSpecificLocationToConceptId = {
@@ -2657,8 +2658,8 @@ export const siteSpecificLocationToConceptId = {
   "NTX Biorepository": 436956777,
   "North Garland": 483909879,
   "Waco - MacArthur": 962830330,
-  "Temple CDM": 117840593,
-  "Temple Roney": 574104518
+  "Temple CDM": conceptIds.nameToKeyObj.templeCDM,
+  "Temple Roney": conceptIds.nameToKeyObj.templeRoney
 }
 
 export const conceptIdToHealthProviderAbbrObj = {
@@ -2741,16 +2742,18 @@ export const keyToLocationObj =
     433070901 : "Sioux Falls Edith Center",
     769594361 : "Fargo Amber Valley",
     246153539 : "Bemidji Clinic",
-    723351427: 'BCC- HWC',
-    807443231: 'FW All Saints',
-    288564244: 'BCC- Fort Worth',
-    475614532: 'BCC- Plano',
-    809370237: 'BCC- Worth St',
-    856158129: 'BCC- Irving',
-    436956777: 'NTX Biorepository',
-    483909879: 'North Garland',
-    962830330: 'Waco - MacArthur',
-    397883980: 'Irving',
+    723351427: "BCC- HWC",
+    807443231: "FW All Saints",
+    288564244: "BCC- Fort Worth",
+    475614532: "BCC- Plano",
+    809370237: "BCC- Worth St",
+    856158129: "BCC- Irving",
+    436956777: "NTX Biorepository",
+    483909879: "North Garland",
+    962830330: "Waco - MacArthur",
+    397883980: "Irving",
+    [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
+    [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
     111111111: "NIH",
     13: "NCI"
 
