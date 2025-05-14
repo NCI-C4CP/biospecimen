@@ -1,5 +1,5 @@
 import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, appState, baseAPI, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, capsEnforcer, autoTabAcrossArray, performQCcheck } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, appState, baseAPI, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, capsEnforcer, autoTabAcrossArray, performQCcheck, escapeHTML } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from '../../fieldToConceptIdMapping.js';
@@ -204,16 +204,19 @@ const renderSidePane = () => {
   const kitObjects = JSON.parse(localStorage.getItem('tmpKitData'));
   let html =  `&nbsp;<b>Kits Assembled:</b> ${Object.keys(kitObjects).length}`;
   kitObjects.forEach((kitObject) => {
-    kitObject[conceptIds.collectionCupId] = kitObject[conceptIds.collectionCupId].replace(/\s/g, "\n");
-    kitObject[conceptIds.collectionCardId] = kitObject[conceptIds.collectionCardId].replace(/\s/g, "\n");
+    const sanitizedCupId = escapeHTML(kitObject[conceptIds.collectionCupId].replace(/\s/g, "\n"));
+    const sanitizedCardId = escapeHTML(kitObject[conceptIds.collectionCardId].replace(/\s/g, "\n"));
+    const sanitizedBarcode = escapeHTML(kitObject[conceptIds.returnKitTrackingNum]);
+    const sanitizedSupplyKitId = escapeHTML(kitObject[conceptIds.supplyKitId]);
+    const sanitizedReturnKitId = escapeHTML(kitObject[conceptIds.returnKitId]);
     html +=
       `<ul style="overflow-y: scroll;">
         <br />
-        Scanned Barcode = ${ kitObject[conceptIds.returnKitTrackingNum] } |
-        Supply Kit ID = ${ kitObject[conceptIds.supplyKitId] } |
-        Return Kit ID = ${ kitObject[conceptIds.returnKitId] } |
-        Cup Id = ${ kitObject[conceptIds.collectionCupId] } |
-        Card Id = ${ kitObject[conceptIds.collectionCardId] }
+        Scanned Barcode = ${sanitizedBarcode} |
+        Supply Kit ID = ${sanitizedSupplyKitId} |
+        Return Kit ID = ${sanitizedReturnKitId} |
+        Cup Id = ${sanitizedCupId} |
+        Card Id = ${sanitizedCardId}
         <button type="button" class="btn btn-outline-primary detailedRow" data-kitObject=${encodeURIComponent(JSON.stringify(kitObject))} id="editAssembledKits">Edit</button>
       </ul>`
   });
