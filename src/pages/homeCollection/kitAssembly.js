@@ -1,5 +1,5 @@
 import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, appState, baseAPI, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, capsEnforcer, autoTabAcrossArray, performQCcheck } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, appState, baseAPI, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, capsEnforcer, autoTabAcrossArray, performQCcheck, escapeHTML } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from '../../fieldToConceptIdMapping.js';
@@ -8,16 +8,16 @@ const contentBody = document.getElementById("contentBody");
 localStorage.setItem('tmpKitData', JSON.stringify([]));
 appState.setState({uniqueKitID: ``});
 
-export const kitAssemblyScreen = async (auth) => {
+export const kitAssemblyScreen = (auth) => {
   const user = auth.currentUser;
   if (!user) return;
-  const name = user.displayName ? user.displayName : user.email;
+  const name = user.displayName || user.email;
   showAnimation();
   kitAssemblyTemplate(name);
   hideAnimation();
 }
 
-const kitAssemblyTemplate = async (name) => {
+const kitAssemblyTemplate = (name) => {
   let template = ``;
   template += homeCollectionNavbar();
   template += `
@@ -156,11 +156,9 @@ const processAssembledKit = () => {
 
         if (queryScannedBarcodeValue !== confirmScannedBarcodeValue) {
             triggerErrorModal('Return Kit tracking number doesn\'t match.');
-            return;
         } else if (scannedBarcodeValue.length === 0 || supplyKitIdValue.length === 0 ||  returnKitIdValue.length === 0 ||
             collectionCupIdValue.length === 0 || collectionCardIdValue.length === 0 || document.getElementById('dropdownSites').innerHTML !== 'Mouthwash') {
             triggerErrorModal('One or more fields are missing.');
-            return
         } else if (supplyKitIdValue !== returnKitIdValue) {
           triggerErrorModal('Supply Kit ID number doesn\'t match Return Kit.');
         } else if (collectionCupIdValue !== collectionCardIdValue) {
@@ -175,6 +173,7 @@ const processAssembledKit = () => {
             kitObj[conceptIds.collectionCardId] = collectionCardIdValue;
             kitObj[conceptIds.kitType] = conceptIds.mouthwashKitType;
             try {
+                showAnimation();
                 const responseStoredStatus = await storeAssembledKit(kitObj);
                 if (responseStoredStatus) {
                     document.getElementById('scannedBarcode').value = ``;
@@ -187,10 +186,13 @@ const processAssembledKit = () => {
                     document.getElementById("showErrorMsg").innerHTML = ``;
                     // Clear error modal
                     document.getElementById("alert_placeholder").innerHTML = ``;
-                    }
+                  }
+                  // No else needed because error messaging is handled within storeAssembledKit
             } catch (error) { 
                 console.error(error);
                 triggerErrorModal('Failed to save the kit.');
+            } finally {
+                hideAnimation();
             }
         }
     });
@@ -200,22 +202,25 @@ const processAssembledKit = () => {
 
 const renderSidePane = () => {
   const kitObjects = JSON.parse(localStorage.getItem('tmpKitData'));
-  document.getElementById('sidePane').innerHTML = ``
-  document.getElementById('sidePane').innerHTML +=  `&nbsp;<b>Kits Assembled:</b> ${Object.keys(kitObjects).length}`
+  let html =  `&nbsp;<b>Kits Assembled:</b> ${Object.keys(kitObjects).length}`;
   kitObjects.forEach((kitObject) => {
-    kitObject[conceptIds.collectionCupId] = kitObject[conceptIds.collectionCupId].replace(/\s/g, "\n");
-    kitObject[conceptIds.collectionCardId] = kitObject[conceptIds.collectionCardId].replace(/\s/g, "\n");
-    document.getElementById('sidePane').innerHTML +=
+    const sanitizedCupId = escapeHTML(kitObject[conceptIds.collectionCupId].replace(/\s/g, "\n"));
+    const sanitizedCardId = escapeHTML(kitObject[conceptIds.collectionCardId].replace(/\s/g, "\n"));
+    const sanitizedBarcode = escapeHTML(kitObject[conceptIds.returnKitTrackingNum]);
+    const sanitizedSupplyKitId = escapeHTML(kitObject[conceptIds.supplyKitId]);
+    const sanitizedReturnKitId = escapeHTML(kitObject[conceptIds.returnKitId]);
+    html +=
       `<ul style="overflow-y: scroll;">
         <br />
-        Scanned Barcode = ${ kitObject[conceptIds.returnKitTrackingNum] } |
-        Supply Kit ID = ${ kitObject[conceptIds.supplyKitId] } |
-        Return Kit ID = ${ kitObject[conceptIds.returnKitId] } |
-        Cup Id = ${ kitObject[conceptIds.collectionCupId] } |
-        Card Id = ${ kitObject[conceptIds.collectionCardId] }
+        Scanned Barcode = ${sanitizedBarcode} |
+        Supply Kit ID = ${sanitizedSupplyKitId} |
+        Return Kit ID = ${sanitizedReturnKitId} |
+        Cup Id = ${sanitizedCupId} |
+        Card Id = ${sanitizedCardId}
         <button type="button" class="btn btn-outline-primary detailedRow" data-kitObject=${encodeURIComponent(JSON.stringify(kitObject))} id="editAssembledKits">Edit</button>
       </ul>`
-  })
+  });
+  document.getElementById('sidePane').innerHTML = html;
   editAssembledKits();
 }
 
@@ -228,45 +233,25 @@ const editAssembledKits = () => {
       editKitBtn.addEventListener('click', () => {
         let data = decodeURIComponent(editKitBtn.getAttribute('data-kitObject'));
         const editKitObj = JSON.parse(data);
-        document.getElementById('scannedBarcode').value = editKitObj[conceptIds.returnKitTrackingNum]
-        document.getElementById('supplyKitId').value = editKitObj[conceptIds.supplyKitId]
-        document.getElementById('returnKitId').value = editKitObj[conceptIds.returnKitId]
-        document.getElementById('cupId').value = editKitObj[conceptIds.collectionCupId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCupId].slice(-4)
-        document.getElementById('cardId').value = editKitObj[conceptIds.collectionCardId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCardId].slice(-4)
-        appState.setState({uniqueKitID: editKitObj[conceptIds.uniqueKitID]})
+        document.getElementById('scannedBarcode').value = editKitObj[conceptIds.returnKitTrackingNum];
+        document.getElementById('supplyKitId').value = editKitObj[conceptIds.supplyKitId];
+        document.getElementById('returnKitId').value = editKitObj[conceptIds.returnKitId];
+        document.getElementById('cupId').value = editKitObj[conceptIds.collectionCupId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCupId].slice(-4);
+        document.getElementById('cardId').value = editKitObj[conceptIds.collectionCardId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCardId].slice(-4);
+        appState.setState({uniqueKitID: editKitObj[conceptIds.uniqueKitID]});
       });
-    }); // state to indicate if its an edit & also pass the uniqueKitID
+    }); // state to indicate if it's an edit & also pass the uniqueKitID
 }}
-
-const checkUniqueness = async (supplyKitId, collectionId, returnKitTrackingNumber) => {
-  const idToken = await getIdToken();
-  const response = await fetch(`${baseAPI}api=collectionUniqueness&supplyKitId=${supplyKitId}&collectionId=${collectionId}&returnKitTrackingNumber=${returnKitTrackingNumber}`, {
-      method: "GET",
-      headers: {
-          Authorization:"Bearer "+idToken
-      }
-  });
-  return await response.json();
-}
 
 const storeAssembledKit = async (kitData) => {
   const idToken = await getIdToken();
-  showAnimation();
-  const collectionUnique = appState.getState().uniqueKitID !== ''
-    ? { data: true } 
-    : await checkUniqueness(kitData[conceptIds.supplyKitId], kitData?.[conceptIds.collectionCupId].replace(/\s/g, "\n"), kitData[conceptIds.returnKitTrackingNum]);
-  hideAnimation();
+  // Both addKitData and updateKitData run uniqueness checks, so we do not need to make a separate checkUniqueness call here
 
-  if (collectionUnique.data === true) {
+    const kitIsNew = appState.getState().uniqueKitID === ``;
+    const api = kitIsNew ? 'addKitData' : 'updateKitData';
     kitData[conceptIds.kitStatus] = conceptIds.pending;
-    kitData[conceptIds.uniqueKitID] = "MW" + Math.random().toString(16).slice(2);
+    kitData[conceptIds.uniqueKitID] = kitIsNew ? "MW" + Math.random().toString(16).slice(2) : appState.getState().uniqueKitID;
     kitData[conceptIds.pendingDateTimeStamp] = new Date().toISOString();
-    let api = `addKitData`;
-
-    if (appState.getState().uniqueKitID !== ``) { 
-      api = `updateKitData`;
-      kitData[conceptIds.uniqueKitID] = appState.getState().uniqueKitID;
-    }
 
     const response = await fetch(`${baseAPI}api=${api}`, {
       method: "POST",
@@ -303,65 +288,38 @@ const storeAssembledKit = async (kitData) => {
         localStorage.setItem('tmpKitData', JSON.stringify(existingKitData))
       }
       renderSidePane();
-      return true
+      return true;
     }
     else if (responseStatus === 'Check Collection ID'){
       alertTemplate('Check collection ID format.');
-      return false
+      return false;
     }
     else if (responseStatus === 'duplicate supplykit id'){
       alertTemplate('This Supply Kit ID is unavailable.');
-      return false
+      return false;
     }
     else if (responseStatus === 'duplicate collection id'){
       alertTemplate('The collection card and cup ID are already in use.');
-      return false
+      return false;
     }
     else if (responseStatus === 'duplicate return kit tracking number'){
       alertTemplate('This tracking number has already been used.');
-      return false
+      return false;
     }
     else if (responseStatus === 'return kit tracking number is for supply kit'){
       alertTemplate('This tracking number has already been used.');
-      return false
+      return false;
     }
     else {
+      console.error('Response error', responseStatus);
       alertTemplate(`Failed to save the kit.`);
-      return false
+      return false;
     }
-  }
-  else if (collectionUnique.data === 'Check Collection ID'){
-    alertTemplate('Check collection ID format.');
-    return false
-  }
-  else if (collectionUnique.data === 'duplicate supplykit id'){
-    alertTemplate('This Supply Kit ID is unavailable.');
-    return false
-  }
-  else if (collectionUnique.data === 'duplicate collection id'){
-    alertTemplate('The collection card and cup ID are already in use.');
-    return false
-  }
-  else if (collectionUnique.data === 'duplicate return kit tracking number'){
-    alertTemplate('This tracking number has already been used.');
-    return false
-  }
-  else if (collectionUnique.data === 'return kit tracking number is for supply kit'){
-    alertTemplate('This tracking number has already been used.');
-    return false
-  }
-  else {
-    alertTemplate('Error');
-    return false
-  }
 }
 
 const alertTemplate = (message, status = "warn", duration = 3000) => {
   if (status === "success") {
-    performQCcheck('returnKitId', 'supplyKitId', 'showReturnKitErrorMsg', ``);
-    performQCcheck('scannedBarcode2', 'scannedBarcode', 'showErrorMsg', ``);
-    performQCcheck('cardId', 'cupId', 'showCardIdErrorMsg', ``);
-    alert = `
+    const alertHtml = `
     <div id="alert-success" class="alert alert-success alert-dismissible fade show" role="alert">
       <strong>${message}</strong>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -369,18 +327,18 @@ const alertTemplate = (message, status = "warn", duration = 3000) => {
       </button>
     </div>`
     ;
-    contentBody.insertAdjacentHTML("afterbegin", alert);
+    contentBody.insertAdjacentHTML("afterbegin", alertHtml);
     closeAlert(status, duration);
   } else if (status === "warn") {
-    alert = `<div id="alert-warning" class="alert alert-danger alert-dismissible fade show" role="alert">
+    const alertHtml = `<div id="alert-warning" class="alert alert-danger alert-dismissible fade show" role="alert">
     <strong>${message}</strong>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>`;
-    contentBody.insertAdjacentHTML("afterbegin", alert);
+    contentBody.insertAdjacentHTML("afterbegin", alertHtml);
     closeAlert(status, duration);
-  } else return;
+  }
 };
 
 // Automatically Close Alert Message
@@ -397,7 +355,7 @@ const closeAlert = (status = "warn", duration = 5000) => {
     setTimeout(function () {
       alertWarning.style.display = "none";
     }, duration);
-  } else return;
+  }
 };
 
 const dropdownTrigger = (sitekeyName) => {
@@ -409,6 +367,6 @@ const dropdownTrigger = (sitekeyName) => {
           if (sitekeyName === `Select Kit Type` || sitekeyName === tempSiteName) {
             dropdownSiteBtn.innerHTML = e.target.textContent;  
           }
-      })
+      });
   }
 }
