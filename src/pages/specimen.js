@@ -181,12 +181,16 @@ export const specimenTemplate = async (data, formData) => {
         
         addSelectionEventListener("collectionLocation", "specimenLink_location");
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
+        autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
+
 
         addEventSpecimenLinkForm(formData);
     } else if (isSpecimenLinkForm2) {// clinical specimen page 2
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
+        autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
+
 
         addEventClinicalSpecimenLinkForm2(formData);
     } else {//clinical specimen page 1
