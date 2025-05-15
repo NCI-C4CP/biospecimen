@@ -2916,7 +2916,7 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
         && !urineCollectionSetting 
         && !mouthwashCollectionSetting
     ) { 
-        return null;
+        return new Promise((resolve) => { resolve(true) });
     }
     
     const button = document.createElement('button');
