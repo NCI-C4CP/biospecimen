@@ -152,22 +152,19 @@ export const getUserProfile = async (uid) => {
     return await response.json();
 }
 
-export const sendClientEmail = async (array) => {
-    const idToken = await getIdToken();
-    let requestObj = {
-        method: "POST",
-        headers:{
-            Authorization:"Bearer "+idToken,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(array)
-    }
-    const response = await fetch(`${api}api=sendClientEmail`, requestObj);
-    
-    return response;
-}
-
 export const sendInstantNotification = async (requestData) => {
+  const catPtStr = `${requestData.category}-${requestData.connectId}`;
+  const isNotificationHandled = appState.getState().handledNotifications?.[catPtStr];
+  if (isNotificationHandled) return true;
+
+  appState.setState((prevState) => ({
+    ...prevState,
+    handledNotifications: {
+      ...prevState.handledNotifications,
+      [catPtStr]: true,
+    },
+  }));
+
   const idToken = await getIdToken();
   const requestObj = {
     method: "POST",
@@ -177,13 +174,26 @@ export const sendInstantNotification = async (requestData) => {
     },
     body: JSON.stringify(requestData),
   };
-  const resp = await fetch(`${api}api=sendInstantNotification`, requestObj);
-  const respJson = await resp.json();
-    if (!resp.ok) {
-      triggerErrorModal(`Error occurred when sending out notification, with message "${respJson.message}".`);
+
+  try {
+    const resp = await fetch(`${api}api=sendInstantNotification`, requestObj);
+    if (resp.ok) return true;
+
+    const respJson = await resp.json();
+    triggerErrorModal(`Error sending notification to participant ${requestData.connectId}: ${respJson.message}.`);
+  } catch (error) {
+    triggerErrorModal(`Error sending notification to participant ${requestData.connectId}: ${error.message}.`);
   }
 
-  return respJson;
+  appState.setState((prevState) => ({
+    ...prevState,
+    handledNotifications: {
+      ...prevState.handledNotifications,
+      [catPtStr]: false,
+    },
+  }));
+
+  return false;
 };
 
 export const biospecimenUsers = async () => {

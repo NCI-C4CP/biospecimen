@@ -5,6 +5,7 @@ static/images/.DS_Store
 /tmp
 .hintrc
 .eslintrc.json
+eslint.config.js
 scratch.js
 node_modules/
 package.json
