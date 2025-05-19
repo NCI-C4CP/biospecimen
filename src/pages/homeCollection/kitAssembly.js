@@ -108,7 +108,7 @@ const kitAssemblyTemplate = (name) => {
   activeHomeCollectionNavbar();
   processAssembledKit();
   enableEnterKeystroke();
-  dropdownTrigger('Select Kit Type');
+  dropdownTrigger();
   checkTrackingNumberSource();
   // Trim FedEx tracking numbers (1033)
   // Already done for the scannedBarcode input in checkTrackingNumberSource
@@ -137,21 +137,21 @@ const processAssembledKit = () => {
   if (saveKitButton) {
     saveKitButton.addEventListener('click', async () => { 
         let kitObj = {};
-        const queryScannedBarcodeValue = document.getElementById('scannedBarcode')?.value?.trim();
+        const queryScannedBarcodeValue = escapeHTML(document.getElementById('scannedBarcode')?.value)?.trim();
         const scannedBarcodeValue = (queryScannedBarcodeValue !== undefined) ? queryScannedBarcodeValue : "";
 
-        const confirmScannedBarcodeValue = document.getElementById('scannedBarcode2')?.value?.trim();
+        const confirmScannedBarcodeValue = escapeHTML(document.getElementById('scannedBarcode2')?.value)?.trim();
 
-        const querySupplyKitIdValue = document.getElementById('supplyKitId').value.trim();
+        const querySupplyKitIdValue = escapeHTML(document.getElementById('supplyKitId').value)?.trim();
         const supplyKitIdValue = (querySupplyKitIdValue !== undefined) ? querySupplyKitIdValue.toUpperCase(): "";
 
-        const queryReturnKitIdValue = document.getElementById('returnKitId')?.value?.trim();
+        const queryReturnKitIdValue = escapeHTML(document.getElementById('returnKitId')?.value)?.trim();
         const returnKitIdValue = (queryReturnKitIdValue !== undefined) ? queryReturnKitIdValue.toUpperCase() : "";
 
-        const queryCollectionCupIdValue = document.getElementById('cupId')?.value?.trim();
+        const queryCollectionCupIdValue = escapeHTML(document.getElementById('cupId')?.value)?.trim();
         const collectionCupIdValue = (queryCollectionCupIdValue !== undefined) ? queryCollectionCupIdValue.toUpperCase() : "";
 
-        const queryCollectionCardIdValue = document.getElementById('cardId')?.value?.trim();
+        const queryCollectionCardIdValue = escapeHTML(document.getElementById('cardId')?.value)?.trim();
         const collectionCardIdValue = (queryCollectionCardIdValue !== undefined) ? queryCollectionCardIdValue.toUpperCase() : "";
 
         if (queryScannedBarcodeValue !== confirmScannedBarcodeValue) {
@@ -358,15 +358,13 @@ const closeAlert = (status = "warn", duration = 5000) => {
   }
 };
 
-const dropdownTrigger = (sitekeyName) => {
-  let dropdownSiteBtn = document.getElementById('dropdownSites');
-  let dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
-  let tempSiteName = dropdownSiteBtn.innerHTML = sitekeyName;
+const dropdownTrigger = () => {
+  const dropdownSiteBtn = document.getElementById('dropdownSites');
+  const dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
+
   if (dropdownMenuButton) {
-      dropdownMenuButton.addEventListener('click', (e) => {
-          if (sitekeyName === `Select Kit Type` || sitekeyName === tempSiteName) {
-            dropdownSiteBtn.innerHTML = e.target.textContent;  
-          }
-      });
+    dropdownMenuButton.addEventListener('click', (e) => {
+      dropdownSiteBtn.innerHTML = escapeHTML(e.target.textContent);  
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { userAuthorization, removeActiveClass, hideAnimation, showAnimation, getDailyParticipant, convertISODateTime, convertISODateTimeToLocal, restrictNonBiospecimenUser, getDataAttributes, appState } from "./../shared.js"
+import { userAuthorization, removeActiveClass, hideAnimation, showAnimation, getDailyParticipant, convertISODateTimeToLocal, restrictNonBiospecimenUser, getDataAttributes, appState, escapeHTML, showNotifications } from "./../shared.js"
 import { homeNavBar, reportSideNavBar } from '../navbar.js';
 import { conceptIds as fieldToConceptIdMapping } from "../fieldToConceptIdMapping.js";
 
@@ -123,14 +123,15 @@ const initializeDailyReportTable = async () => {
         const dailyReportsData = await getDailyParticipant().then(res => res.data);
         appState.setState({dailyReportsData: dailyReportsData}); // store inital daily reports data
         hideAnimation();
-        populateDailyReportTable(`Filter by Collection Location`, dailyReportsData);
+
+        populateDailyReportTable(dailyReportsData);
     } catch (e) {
         hideAnimation();
         showNotifications({title: "Error", body: `Error fetching participant data -- ${e.message}`});
     }
 }
 
-const populateDailyReportTable = (dropdownHeader, dailyReportsData) => {
+const populateDailyReportTable = (dailyReportsData) => {
     const currTable = document.getElementById('populateDailyReportTable');
     currTable.innerHTML = '';
     
@@ -162,30 +163,29 @@ const populateDailyReportTable = (dropdownHeader, dailyReportsData) => {
         `;
       }
     }
-    dropdownTrigger(dropdownHeader);
+    dropdownTrigger();
 }
 
-const reInitalizeDailyReportTable = async (dropdownText, siteKey, dailyData) => {
+const reInitalizeDailyReportTable = async (siteKey, dailyData) => {
     let data = dailyData;
     if (siteKey !== 'all') {
         data = data.filter((dailyReportData) => dailyReportData[fieldToConceptIdMapping.collectionLocation] === fieldToConceptIdMapping.nameToKeyObj[siteKey]);
     }
-    populateDailyReportTable(dropdownText, data)
+    populateDailyReportTable(data)
 }
 
+const dropdownTrigger = () => {
+    const dropdownSites = document.getElementById('dropdownSites');
+    const dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
 
-const dropdownTrigger = (sitekeyName) => {
-    let a = document.getElementById('dropdownSites');
-    let dropdownMenuButton = document.getElementById('dropdownMenuButtonSites');
-    let tempSiteName = a.innerHTML = sitekeyName;
     if (dropdownMenuButton) {
         dropdownMenuButton.addEventListener('click', (e) => {
-            if (sitekeyName === `Filter by Collection Location` || sitekeyName === tempSiteName) {
-                a.innerHTML = e.target.textContent;
-                const sitekey = getDataAttributes(e.target)
-                const dailyReportsData = appState.getState().dailyReportsData;
-                reInitalizeDailyReportTable(e.target.textContent, sitekey, dailyReportsData);
-            }
-        })
+            const siteText = escapeHTML(e.target.textContent);
+            const siteKey = getDataAttributes(e.target);
+
+            dropdownSites.innerHTML = siteText;
+
+            reInitalizeDailyReportTable(siteKey, dailyReportsData);
+        });
     }
 }
