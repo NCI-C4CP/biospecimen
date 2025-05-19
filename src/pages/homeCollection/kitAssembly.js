@@ -108,7 +108,7 @@ const kitAssemblyTemplate = (name) => {
   activeHomeCollectionNavbar();
   processAssembledKit();
   enableEnterKeystroke();
-  dropdownTrigger('Select Kit Type');
+  dropdownTrigger();
   checkTrackingNumberSource();
   // Trim FedEx tracking numbers (1033)
   // Already done for the scannedBarcode input in checkTrackingNumberSource
