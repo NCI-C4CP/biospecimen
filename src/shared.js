@@ -2782,7 +2782,7 @@ const deprecatedShippingLocations = [
     'HFH Livonia Research Clinic',
     // SFH
     'Sioux Falls Imagenetics',
-    'Sanford South University',
+    'Sioux Falls Sanford Center',
     'Bismarck Medical Center',
     'Fargo South University',
 ];
