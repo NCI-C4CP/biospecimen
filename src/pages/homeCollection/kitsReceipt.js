@@ -80,7 +80,7 @@ const kitsReceiptTemplate = async (name) => {
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard" onkeydown="event.preventDefault()">
+                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
                       </div>
                       <div class="row form-group">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
@@ -118,6 +118,16 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
   activeHomeCollectionNavbar();
   checkTrackingNumberSource();
   performCollectionIdcheck();
+  preventManualEntry();
+};
+
+const preventManualEntry = () => {
+  document.getElementById("dateCollectionCard").addEventListener("keydown", (event) => {
+    const { key, code } = event;
+    if (key !== "Tab" && key !== "Enter" && code !== "Space") {
+      event.preventDefault();
+    }
+  });
 };
 
 const performCollectionIdcheck = () => {
@@ -152,7 +162,7 @@ const formSubmit = () => {
 export const confirmKitReceipt = () => {
   const confirmReceiptBtn = document.getElementById('confirmReceipt');
   if (confirmReceiptBtn) {
-    confirmReceiptBtn.addEventListener('click',  () => {
+    confirmReceiptBtn.addEventListener('click',  async () => {
       let kitObj = {};
       let packageConditions = [];
       const scannedBarcode = document.getElementById('scannedBarcode').value.trim();
@@ -178,10 +188,10 @@ export const confirmKitReceipt = () => {
       }
       window.removeEventListener("beforeunload", handleBeforeUnload);
       setupLeavingPageMessage();
-      storePackageReceipt(kitObj);
-    })
+      await storePackageReceipt(kitObj);
+    });
   }
-}
+};
 
 const storePackageReceipt = async (data) => {
   showAnimation();
@@ -268,16 +278,9 @@ const storePackageReceipt = async (data) => {
           requestData.category = "Mouthwash Home Collection Acknowledgement";
         }
       }
-      
     }
 
-    try {
-      await sendInstantNotification(requestData);
-    } catch (e) {
-      console.error(`Error sending email to user ${returnedPtInfo.prefEmail}.`, e);
-      throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
-    }
-
+    await sendInstantNotification(requestData);
   } else if (returnedPtInfo.status === "Check Collection ID") {
     triggerErrorModal("Error during kit receipt. Please check the collection ID.");
   } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {

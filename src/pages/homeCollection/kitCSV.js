@@ -69,6 +69,11 @@ const getKitsByReceivedDate = async (dateString) => {
 }
 
 const modifyKitQueryResults = (kitsData) => {
+  const kitLevelLookup = {
+    [conceptIds.initialKit]: 'BL',
+    [conceptIds.replacementKit1]: 'BL_1',
+    [conceptIds.replacementKit2]: 'BL_2'
+  }
   const csvKitArray = [];
   kitsData.forEach(kitData => {
     const sampleCollectionCenter = keyToNameCSVObj[kitData[conceptIds.healthcareProvider]];
@@ -83,6 +88,7 @@ const modifyKitQueryResults = (kitsData) => {
     const additivePreservative = vialMappings[1] || '';
     const materialType = vialMappings[2] || '';
     const volume = vialMappings[3] || '';
+    const visit = kitLevelLookup[kitData[conceptIds.kitLevel]] || 'BL';
     const updatedKitResults = {
       'Study ID': 'Connect Study',
       'Sample Collection Center': sampleCollectionCenter,
@@ -101,7 +107,7 @@ const modifyKitQueryResults = (kitsData) => {
       'Vial Warnings': '',
       'Hemolyzed': '',
       'Label Status': 'Barcoded',
-      'Visit': 'BL'
+      'Visit': visit
     }
     csvKitArray.push(updatedKitResults);
   });
