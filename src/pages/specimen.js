@@ -1,4 +1,4 @@
-import { addEventBarCodeScanner, collectionSettings, generateBarCode, getWorkflow, removeActiveClass, siteLocations, visitType, getCheckedInVisit, getSiteAcronym, numericInputValidator, getSiteCode, searchSpecimen, collectionInputValidator, addSelectionEventListener, autoTabInputField, errorMessage, removeAllErrors, removeSingleError } from "./../shared.js";
+import { addEventBarCodeScanner, collectionSettings, generateBarCode, getWorkflow, removeActiveClass, siteLocations, visitType, getCheckedInVisit, getSiteAcronym, numericInputValidator, getSiteCode, searchSpecimen, collectionInputValidator, addSelectionEventListener, autoTabInputField, errorMessage, removeAllErrors, removeSingleError, deprecatedResearchCollectionLocations } from "./../shared.js";
 import { addEventSpecimenLinkForm, addEventClinicalSpecimenLinkForm, addEventClinicalSpecimenLinkForm2, addEventNavBarParticipantCheckIn, addEventBackToSearch, checkAccessionMatch } from "./../events.js";
 import { masterSpecimenIDRequirement } from "../tubeValidation.js";
 import { conceptIds } from '../fieldToConceptIdMapping.js';
@@ -49,38 +49,33 @@ export const specimenTemplate = async (data, formData) => {
             <div class="form-group row">`
                 
         const siteAcronym = getSiteAcronym();
-                
-        if (siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
 
-            
-            // For the purposes of 1008 we are filtering out some locations.
-            // This will require more discussion for a long-term implementation
+        if (siteLocations[workflow] && siteLocations[workflow][siteAcronym]) {
             let siteLocationArray = siteLocations[workflow][siteAcronym]; // Form of [{location, concept}]
-            siteLocationArray = siteLocationArray.filter(loc => 
-                ['River East', 'South Loop', 'Orland Park', 'Henry Ford West Bloomfield Hospital', 'Sioux Falls Imagenetics'].indexOf(loc.location) === -1
-                // 'Henry Ford Medical Center- Fairlane' has inconsistent spacing across environments: play it safe by omitting any combination of "Henry Ford" and "Fairlane"
-                && (!loc.location.includes('Fairlane') || !loc.location.includes('Henry Ford')) 
-            );
+
+            siteLocationArray = siteLocationArray.filter(loc => !deprecatedResearchCollectionLocations.includes(loc.location));
             
             template += `
                 <label class="col-md-4 col-form-label" for="collectionLocation">Select Collection Location</label>
                 <select class="form-control col-md-5" id="collectionLocation">
-                    <option value='none'>Please Select Location</option>`
+                    <option value='none'>Please Select Location</option>
+            `;
 
-            if (siteAcronym === 'BSWH') {
-                const sortedBSWHLocations = siteLocationArray.sort((a, b) => a.location.localeCompare(b.location));
-                
-                sortedBSWHLocations.forEach(site => {
-                    template += `<option ${locationSelection === site.concept.toString() ? 'selected="selected"' : ""} value='${site.concept}'>${site.location}</option>`
+            if (['BSWH', 'SFH', 'HFHS'].includes(siteAcronym)) { // sort collection locations with these site acronyms
+                const sortedLocations = siteLocationArray.sort((a, b) => a.location.localeCompare(b.location));
+
+                sortedLocations.forEach(site => {
+                    template += `<option ${locationSelection === site.concept.toString() ? 'selected="selected"' : ""} value='${site.concept}'>${site.location}</option>`;
                 });
             } else {
                 siteLocationArray.forEach(site => {
-                    template += `<option ${locationSelection === site.concept.toString() ? 'selected="selected"' : ""} value='${site.concept}'>${site.location}</option>`
+                    template += `<option ${locationSelection === site.concept.toString() ? 'selected="selected"' : ""} value='${site.concept}'>${site.location}</option>`;
                 });
             }
 
             template += `
-                </select>`
+                </select>
+            `;
         }
             
         template += `
@@ -181,12 +176,16 @@ export const specimenTemplate = async (data, formData) => {
         
         addSelectionEventListener("collectionLocation", "specimenLink_location");
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
+        autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
+
 
         addEventSpecimenLinkForm(formData);
     } else if (isSpecimenLinkForm2) {// clinical specimen page 2
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
+        autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
+
 
         addEventClinicalSpecimenLinkForm2(formData);
     } else {//clinical specimen page 1

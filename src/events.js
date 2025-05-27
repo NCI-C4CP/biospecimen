@@ -7,7 +7,7 @@ import {
     checkNonAlphanumericStr, shippingNonAlphaNumericStrMessage, visitType, getParticipantCollections, updateBaselineData,
     siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, convertToOldBox, translateNumToType,
     getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
-    showConfirmationModal, dismissBiospecimenModal, submitSpecimen
+    showConfirmationModal, dismissBiospecimenModal, submitSpecimen, escapeHTML
 } from './shared.js';
 import { searchTemplate, searchBiospecimenTemplate } from './pages/dashboard.js';
 import { showReportsManifest } from './pages/reportsQuery.js';
@@ -225,7 +225,7 @@ const addEventSubmitSpecimenBuildModal = (currBoxId) => {
         e.preventDefault();
         renderShippingModalHeader();
         
-        const masterSpecimenId = document.getElementById('masterSpecimenId').value.toUpperCase().trim();
+        const masterSpecimenId = escapeHTML(document.getElementById('masterSpecimenId').value).toUpperCase().trim();
         const specimenTablesResult = buildSpecimenDataInModal(masterSpecimenId);
         const foundInOrphan = specimenTablesResult.foundInOrphan;
         const biospecimensList = specimenTablesResult.biospecimensList;
@@ -775,11 +775,11 @@ const existingCollectionAlert = async (collections, connectId, formData) => {
 const btnsClicked = async (connectId, formData) => {
     removeAllErrors();
 
-    let scanSpecimenID = document.getElementById('scanSpecimenID')?.value && document.getElementById('scanSpecimenID')?.value.toUpperCase();
+    let scanSpecimenID = document.getElementById('scanSpecimenID') && escapeHTML(document.getElementById('scanSpecimenID')?.value).toUpperCase();
 
     if(scanSpecimenID && scanSpecimenID.length > masterSpecimenIDRequirement.length) scanSpecimenID = scanSpecimenID.substring(0, masterSpecimenIDRequirement.length);
 
-    const scanSpecimenID2 = document.getElementById('scanSpecimenID2')?.value && document.getElementById('scanSpecimenID2')?.value.toUpperCase();
+    const scanSpecimenID2 = document.getElementById('scanSpecimenID2') && escapeHTML(document.getElementById('scanSpecimenID2')?.value).toUpperCase();
     const collectionLocation = document.getElementById('collectionLocation');
 
     let hasError = false;
@@ -1784,7 +1784,7 @@ export const addEventNavBarShippingManifest = (userName) => {
 
             let currCheck = currTable.rows[r].cells[0]
             if (currCheck.childNodes[0].checked) {
-                let currBoxId = currTable.rows[r].cells[3].innerText;
+                let currBoxId = escapeHTML(currTable.rows[r].cells[3].innerText);
                 boxesToShip.push(currBoxId)
             }
 
@@ -2037,7 +2037,7 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
         }
 
         localforage.setItem("shipData", shippingData);
-        const shipmentCourier = document.getElementById('courierSelect').value;
+        const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
         finalShipmentTracking({boxIdAndBagsObj, boxIdAndTrackingObj, userName, boxWithTempMonitor, shipmentCourier});
     })
 
@@ -2916,7 +2916,7 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
         && !urineCollectionSetting 
         && !mouthwashCollectionSetting
     ) { 
-        return null;
+        return new Promise((resolve) => { resolve(true) });
     }
     
     const button = document.createElement('button');

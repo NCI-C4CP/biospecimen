@@ -86,9 +86,9 @@ const saveResponse = (uniqueKitID) => {
   let data = {};
   data[conceptIds.uniqueKitID] = uniqueKitID;
   if (saveResponseBtn) {
-    saveResponseBtn.addEventListener("click", (e) => {
+    saveResponseBtn.addEventListener("click", async () => {
       data[conceptIds.shippedDateTime] = convertDateReceivedinISO(document.getElementById("inputDate").value);
-      setShippedResponse(data);
+      await setShippedResponse(data);
     });
   }
 };
@@ -138,16 +138,8 @@ const setShippedResponse = async (data) => {
         firstName: returnedPtInfo.ptName || "User",
       },
     };
-
-    try {
-      await sendInstantNotification(requestData);
-    } catch (e) {
-      console.error(`Error sending email to user ${returnedPtInfo.prefEmail}`, e);
-      throw new Error(`Error sending email to user ${returnedPtInfo.prefEmail}: ${e.message}`);
-    }
     
-    return true;
-
+    await sendInstantNotification(requestData);
   } else {
     triggerErrorModal('Error in shipping: Please check the tracking number.');
   }
