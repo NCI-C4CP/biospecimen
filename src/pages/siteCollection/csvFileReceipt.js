@@ -530,7 +530,7 @@ const generateFileToDownload = (blob, title, fileType) => {
 /**
  * Returns hemolyzed status based on material type using a predefined map.
  * @param {string} materialType - Material type of the specimen (e.g., "Serum", "Plasma")
- * @returns {string} Correspondiong hemoilyzed status, or an empty string if not found in the map
+ * @returns {string} Corresponding hemolyzed status, or an empty string if not found in the map
 */
 const  getHemolyzedStatus = (materialType) => {
   const statusMap = {
