@@ -532,7 +532,7 @@ const generateFileToDownload = (blob, title, fileType) => {
  * @param {string} materialType - Material type of the specimen (e.g., "Serum", "Plasma")
  * @returns {string} Corresponding hemolyzed status, or an empty string if not found in the map
 */
-const  getHemolyzedStatus = (materialType) => {
+const getHemolyzedStatus = (materialType) => {
   const statusMap = {
     'Serum': 'not hem (1)',
     'Plasma': 'not hem (1)',
