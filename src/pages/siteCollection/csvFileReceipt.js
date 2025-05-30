@@ -135,7 +135,6 @@ const csvFileButtonSubmit = () => {
 
         try {
             const results = await getSpecimensByReceivedDate(dateFilter);
-            console.log("🚀 ~ document.getElementById ~ results:", results)
             const modifiedResults = modifyBSIQueryResults(results.data);
             generateBSIqueryCSVData(modifiedResults);
             hideAnimation();
@@ -402,7 +401,6 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
 
     // Dummy date for clinical files requested in issue 936
     const dateDrawn = (collectionTypeValue === fieldToConceptIdMapping.clinical)
-        console.log("🚀 ~ updateResultMappings ~ collectionTypeValue:", collectionTypeValue)
         ? '01/01/1999 12:00:00 PM'
         : (withdrawalDateTime ? convertISODateTime(withdrawalDateTime) : '');
 
@@ -434,7 +432,6 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
 };
 
 const generateBSIqueryCSVData = (items) => {
-    console.log("items", items);
     const csv = 'Study ID, Sample Collection Center, Sample ID, Sequence, BSI ID, Subject ID, Date Received, Date Drawn, Vial Type, Additive/Preservative, Material Type, Volume, Volume Estimate, Volume Unit, Vial Warnings, Hemolyzed, Label Status, Visit\r\n';
     downloadCSVfile(items, csv, 'BSI-data-export');
 }
@@ -542,4 +539,4 @@ const  getHemolyzedStatus = (materialType) => {
   };
 
   return statusMap[materialType] || '';
-}
+};
