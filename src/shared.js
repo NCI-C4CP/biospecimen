@@ -2778,7 +2778,6 @@ const deprecatedShippingLocations = [
     // HFHS
     'Henry Ford West Bloomfield Hospital',
     'Henry Ford Medical Center- Fairlane',
-    'Henry Ford Main Campus',
     'HFH Livonia Research Clinic',
     // SFH
     'Sioux Falls Imagenetics',
