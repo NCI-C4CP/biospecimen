@@ -1,57 +1,121 @@
-import { getIdToken, findParticipant, showAnimation, hideAnimation} from "../../shared.js";
-import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
+import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
+import { nonUserNavBar } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
+import { conceptIds } from "../../fieldToConceptIdMapping.js";
 
-export const displayKitStatusReportsScreen = async (auth) => {
+
+export const displayKitStatusReportsScreen = async (auth, route) => {
+    console.log("auth", auth, "----","route", route);
     const user = auth.currentUser;
     if (!user) return;
     const username = user.displayName ? user.displayName : user.email;
-    kitStatusReportsTemplate(username);
+    kitStatusShippedTemplate(username, auth, route);
 };
 
-const kitStatusReportsTemplate = async (name) => {
-  let template = `
-    ${displayKitStatusReportsHeader()}
-    <div class="container-fluid">
-        <div id="root root-margin">
-          <div id="alert_placeholder"></div>
-            <div class="table-responsive">
-            <span> <h3 style="text-align: center; margin: 0 0 1rem;">Print Addresses </h3> </span>
-            <div class="sticky-header" style="overflow:auto; width:95.7%; margin:0 auto;">
-                    <table class="table table-bordered" id="participantData" 
-                        style="margin-bottom:0; position: relative;border-collapse:collapse; box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);">
-                        <thead> 
-                            <tr style="top: 0; position: sticky;">
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Select to print address</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">First Name</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Last Name</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Status</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Address 1</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Address 2</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">City</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">State</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Zip Code</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Date Requested</th>
-                            </tr>
-                        </thead>   
-                        <tbody>
+const kitStatusShippedTemplate = async (name) => {
+    showAnimation();
+    const response = await getParticipantsByKitStatus(conceptIds.shipped);
+    const shippedKitStatusParticipantsArray = response.data;
+    hideAnimation();
 
-                        </tbody>
-                      </table>
-                </div>
-        </div> 
-    </div>
-    <br />
-    <button type="button" id='generateCsv' class="btn btn-success btn-lg">Generate Address File</button>
-    </div>`;
+    const template = `
+                    ${displayKitStatusReportsHeader()}
+                    <div class="container-fluid">
+                        <div id="root root-margin">
+                            <div class="table">
+                                <h3 style="text-align: center; margin: 0 0 1rem;">Kits Shipped</h3>
+                                ${displayKitStatusShippedTable(shippedKitStatusParticipantsArray)}
+                            </div>
+                        </div>
+                    </div>`;
+                    
     document.getElementById("contentBody").innerHTML = template;
     document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
-    activeHomeCollectionNavbar();
+    activeHomeCollectionNavbar()
     kitStatusSelectionDropdown();
 };
+
+const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
+    return `
+            <div class="sticky-header" style="overflow:auto;">
+                <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
+                    position:relative; border-collapse:collapse;">
+                    <thead> 
+                        <tr style="top: 0; position: sticky;">
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Study Site </th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Shipped Date</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit ID</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Collection ID</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
+                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/<wbr />2nd/<wbr />3rd Kit</th>
+                        </tr>
+                    </thead>   
+                    <tbody>
+                        ${createShippedRows(shippedKitStatusParticipantsArray)}
+                    </tbody>
+                </table>
+            </div>`;
+};
+
+/**
+ * Returns rows for the shipped kits table
+ * @param {Array} shippedKitStatusParticipantsArray - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
+ * @returns {string} - a string of table rows
+*/
+const createShippedRows = (shippedKitStatusParticipantsArray) => {
+    let template = ``;
+    if (!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
+        return template;
+    }
+    for (const participantObj of shippedKitStatusParticipantsArray) {
+
+    const connectID = participantObj["Connect_ID"];
+    const healthcareProvider = keyToNameObj[participantObj[conceptIds.healthcareProvider]];
+    const mouthwashShippedDate = convertISODateTime(participantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
+    const supplyKitId = participantObj[conceptIds.supplyKitId];
+    const collectionCardId = participantObj[conceptIds.collectionCardId];
+    const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
+    const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
+    const kitIteration = participantObj['kitIteration'];
+    const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
+
+    template += `
+                <tr class="row-color-enrollment-dark participantRow">
+                    <td>${connectID}</td>
+                    <td>${healthcareProvider}</td>
+                    <td>${mouthwashShippedDate}</td>
+                    <td>${supplyKitId}</td>
+                    <td>${collectionCardId}</td>
+                    <td>${supplyKitTrackingNum}</td>
+                    <td>${returnKitTrackingNum}</td>
+                    <td>${mouthwashSurveyStatus}</td>
+                    <td>${kitIteration}</tc>
+                </tr>`;
+    }
+    return template;
+};
+
+/**
+ * Returns the survey completion status (Not Started, In Progress, Completed) based on the status value
+ * @param {number} status - the concept Id status value of the mouthwash survey
+*/
+const convertSurveyCompletionStatus = (status) => {
+    switch (status) {
+        case conceptIds.modules.notStarted:
+            return "Not Started";
+        case conceptIds.modules.started:
+            return "Started";
+        case conceptIds.modules.submitted:
+            return "Submitted";
+        default:
+            return "Unknown Status";
+    }
+}
+
 
 // REFACTOR
 export const kitStatusSelectionDropdown = () => {
@@ -104,116 +168,4 @@ export const kitStatusSelectionDropdown = () => {
             return
         } else return
     });
-};
-
-const createParticipantRows = (participantRows) => {
-    let template = ``;
-    participantRows.forEach((i) => {
-        template += `
-                <tr class="row-color-enrollment-dark participantRow">
-                    <td> <input type="checkbox" class="ptSelection" data-participantHolder = ${storeParticipantInfo(
-                        i
-                    )} name="ptSelection"></td>
-                    <td>${i.first_name && i.first_name}</td>
-                    <td>${i.last_name && i.last_name}</td>
-                    <td>${i.connect_id && i.connect_id}</td>
-                    <td>Pending</td>
-                    <td>${i.address_1 && i.address_1}</td>
-                    <td>${i.address_2 != undefined ? i.address_2 : ``}</td>
-                    <td>${i.city && i.city}</td>
-                    <td>${i.state && i.state}</td>
-                    <td>${i.zip_code && i.zip_code}</td>
-                    <td>${i.date_requested && i.date_requested}</td>
-                </tr>`;
-    });
-    return template;
-};
-
-const storeParticipantInfo = (i) => {
-    let participantHolder = {};
-    participantHolder["first_name"] = i.first_name && i.first_name;
-    participantHolder["last_name"] = i.last_name && i.last_name;
-    participantHolder["connect_id"] = i.connect_id && i.connect_id;
-    participantHolder["kit_status"] = "addressPrinted";
-    participantHolder["address_1"] = String(i.address_1 && i.address_1);
-    participantHolder["address_2"] = i.address_2 != undefined ? i.address_2 : ``;
-    participantHolder["city"] = i.city && i.city;
-    participantHolder["state"] = i.state && i.state;
-    participantHolder["zip_code"] = i.zip_code && i.zip_code;
-    participantHolder["study_site"] = i.study_site && i.study_site;
-    participantHolder["date_requested"] = i.date_requested && i.date_requested;
-    let schemaInfo = escape(JSON.stringify(participantHolder));
-    return schemaInfo;
-};
-
-const generateParticipantCsvGetter = () => {
-    const a = document.getElementById("generateCsv");
-    let holdParticipantResponse = [];
-    if (a) {
-        a.addEventListener("click", () => {
-            const participantRow = Array.from(
-                document.getElementsByClassName("participantRow")
-            );
-            if (participantRow) {
-                participantRow.forEach((element) => {
-                    const checkboxPt = element.getElementsByClassName("ptSelection")[0];
-                    checkboxPt.checked ? holdParticipantResponse.push(JSON.parse(unescape(checkboxPt.dataset.participantholder))) : ``;
-                });
-            }
-            const response = setParticipantResponses(holdParticipantResponse);
-            if (response) {
-                generateParticipantCsv(holdParticipantResponse);
-            }
-        });
-    }
-};
-
-const generateParticipantCsv = (items) => {
-  let csv = ``;
-  csv += `first_name, last_name, address_1, address_2, city, state, zip_code, study_site, \r\n`
-  for (let row = 0; row < (items.length); row++) {
-    let keysAmount = Object.keys(items[row]).length
-    let keysCounter = 0
-    for(let key in items[row]) {
-      if (key !== 'connect_id' && key !== 'kit_status' && key !== 'date_requested') { 
-        csv += items[row][key] + (keysCounter + 1 < keysAmount ? ',' : '\r\n') }
-      keysCounter++
-    }}
-    let link = document.createElement("a");
-    link.id = "download-csv";
-    link.setAttribute("href","data:text/plain;charset=utf-8," + encodeURIComponent(csv));
-    link.setAttribute("download",`${new Date().toLocaleDateString()}-participant-address-export.csv`);
-    document.body.appendChild(link);
-    document.querySelector("#download-csv").click();
-    document.body.removeChild(link);
-    let alertList = document.getElementById("alert_placeholder");
-    let template = ``;
-    template += `
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              Success!
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>`;
-    alertList.innerHTML = template;
-};
-
-const setParticipantResponses = async (holdParticipantResponse) => {
-    const idToken = await getIdToken();
-    const response = await await fetch(
-        `https://us-central1-nih-nci-dceg-connect-dev.cloudfunctions.net/biospecimen?api=printAddresses`,
-        {
-            method: "POST",
-            body: JSON.stringify(holdParticipantResponse),
-            headers: {
-                Authorization: "Bearer " + idToken,
-                "Content-Type": "application/json",
-            },
-        }
-    );
-    if (response.status === 200) {
-        return true;
-    } else {
-        alert("Error");
-    }
 };
