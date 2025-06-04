@@ -130,6 +130,7 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                                     <input 
                                         type="text" 
                                         autocomplete="off" 
+                                        onpaste="return false;"
                                         id="${obj.concept}Id" 
                                         ${biospecimenData[`${obj.concept}`] && biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.scannedId] ? `value='${biospecimenData[`${obj.concept}`][conceptIds.collection.tube.scannedId]}'`: ``}
                                         class="form-control input-barcode-id" 
