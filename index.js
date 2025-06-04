@@ -115,6 +115,7 @@ window.addEventListener('hashchange', function(e) { // prevent default smooth sc
 
 const manageRoutes = async () => {
     const route = window.location.hash || "#";
+    console.log("🚀 ~ manageRoutes ~ route:", route)
     if (await userLoggedIn()) {
         if (route === "#dashboard") userDashboard(auth, route);
         else if (route === "#shipping") shippingDashboard(auth, route);
@@ -125,9 +126,7 @@ const manageRoutes = async () => {
         else if (route === "#assignKits") assignKitsScreen(auth, route);
         else if (route === "#kitsReceipt") kitsReceiptScreen(auth, route);
         else if (route === "#kitsCsv") kitCsvScreen(auth, route);
-        else if (route === "#kitStatusReports") { 
-          displayKitStatusReportsScreen(auth, route);
-        }
+        else if (route.startsWith("#kitStatusReports")) handleKitStatusReportsRoute(auth, route);
         else if (route === "#allParticipants") allParticipantsScreen(auth, route);
         else if (route === "#addressPrinted") addressesPrintedScreen(auth, route);
         else if (route === "#assigned") assignedScreen(auth, route);
@@ -147,6 +146,7 @@ const manageRoutes = async () => {
     } else {
         if (route === "#") signIn();
         else window.location.hash = "#";
+        // else window.location.hash = "#kitStatusReports";
     }
 };
 
@@ -162,3 +162,29 @@ const userLoggedIn = () => {
         });
     });
 };
+
+const handleKitStatusReportsRoute = (auth, route) => {
+  const queryPart = route.split('?')[1];
+    console.log("🚀 ~ manageRoutes ~ queryPart:", queryPart)
+    const queryParams = new URLSearchParams(queryPart);
+    console.log("🚀 ~ manageRoutes ~ queryParams:", queryParams)
+    const requestedStatus = queryParams.get('status');
+    console.log("🚀 ~ manageRoutes ~ requestedStatus:", requestedStatus)
+    const status = requestedStatus?.trim()?.toLowerCase();
+    console.log("🚀 ~ manageRoutes ~ status:", status)
+    const allowedStatuses = ['pending', 'assigned', 'shipped', 'received'];
+
+    if (!queryPart) {
+      console.log("test here!")
+      displayKitStatusReportsScreen(auth);
+    } else if (
+      queryParams.size === 1
+      && queryParams.has("status")
+      && allowedStatuses.includes(status)
+    ) {
+      displayKitStatusReportsScreen(auth, status);
+    }
+    else {
+      window.location.hash = "#welcome";
+    }
+}
