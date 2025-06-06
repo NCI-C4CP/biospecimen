@@ -52,33 +52,7 @@ const kitStatusTemplate= async (name , route, status ) => {
     console.log("Object of kit status", kitStatusSelectionOptions); 
 };
 
-// const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
-//     return `
-//             <div class="sticky-header" style="overflow:auto;">
-//                 <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
-//                     position:relative; border-collapse:collapse;">
-//                     <thead> 
-//                         <tr style="top: 0; position: sticky;">
-//                         <!-- Create function to manipulate the display headers here  -->
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Study Site </th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Shipped Date</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit ID</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Collection ID</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
-//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/<wbr />2nd/<wbr />3rd Kit</th>
-//                         </tr>
-//                     </thead>   
-//                     <tbody>
-//                         ${createShippedRows(shippedKitStatusParticipantsArray)}
-//                     </tbody>
-//                 </table>
-//             </div>`;
-// };
-
-const displayKitStatusTable = () => {
+const displayKitStatusTable = (status) => {
     return `
             <div class="sticky-header" style="overflow:auto;">
                 <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
@@ -86,15 +60,7 @@ const displayKitStatusTable = () => {
                     <thead> 
                         <tr style="top: 0; position: sticky;">
                         <!-- Create function to manipulate the display headers here  -->
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Study Site </th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Shipped Date</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit ID</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Collection ID</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
-                            <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/<wbr />2nd/<wbr />3rd Kit</th>
+                            ${createColumnHeaders(status)}
                         </tr>
                     </thead>   
                     <tbody>
@@ -106,21 +72,29 @@ const displayKitStatusTable = () => {
 };
 
 const displayKitStatusHeader = (status) => { 
-    
-    // const statusHeaders = {
-    //     pending: "Pending Kits",
-    //     assigned: "Assigned Kits",
-    //     shipped: "Shipped Kits",
-    //     received: "Received Kits"
-    // }
-
     // console.log("statusHeaders", statusHeaders, "status", status)
     // console.log("status || !statusHeaders.status", status, statusHeaders[status], )
-    // No status, reuturn empty string
     if (!status || !kitStatusSelectionOptions[status]?.headerName) return '';
     return `<h3 style="text-align: center; margin: 0 0 1rem;">${kitStatusSelectionOptions[status].headerName}</h3>`
 } 
 
+const createColumnHeaders = (status) => {
+    // Using status determine what headers to display
+    let columnHeaders;
+
+    if (!status) return `Please select a kit status report from the dropdown to view the report.`;
+    
+    // console.log(kitStatusSelectionOptions[status]?.columnHeaders)
+    const columnHeadersArray = kitStatusSelectionOptions[status]?.columnHeaders;
+
+    if (columnHeadersArray) { 
+        columnHeaders = columnHeadersArray.map(header => {
+            return `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${header}</th>`;
+        }).join('');
+    }
+
+    return columnHeaders;
+}
 
 /*
     showAnimation();
@@ -233,29 +207,65 @@ export const handleKitStatusSelectionDropdown = () => {
 
 
 // Can be kept here and exported to index.js later
-// Might add the columns here too 
+// column name table headers
 export const kitStatusSelectionOptions = {
     pending: { 
-        conceptId: conceptIds.pending, 
+        conceptId: conceptIds.pending,
+        columnHeaders: [
+            'Date Assembled', 
+            'Return Kit Tracking Number', 
+            'Supply Kit ID', 
+            'Return Kit ID', 
+            'Cup ID', 
+            'Card ID'
+        ],
         headerName: 'Assembled Kits Pending Assignment',
         name: 'pending', 
         queryParam: 'status=pending' 
     },
     assigned: {
         conceptId: conceptIds.assigned, 
+        columnHeaders: [
+            'Connect ID',
+            'Full Name',
+            'Address',
+            'Study Site',
+            'Supply Kit ID',
+            'Collection ID',
+            'Supply Kit Tracking Number',
+            'Return Kit Tracking Number',
+            'Kit Type (Initial, 2nd, 3rd)'
+        ],
         headerName: 'Assigned Kits',
         name: 'assigned', 
         queryParam: 'status=assigned'
     },
     shipped: {
         conceptId: conceptIds.shipped, 
+        columnHeaders: [
+            'Connect ID', 
+            'Study Site', 
+            'Shipped Date', 
+            'Supply Kit ID', 
+            'Collection ID', 
+            'Supply Kit Tracking Number', 
+            'Return Kit Tracking Number', 
+            'Mouthwash Survey Completion Status', 
+            'Kit Type (Initial, 2nd, 3rd)'
+        ],
         headerName: 'Shipped Kits',
         name: 'shipped', 
         queryParam: 'status=shipped'
-
     },
     received: {
-        conceptId: conceptIds.received, 
+        conceptId: conceptIds.received,
+        columnHeaders: [
+            'Connect ID',
+            'Collection ID',
+            'Date Received',
+            'Return Kit Tracking Number',
+            'Kit Type (Initial, 2nd, 3rd)'
+        ],
         headerName: 'Received Kits',
         name: 'received', 
         queryParam: 'status=received'
