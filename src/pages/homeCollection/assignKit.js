@@ -1,6 +1,6 @@
 import { showAnimation, hideAnimation, getIdToken, getParticipantsByKitStatus} from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
-import { kitStatusSelectionDropdown } from "./kitStatusReports.js";
+import { handleKitStatusSelectionDropdown } from "./kitStatusReports.js";
 import { nonUserNavBar, unAuthorizedUser } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 
@@ -48,7 +48,7 @@ const addressesPrintedTemplate = async (name, auth, route) => {
   document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
   activeHomeCollectionNavbar()
   assignKitButton();
-  kitStatusSelectionDropdown();
+  handleKitStatusSelectionDropdown();
   
 };
 

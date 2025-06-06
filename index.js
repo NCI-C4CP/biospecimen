@@ -163,8 +163,10 @@ const userLoggedIn = () => {
     });
 };
 
+// Lock routes to only one query param called status, have query param value be an allowed status, and allow an no query param
 const handleKitStatusReportsRoute = (auth, route) => {
-  const queryPart = route.split('?')[1];
+    const queryPart = route.split('?')[1];
+
     console.log("🚀 ~ manageRoutes ~ queryPart:", queryPart)
     const queryParams = new URLSearchParams(queryPart);
     console.log("🚀 ~ manageRoutes ~ queryParams:", queryParams)
@@ -174,7 +176,7 @@ const handleKitStatusReportsRoute = (auth, route) => {
     console.log("🚀 ~ manageRoutes ~ status:", status)
     const allowedStatuses = ['pending', 'assigned', 'shipped', 'received'];
 
-    if (!queryPart) {
+    if (route === "#kitStatusReports" && !queryPart) {
       console.log("test here!")
       displayKitStatusReportsScreen(auth);
     } else if (
@@ -182,7 +184,9 @@ const handleKitStatusReportsRoute = (auth, route) => {
       && queryParams.has("status")
       && allowedStatuses.includes(status)
     ) {
+      console.log("queryParams", queryParams)
       displayKitStatusReportsScreen(auth, status);
+      console.log("called TEST!!!!!")
     }
     else {
       window.location.hash = "#welcome";

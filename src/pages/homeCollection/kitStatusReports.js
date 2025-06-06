@@ -5,44 +5,87 @@ import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 
 
-export const displayKitStatusReportsScreen = async (auth, route) => {
+export const displayKitStatusReportsScreen = async (auth, route, status) => {
     console.log("auth", auth, "----","route", route);
     const user = auth.currentUser;
     if (!user) return;
     const username = user.displayName ? user.displayName : user.email;
-    kitStatusShippedTemplate(username, auth, route);
+    kitStatusTemplate(username, auth, route, status); // rename to adjust for different kitStatus reports || createKitStatusReportsTemplate
+    // kitStatusReportsTemplate(username, auth, route, status);
 };
 
-const kitStatusShippedTemplate = async (name) => {
-    showAnimation();
-    const response = await getParticipantsByKitStatus(conceptIds.shipped);
-    const shippedKitStatusParticipantsArray = response.data;
-    hideAnimation();
+
+
+// rename 
+const kitStatusTemplate= async (name , route, status ) => {
+    // add logic here to determine the status of kit and what to load
+    console.log("Status On load --->", status);
+
+    /*
+    Kit Status Header 
+
+    Kit Status Single Search 
+
+    
+    
+    */ 
 
     const template = `
                     ${displayKitStatusReportsHeader()}
+
+                    <!-- Kit Status Table Container -->
                     <div class="container-fluid">
                         <div id="root root-margin">
                             <div class="table">
-                                <h3 style="text-align: center; margin: 0 0 1rem;">Kits Shipped</h3>
-                                ${displayKitStatusShippedTable(shippedKitStatusParticipantsArray)}
+                            <!-- Kit Status Table Container -->
+                                ${displayKitStatusHeader(status)}
+                                ${displayKitStatusTable(status)}
                             </div>
                         </div>
-                    </div>`;
+                    </div>
+                    `;
                     
     document.getElementById("contentBody").innerHTML = template;
     document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
-    activeHomeCollectionNavbar()
-    kitStatusSelectionDropdown();
+    activeHomeCollectionNavbar();
+    handleKitStatusSelectionDropdown();
+    console.log("Object of kit status", kitStatusSelectionOptions); 
 };
 
-const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
+// const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
+//     return `
+//             <div class="sticky-header" style="overflow:auto;">
+//                 <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
+//                     position:relative; border-collapse:collapse;">
+//                     <thead> 
+//                         <tr style="top: 0; position: sticky;">
+//                         <!-- Create function to manipulate the display headers here  -->
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Study Site </th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Shipped Date</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit ID</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Collection ID</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Tracking Number</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Return Kit Tracking Number</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Mouthwash Survey Completion Status</th>
+//                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Initial/<wbr />2nd/<wbr />3rd Kit</th>
+//                         </tr>
+//                     </thead>   
+//                     <tbody>
+//                         ${createShippedRows(shippedKitStatusParticipantsArray)}
+//                     </tbody>
+//                 </table>
+//             </div>`;
+// };
+
+const displayKitStatusTable = () => {
     return `
             <div class="sticky-header" style="overflow:auto;">
                 <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
                     position:relative; border-collapse:collapse;">
                     <thead> 
                         <tr style="top: 0; position: sticky;">
+                        <!-- Create function to manipulate the display headers here  -->
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Study Site </th>
                             <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Shipped Date</th>
@@ -55,11 +98,40 @@ const displayKitStatusShippedTable = (shippedKitStatusParticipantsArray) => {
                         </tr>
                     </thead>   
                     <tbody>
-                        ${createShippedRows(shippedKitStatusParticipantsArray)}
+                        ${createShippedRows()}
                     </tbody>
                 </table>
-            </div>`;
+            </div>
+            `;
 };
+
+const displayKitStatusHeader = (status) => { 
+    
+    // const statusHeaders = {
+    //     pending: "Pending Kits",
+    //     assigned: "Assigned Kits",
+    //     shipped: "Shipped Kits",
+    //     received: "Received Kits"
+    // }
+
+    // console.log("statusHeaders", statusHeaders, "status", status)
+    // console.log("status || !statusHeaders.status", status, statusHeaders[status], )
+    // No status, reuturn empty string
+    if (!status || !kitStatusSelectionOptions[status]?.headerName) return '';
+    return `<h3 style="text-align: center; margin: 0 0 1rem;">${kitStatusSelectionOptions[status].headerName}</h3>`
+} 
+
+
+/*
+    showAnimation();
+
+    // different kit status reports logic herere
+
+    const response = await getParticipantsByKitStatus(conceptIds.shipped);
+    const shippedKitStatusParticipantsArray = response.data; // rename to adjust for different kitStatus reports
+    hideAnimation();
+
+*/
 
 /**
  * Returns rows for the shipped kits table
@@ -80,8 +152,8 @@ const createShippedRows = (shippedKitStatusParticipantsArray) => {
     const collectionCardId = participantObj[conceptIds.collectionCardId];
     const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
     const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
-    const kitIteration = participantObj['kitIteration'];
     const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
+    const kitIteration = participantObj['kitIteration'];
 
     template += `
                 <tr class="row-color-enrollment-dark participantRow">
@@ -93,8 +165,9 @@ const createShippedRows = (shippedKitStatusParticipantsArray) => {
                     <td>${supplyKitTrackingNum}</td>
                     <td>${returnKitTrackingNum}</td>
                     <td>${mouthwashSurveyStatus}</td>
-                    <td>${kitIteration}</tc>
-                </tr>`;
+                    <td>${kitIteration}</td>
+                </tr>
+                `;
     }
     return template;
 };
@@ -116,56 +189,75 @@ const convertSurveyCompletionStatus = (status) => {
     }
 }
 
-
-// REFACTOR
-export const kitStatusSelectionDropdown = () => {
+export const handleKitStatusSelectionDropdown = () => {
     const participantDropdown = document.querySelector(".kitStatusSelectionDropdown");
-    // CHECKS THE CURRENT HASH AFTER ON LOAD AND SETS OPTION TO SELECTED
-    if (location.hash === "#kitStatusReports") { // TODO: enable only shipped  option, change this default later
-        document.getElementById("select-shipped").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#allParticipants") {
-        document.getElementById("select-all").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#addressPrinted") {
-        document.getElementById("select-address-printed").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#assigned") {
-        document.getElementById("select-assigned").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#shipped") {
-        document.getElementById("select-shipped").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#received") {
-        document.getElementById("select-received").setAttribute("selected","selected");
+    if (!participantDropdown) { 
+        location.hash = '#welcome';
+        return;
     }
 
+    // this part keeps getting current hash but will append the query param to the end of the hash
+    const baseHash = '#kitStatusReports';
+    let currentHash = window.location.hash;
+    let queryPart = currentHash.split('?')[1];
+    const queryParams = new URLSearchParams(queryPart);
+    const requestedStatus = queryParams.get('status');
+    
+    const validKitStatusOptions = Object.keys(kitStatusSelectionOptions);
+    if (requestedStatus && validKitStatusOptions.includes(requestedStatus.trim().toLowerCase())) { 
+        console.log("🚀 ~ handleKitStatusSelectionDropdown ~ requestedStatus:", requestedStatus);
+        // Set the dropdown to the requested status
+        participantDropdown.value = requestedStatus.trim().toLowerCase();
+    } else {
+        // Set the dropdown to the default value
+        participantDropdown.value = '';
+    }
+
+    console.log("🚀 ~ handleKitStatusSelectionDropdown ~ validKitStatusOptions:", validKitStatusOptions)
     participantDropdown.addEventListener("change", (e) => {
-        // Clear selected attribute from each child node
-        for (let i = 0; i < participantDropdown.children.length; i++) {
-            participantDropdown.children[i].removeAttribute("selected");
-        }
-
-        // TODO: ADD MORE BASED ON UPCOMING DIFFERENT URL ROUTES
+        console.log("🚀 ~ participantDropdown.addEventListener ~ participantDropdown:", participantDropdown)
         let selection = e.target.value;
-        if (selection === "pending") {
-            location.hash = "#participantselection";
-            return;
-        } else if (selection === "addressPrinted") {
-            location.hash = "#addressPrinted";
-            return;
+        if (selection === '') {
+            location.hash = baseHash;
+        } else if (selection === "pending") {
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.pending.queryParam;
         } else if (selection === "assigned") {
-            location.hash = "#assigned";
-            return;
-        } else if (selection === "all") {
-            location.hash = "#allParticipants";
-            return;
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.assigned.queryParam;
         } else if (selection === "shipped") {
-            location.hash = "#kitStatusReports";
-            return
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.shipped.queryParam;
         } else if(selection === "received") {
-            location.hash = "#received"
-            return
-        } else return
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.received.queryParam;
+        }
     });
 };
+
+
+// Can be kept here and exported to index.js later
+// Might add the columns here too 
+export const kitStatusSelectionOptions = {
+    pending: { 
+        conceptId: conceptIds.pending, 
+        headerName: 'Assembled Kits Pending Assignment',
+        name: 'pending', 
+        queryParam: 'status=pending' 
+    },
+    assigned: {
+        conceptId: conceptIds.assigned, 
+        headerName: 'Assigned Kits',
+        name: 'assigned', 
+        queryParam: 'status=assigned'
+    },
+    shipped: {
+        conceptId: conceptIds.shipped, 
+        headerName: 'Shipped Kits',
+        name: 'shipped', 
+        queryParam: 'status=shipped'
+
+    },
+    received: {
+        conceptId: conceptIds.received, 
+        headerName: 'Received Kits',
+        name: 'received', 
+        queryParam: 'status=received'
+    }
+}
