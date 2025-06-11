@@ -28,6 +28,6 @@ export const renderKitStatusList = () => {
                     </select>
                 </div>
                 </br>
-            </div>
+        </div>
     `;
 };

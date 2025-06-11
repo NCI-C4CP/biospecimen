@@ -17,19 +17,26 @@ export const displayKitStatusReportsScreen = async (auth, route, status) => {
 
 
 // rename 
-const kitStatusTemplate= async (name , route, status ) => {
+const kitStatusTemplate = async (name , route, status ) => {
     // add logic here to determine the status of kit and what to load
     console.log("Status On load --->", status);
 
     /*
-    Kit Status Header 
-
     Kit Status Single Search 
-
-    
-    
     */ 
+   let participants;
 
+    console.log("status", status)
+    if (status) {
+        showAnimation();
+        const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+        console.log("🚀 ~ kitStatusTemplate ~ kitStatusConceptId:", kitStatusConceptId)
+        const response = await getParticipantsByKitStatus(kitStatusConceptId);
+        participants = response.data; // rename to adjust for different kitStatus reports
+        console.log("🚀 ~ kitStatusTemplate ~ participants:", participants)
+        hideAnimation();
+    }
+    
     const template = `
                     ${displayKitStatusReportsHeader()}
 
@@ -39,7 +46,7 @@ const kitStatusTemplate= async (name , route, status ) => {
                             <div class="table">
                             <!-- Kit Status Table Container -->
                                 ${displayKitStatusHeader(status)}
-                                ${displayKitStatusTable(status)}
+                                ${displayKitStatusTable(participants, status)}
                             </div>
                         </div>
                     </div>
@@ -52,7 +59,9 @@ const kitStatusTemplate= async (name , route, status ) => {
     console.log("Object of kit status", kitStatusSelectionOptions); 
 };
 
-const displayKitStatusTable = (status) => {
+const displayKitStatusTable =  (participants, status) => { // rename to create
+    
+
     return `
             <div class="sticky-header" style="overflow:auto;">
                 <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
@@ -64,7 +73,7 @@ const displayKitStatusTable = (status) => {
                         </tr>
                     </thead>   
                     <tbody>
-                        ${createShippedRows()}
+                        ${createShippedRows(participants)}
                     </tbody>
                 </table>
             </div>
@@ -75,7 +84,11 @@ const displayKitStatusHeader = (status) => {
     // console.log("statusHeaders", statusHeaders, "status", status)
     // console.log("status || !statusHeaders.status", status, statusHeaders[status], )
     if (!status || !kitStatusSelectionOptions[status]?.headerName) return '';
-    return `<h3 style="text-align: center; margin: 0 0 1rem;">${kitStatusSelectionOptions[status].headerName}</h3>`
+    return `
+        <h3 style="text-align: center; margin: 0 0 1rem;">
+            ${kitStatusSelectionOptions[status].headerName}
+        </h3>
+    `;
 } 
 
 const createColumnHeaders = (status) => {
@@ -94,26 +107,28 @@ const createColumnHeaders = (status) => {
     }
 
     return columnHeaders;
-}
+};
 
 /*
     showAnimation();
 
     // different kit status reports logic herere
 
-    const response = await getParticipantsByKitStatus(conceptIds.shipped);
-    const shippedKitStatusParticipantsArray = response.data; // rename to adjust for different kitStatus reports
-    hideAnimation();
+
 
 */
 
 /**
+ * TODO: Update comments later
+ * 
  * Returns rows for the shipped kits table
  * @param {Array} shippedKitStatusParticipantsArray - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
  * @returns {string} - a string of table rows
 */
-const createShippedRows = (shippedKitStatusParticipantsArray) => {
+const createShippedRows = (participants) => {
+    
     let template = ``;
+    return ``
     if (!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
         return template;
     }
@@ -207,7 +222,6 @@ export const handleKitStatusSelectionDropdown = () => {
 
 
 // Can be kept here and exported to index.js later
-// column name table headers
 export const kitStatusSelectionOptions = {
     pending: { 
         conceptId: conceptIds.pending,
