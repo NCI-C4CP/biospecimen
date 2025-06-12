@@ -24,7 +24,7 @@ const kitStatusTemplate = async (name , route, status ) => {
     /*
     Kit Status Single Search 
     */ 
-   let participants;
+   let reportsData;
 
     console.log("status", status)
     if (status) {
@@ -32,11 +32,12 @@ const kitStatusTemplate = async (name , route, status ) => {
         const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
         console.log("🚀 ~ kitStatusTemplate ~ kitStatusConceptId:", kitStatusConceptId)
         const response = await getParticipantsByKitStatus(kitStatusConceptId);
-        participants = response.data; // rename to adjust for different kitStatus reports
-        console.log("🚀 ~ kitStatusTemplate ~ participants:", participants)
+        reportsData = response.data; // rename to adjust for different kitStatus reports
+        // console.log("🚀 ~ kitStatusTemplate ~ participants:", reportsData)
         hideAnimation();
     }
     
+    console.log("🚀 ~ kitStatusTemplate ~ reportsData:", reportsData);
     const template = `
                     ${displayKitStatusReportsHeader()}
 
@@ -46,7 +47,7 @@ const kitStatusTemplate = async (name , route, status ) => {
                             <div class="table">
                             <!-- Kit Status Table Container -->
                                 ${displayKitStatusHeader(status)}
-                                ${displayKitStatusTable(participants, status)}
+                                ${displayKitStatusTable(reportsData, status)}
                             </div>
                         </div>
                     </div>
@@ -59,7 +60,7 @@ const kitStatusTemplate = async (name , route, status ) => {
     console.log("Object of kit status", kitStatusSelectionOptions); 
 };
 
-const displayKitStatusTable =  (participants, status) => { // rename to create
+const displayKitStatusTable =  (reportsData, status) => { // rename to create
     
 
     return `
@@ -73,7 +74,7 @@ const displayKitStatusTable =  (participants, status) => { // rename to create
                         </tr>
                     </thead>   
                     <tbody>
-                        ${createShippedRows(participants)}
+                        ${createColumnRows(reportsData, status)}
                     </tbody>
                 </table>
             </div>
@@ -98,15 +99,21 @@ const createColumnHeaders = (status) => {
     if (!status) return `Please select a kit status report from the dropdown to view the report.`;
     
     // console.log(kitStatusSelectionOptions[status]?.columnHeaders)
-    const columnHeadersArray = kitStatusSelectionOptions[status]?.columnHeaders;
+    // const columnHeadersArray = kitStatusSelectionOptions[status]?.columnHeaders;
 
-    if (columnHeadersArray) { 
-        columnHeaders = columnHeadersArray.map(header => {
-            return `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${header}</th>`;
-        }).join('');
-    }
+    // if (columnHeadersArray) { 
+    //     columnHeaders = columnHeadersArray.map(header => {
+    //         return `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${header}</th>`;
+    //     }).join('');
+    // }
 
-    return columnHeaders;
+    // return columnHeaders;
+
+    const columns = kitStatusSelectionOptions[status].columns;
+
+    return columns.map(col => 
+        `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${col.header}</th>`
+    ).join('');
 };
 
 /*
@@ -122,43 +129,67 @@ const createColumnHeaders = (status) => {
  * TODO: Update comments later
  * 
  * Returns rows for the shipped kits table
- * @param {Array} shippedKitStatusParticipantsArray - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
+ * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
  * @returns {string} - a string of table rows
 */
-const createShippedRows = (participants) => {
+const createColumnRows = (reportsData, status) => {
     
     let template = ``;
-    return ``
-    if (!shippedKitStatusParticipantsArray || !Array.isArray(shippedKitStatusParticipantsArray)) {
+    if (!reportsData || !Array.isArray(reportsData)) {
         return template;
     }
-    for (const participantObj of shippedKitStatusParticipantsArray) {
 
-    const connectID = participantObj["Connect_ID"];
-    const healthcareProvider = keyToNameObj[participantObj[conceptIds.healthcareProvider]];
-    const mouthwashShippedDate = convertISODateTime(participantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
-    const supplyKitId = participantObj[conceptIds.supplyKitId];
-    const collectionCardId = participantObj[conceptIds.collectionCardId];
-    const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
-    const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
-    const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
-    const kitIteration = participantObj['kitIteration'];
+    const columns = kitStatusSelectionOptions[status].columns;
 
-    template += `
-                <tr class="row-color-enrollment-dark participantRow">
-                    <td>${connectID}</td>
-                    <td>${healthcareProvider}</td>
-                    <td>${mouthwashShippedDate}</td>
-                    <td>${supplyKitId}</td>
-                    <td>${collectionCardId}</td>
-                    <td>${supplyKitTrackingNum}</td>
-                    <td>${returnKitTrackingNum}</td>
-                    <td>${mouthwashSurveyStatus}</td>
-                    <td>${kitIteration}</td>
-                </tr>
-                `;
+    for (const dataRow of reportsData) {
+        template += `<tr class="row-color-enrollment-dark participantRow">`;
+
+        // Loop through the column configuration
+        for (const column of columns) {
+
+            let displayValue;
+
+            if (column.renderer) {
+                displayValue = column.renderer(dataRow);
+            } else {
+                displayValue = dataRow[column.key];
+            }
+            
+            template += `<td>${displayValue ?? ''}</td>`;
+        }
+        template += `</tr>`;
     }
+
     return template;
+
+    // for (const participantObj of shippedKitStatusParticipantsArray) {
+
+    // const connectID = participantObj["Connect_ID"];
+    // const healthcareProvider = keyToNameObj[participantObj[conceptIds.healthcareProvider]];
+    // const mouthwashShippedDate = convertISODateTime(participantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
+    // const supplyKitId = participantObj[conceptIds.supplyKitId];
+    // const collectionCardId = participantObj[conceptIds.collectionCardId];
+    // const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
+    // const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
+    // const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
+    // const kitIteration = participantObj['kitIteration'];
+
+    // template += `
+    //             <tr class="row-color-enrollment-dark participantRow">
+    //                 <td>${connectID}</td>
+    //                 <td>${healthcareProvider}</td>
+    //                 <td>${mouthwashShippedDate}</td>
+    //                 <td>${supplyKitId}</td>
+    //                 <td>${collectionCardId}</td>
+    //                 <td>${supplyKitTrackingNum}</td>
+    //                 <td>${returnKitTrackingNum}</td>
+    //                 <td>${mouthwashSurveyStatus}</td>
+    //                 <td>${kitIteration}</td>
+    //             </tr>
+    //             `;
+    // }
+    // return template;
+    
 };
 
 /**
@@ -185,7 +216,6 @@ export const handleKitStatusSelectionDropdown = () => {
         return;
     }
 
-    // this part keeps getting current hash but will append the query param to the end of the hash
     const baseHash = '#kitStatusReports';
     let currentHash = window.location.hash;
     let queryPart = currentHash.split('?')[1];
@@ -235,14 +265,44 @@ export const kitStatusSelectionOptions = {
         ],
         headerName: 'Assembled Kits Pending Assignment',
         name: 'pending', 
-        queryParam: 'status=pending' 
+        queryParam: 'status=pending',
+        columns: [
+            {
+            header: 'Date Assembled',
+            key: conceptIds.pendingDateTimeStamp,
+
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.pendingDateTimeStamp];
+                return convertISODateTime(isoDate).split(/\s+/)[0];
+                }
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Return Kit ID',
+            key: conceptIds.returnKitId
+            },
+            {
+            header: 'Cup ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Card ID',
+            key: conceptIds.collectionCardId
+            }
+        ]
     },
     assigned: {
         conceptId: conceptIds.assigned, 
         columnHeaders: [
             'Connect ID',
             'Full Name',
-            'Address',
             'Study Site',
             'Supply Kit ID',
             'Collection ID',
@@ -252,7 +312,50 @@ export const kitStatusSelectionOptions = {
         ],
         headerName: 'Assigned Kits',
         name: 'assigned', 
-        queryParam: 'status=assigned'
+        queryParam: 'status=assigned',
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Full Name',
+            key: 'conceptIds.firstName',
+            renderer: (dataRow) => { 
+                const firstName = dataRow[conceptIds.firstName];
+                const lastName = dataRow[conceptIds.lastName];
+                return `${firstName} ${lastName}`;
+                }
+            },
+            {
+            header: 'Study Site',
+            key: conceptIds.healthcareProvider,
+            renderer: (dataRow) => {
+                const studySite = dataRow[conceptIds.healthcareProvider];
+                return keyToNameObj[studySite] || '';
+                }
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Supply Kit Tracking Number',
+            key: conceptIds.supplyKitTrackingNum
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: 'kitIteration'
+            }
+        ]
     },
     shipped: {
         conceptId: conceptIds.shipped, 
@@ -269,7 +372,59 @@ export const kitStatusSelectionOptions = {
         ],
         headerName: 'Shipped Kits',
         name: 'shipped', 
-        queryParam: 'status=shipped'
+        queryParam: 'status=shipped',
+
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Study Site',
+            key: conceptIds.healthcareProvider,
+            renderer: (dataRow) => {
+                const studySite = dataRow[conceptIds.healthcareProvider];
+                return keyToNameObj[studySite] || '';
+                }
+            },
+            {
+            header: 'Shipped Date',
+            key: conceptIds.shippedDateTime,
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.shippedDateTime];
+                return convertISODateTime(isoDate).split(/\s+/)[0];
+                }
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Supply Kit Tracking Number',
+            key: conceptIds.supplyKitTrackingNum
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Mouthwash Survey Completion Status',
+            key: conceptIds.mouthwashSurveyCompletionStatus,
+            renderer: (dataRow) => {
+                const status = dataRow[conceptIds.mouthwashSurveyCompletionStatus];
+                return convertSurveyCompletionStatus(status);
+                }
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: 'kitIteration'
+            }
+        ]
+        
     },
     received: {
         conceptId: conceptIds.received,
@@ -282,6 +437,32 @@ export const kitStatusSelectionOptions = {
         ],
         headerName: 'Received Kits',
         name: 'received', 
-        queryParam: 'status=received'
+        queryParam: 'status=received',
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Date Received',
+            key: conceptIds.receivedDateTime,
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.receivedDateTime];
+                return convertISODateTime(isoDate).split(/\s+/)[0];
+                }
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: 'kitIteration'
+            }
+        ]
     }
 }
