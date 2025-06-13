@@ -115,7 +115,7 @@ window.addEventListener('hashchange', function(e) { // prevent default smooth sc
 
 const manageRoutes = async () => {
     const route = window.location.hash || "#";
-    console.log("🚀 ~ manageRoutes ~ route:", route)
+
     if (await userLoggedIn()) {
         if (route === "#dashboard") userDashboard(auth, route);
         else if (route === "#shipping") shippingDashboard(auth, route);
@@ -146,7 +146,6 @@ const manageRoutes = async () => {
     } else {
         if (route === "#") signIn();
         else window.location.hash = "#";
-        // else window.location.hash = "#kitStatusReports";
     }
 };
 
