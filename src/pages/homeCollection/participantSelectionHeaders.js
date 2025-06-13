@@ -16,10 +16,10 @@ export const displayKitStatusReportsHeader = () => {
 
 export const renderKitStatusList = () => {
     return `
-        <div style="margin-top:10px; padding:15px;">
+        <div style="margin-top:10px; padding:15px 0 ;">
                 <div>
-                    <label for="paticipantSelection" class="col-form-label">Kit Status</label>
-                    <select required class="col form-control kitStatusSelectionDropdown" id="paticipantSelection">
+                    <label for="kitStatusSelection" class="col-form-label">Kit Status</label>
+                    <select required class="col form-control kitStatusSelectionDropdown" id="kitStatusSelection">
                         <option id="select-dashboard" value="" >-- Select dashboard --</option>
                         <option id="select-pending" value="pending" >Pending</option>
                         <option id="select-assigned" value="assigned" >Assigned</option>

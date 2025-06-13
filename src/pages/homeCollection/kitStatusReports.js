@@ -1,9 +1,8 @@
-import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj } from "../../shared.js";
+import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj, getCurrentDate } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
-
 
 export const displayKitStatusReportsScreen = async (auth, route, status) => {
     console.log("auth", auth, "----","route", route);
@@ -15,8 +14,6 @@ export const displayKitStatusReportsScreen = async (auth, route, status) => {
 };
 
 
-
-// rename 
 const kitStatusTemplate = async (name , route, status ) => {
     // add logic here to determine the status of kit and what to load
     console.log("Status On load --->", status);
@@ -25,47 +22,51 @@ const kitStatusTemplate = async (name , route, status ) => {
     Kit Status Single Search 
     */ 
    let reportsData;
+   let template;
 
-    console.log("status", status)
+    console.log("status", kitStatusSelectionOptions[status]?.conceptId, conceptIds.received)
     if (status) {
         showAnimation();
         const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
         console.log("🚀 ~ kitStatusTemplate ~ kitStatusConceptId:", kitStatusConceptId)
         const response = await getParticipantsByKitStatus(kitStatusConceptId);
         reportsData = response.data; // rename to adjust for different kitStatus reports
-        // console.log("🚀 ~ kitStatusTemplate ~ participants:", reportsData)
+        // reportsData = []
         hideAnimation();
     }
-    
-    console.log("🚀 ~ kitStatusTemplate ~ reportsData:", reportsData);
-    const template = `
-                    ${displayKitStatusReportsHeader()}
 
-                    <!-- Kit Status Table Container -->
-                    <div class="container-fluid">
-                        <div id="root root-margin">
-                            <div class="table">
-                            <!-- Kit Status Table Container -->
-                                ${displayKitStatusHeader(status)}
-                                ${displayKitStatusTable(reportsData, status)}
-                            </div>
+    template = `
+        ${displayKitStatusReportsHeader()}
+        ${ status && kitStatusSelectionOptions[status]?.conceptId === conceptIds.received 
+            ? createKitStatusFilterSection(status)
+            : ''
+        }
+
+        ${reportsData && reportsData.length > 0
+            ? `
+                    <div id="root root-margin">
+                        <div class="table">
+                            ${displayKitStatusHeader(status)}
+                            ${displayKitStatusTable(reportsData, status)}
                         </div>
                     </div>
-                    `;
+            `
+            : '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
+        }
+    `;
                     
     document.getElementById("contentBody").innerHTML = template;
     document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
     activeHomeCollectionNavbar();
     handleKitStatusSelectionDropdown();
-    console.log("Object of kit status", kitStatusSelectionOptions); 
+    filterKitsHandler();
+    clearFiltersHandler();
 };
 
 const displayKitStatusTable =  (reportsData, status) => { // rename to create
-    
-
     return `
             <div class="sticky-header" style="overflow:auto;">
-                <table class="table table-bordered" id="participantData" style="margin-bottom:1rem; 
+                <table class="table table-bordered" id="kitStatusReportsTable" style="margin-bottom:1rem; 
                     position:relative; border-collapse:collapse;">
                     <thead> 
                         <tr style="top: 0; position: sticky;">
@@ -78,8 +79,10 @@ const displayKitStatusTable =  (reportsData, status) => { // rename to create
                     </tbody>
                 </table>
             </div>
-            `;
+    `;
 };
+
+// target the table's table body and insert createColumnRows
 
 const displayKitStatusHeader = (status) => { 
     // console.log("statusHeaders", statusHeaders, "status", status)
@@ -116,17 +119,7 @@ const createColumnHeaders = (status) => {
     ).join('');
 };
 
-/*
-    showAnimation();
-
-    // different kit status reports logic herere
-
-
-
-*/
-
 /**
- * TODO: Update comments later
  * 
  * Returns rows for the shipped kits table
  * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
@@ -146,7 +139,6 @@ const createColumnRows = (reportsData, status) => {
 
         // Loop through the column configuration
         for (const column of columns) {
-
             let displayValue;
 
             if (column.renderer) {
@@ -161,35 +153,6 @@ const createColumnRows = (reportsData, status) => {
     }
 
     return template;
-
-    // for (const participantObj of shippedKitStatusParticipantsArray) {
-
-    // const connectID = participantObj["Connect_ID"];
-    // const healthcareProvider = keyToNameObj[participantObj[conceptIds.healthcareProvider]];
-    // const mouthwashShippedDate = convertISODateTime(participantObj[conceptIds.shippedDateTime]).split(/\s+/)[0];
-    // const supplyKitId = participantObj[conceptIds.supplyKitId];
-    // const collectionCardId = participantObj[conceptIds.collectionCardId];
-    // const supplyKitTrackingNum = participantObj[conceptIds.supplyKitTrackingNum];
-    // const returnKitTrackingNum = participantObj[conceptIds.returnKitTrackingNum];
-    // const mouthwashSurveyStatus = convertSurveyCompletionStatus(participantObj[conceptIds.mouthwashSurveyCompletionStatus]);
-    // const kitIteration = participantObj['kitIteration'];
-
-    // template += `
-    //             <tr class="row-color-enrollment-dark participantRow">
-    //                 <td>${connectID}</td>
-    //                 <td>${healthcareProvider}</td>
-    //                 <td>${mouthwashShippedDate}</td>
-    //                 <td>${supplyKitId}</td>
-    //                 <td>${collectionCardId}</td>
-    //                 <td>${supplyKitTrackingNum}</td>
-    //                 <td>${returnKitTrackingNum}</td>
-    //                 <td>${mouthwashSurveyStatus}</td>
-    //                 <td>${kitIteration}</td>
-    //             </tr>
-    //             `;
-    // }
-    // return template;
-    
 };
 
 /**
@@ -232,7 +195,7 @@ export const handleKitStatusSelectionDropdown = () => {
         participantDropdown.value = '';
     }
 
-    console.log("🚀 ~ handleKitStatusSelectionDropdown ~ validKitStatusOptions:", validKitStatusOptions)
+    // console.log("🚀 ~ handleKitStatusSelectionDropdown ~ validKitStatusOptions:", validKitStatusOptions)
     participantDropdown.addEventListener("change", (e) => {
         console.log("🚀 ~ participantDropdown.addEventListener ~ participantDropdown:", participantDropdown)
         let selection = e.target.value;
@@ -250,8 +213,106 @@ export const handleKitStatusSelectionDropdown = () => {
     });
 };
 
+const createKitStatusFilterSection = (status) => {
+    // use bootsrap to create input fields for (Collection ID, Connect ID, Return Kit Tracking Number and Date Received)
+    console.log("🚀 ~ createKitStatusFilterSection ~ status:", status);
 
-// Can be kept here and exported to index.js later
+        return `
+                <div class="kit-status-filter-section" style="margin-bottom: 1rem;">
+
+                    <h5>Filter Kits</h5>
+                    <label for="connectId" class="form-label">Connect ID</label>
+                    <input type="text" class="form-control" id="connectId" placeholder="Enter Connect ID" style="margin-bottom: 1rem;">
+
+                    <label for="collectionId" class="form-label">Collection ID</label>
+                    <input type="text" class="form-control" id="collectionId" placeholder="Enter Collection ID" style="margin-bottom: 1rem;">
+
+                    <label for="returnKitTrackingNum" class="form-label">Return Kit Tracking Number</label>
+                    <input type="text" class="form-control" id="returnKitTrackingNum" placeholder="Enter Return Kit Tracking Number" style="margin-bottom: 1rem;>
+
+                    <label for="dateReceived" class="form-label">Date Received</label>
+                    <input type="date" class="form-control" id="dateReceived" max="${getCurrentDate()}" style="margin-bottom: 1rem;">
+
+                    <button class="btn btn-primary mt-2" id="filterKitsButton">Filter Kits</button>
+                    <button class="btn btn-secondary mt-2" id="clearFiltersButton">Clear Filters</button style="margin-bottom: 1rem;">
+                </div>
+        `;
+};
+
+function filterKitsHandler () { 
+    const filterButton = document.getElementById("filterKitsButton");
+
+    if (filterButton) {
+        filterButton.addEventListener("click", async () => {
+
+            const collectionIdInput = document.getElementById("collectionId");
+            const connectIdInput = document.getElementById("connectId");
+            const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
+            const dateReceivedInput = document.getElementById("dateReceived");
+
+            // const collectedId = collectionIdInput ? collectionIdInput.value.trim() : '';
+            // const connectId = connectIdInput.value.trim() || ''; // .trim() to remove any leading/trailing whitespace
+            // const returnKitTrackingNum = returnKitTrackingNumInput ? returnKitTrackingNumInput.value.trim() : '';
+            // const dateReceived = dateReceivedInput ? dateReceivedInput.value : ''; // .trim() not needed for date inputs
+
+            const queryParams = new URLSearchParams(window.location.hash.split('?')[1]);
+            console.log("🚀 ~ filterButton.addEventListener ~ queryParams:", queryParams)
+            const status = queryParams.get('status');
+            const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+            console.log("🚀 ~ filterButton.addEventListener ~ status:", status)
+
+
+
+            // const filterValues = {
+            //     collectionId: collectedId,
+            //     connectId: connectId,
+            //     returnKitTrackingNum: returnKitTrackingNum,
+            //     dateReceived: dateReceived // validIso8601Format function
+            // };
+            const filters = {
+                collectionId: collectionIdInput.value.trim(),
+                connectId: connectIdInput.value.trim(),
+                returnKitTrackingNum: returnKitTrackingNumInput.value.trim(),
+                dateReceived: dateReceivedInput.value
+            };
+            console.log("🚀 ~ filterButton.addEventListener ~ filters:", filters)
+            
+
+            // console.log("Filter values object:", filterValues);
+
+            showAnimation();
+            const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
+            hideAnimation();
+            
+            // Re-render the table with the new, filtered data
+            const newTableBody = createColumnRows(response.data, status);
+            document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+
+
+        });
+    }
+};
+
+function clearFiltersHandler() { 
+    const clearButton = document.getElementById("clearFiltersButton");
+
+    if (clearButton) {
+        clearButton.addEventListener("click", async () => {
+            // Reset all input fields to empty
+            const collectionIdInput = document.getElementById("collectionId");
+            const connectIdInput = document.getElementById("connectId");
+            const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
+            const dateReceivedInput = document.getElementById("dateReceived");
+
+            if (collectionIdInput) collectionIdInput.value = '';
+            if (connectIdInput) connectIdInput.value = '';
+            if (returnKitTrackingNumInput) returnKitTrackingNumInput.value = '';
+            if (dateReceivedInput) dateReceivedInput.value = '';
+        });
+    }
+}
+
+// Can be kept here and imported to index.js later
 export const kitStatusSelectionOptions = {
     pending: { 
         conceptId: conceptIds.pending,
@@ -415,7 +476,8 @@ export const kitStatusSelectionOptions = {
             key: conceptIds.receivedDateTime,
             renderer: (dataRow) => {
                 const isoDate = dataRow[conceptIds.receivedDateTime];
-                return convertISODateTime(isoDate).split(/\s+/)[0];
+                if (!isoDate) return '';
+                return convertISODateTime(isoDate).split(/\s+/)[0]
                 }
             },
             {
@@ -436,4 +498,4 @@ export const kitStatusSelectionOptions = {
             }
         ]
     }
-}
+};
