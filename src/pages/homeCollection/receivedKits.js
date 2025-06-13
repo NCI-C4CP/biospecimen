@@ -1,6 +1,6 @@
 import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertTime } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
-import { kitStatusSelectionDropdown } from "./kitStatusReports.js";
+import { handleKitStatusSelectionDropdown } from "./kitStatusReports.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 
@@ -47,7 +47,7 @@ const receivedKitsTemplate = async (name,auth,route) => {
   document.getElementById("contentBody").innerHTML = template;
   document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
   activeHomeCollectionNavbar()
-  kitStatusSelectionDropdown();
+  handleKitStatusSelectionDropdown();
 }
 
 const createReceivedRows = (participantRows) => {

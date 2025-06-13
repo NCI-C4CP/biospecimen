@@ -3339,13 +3339,28 @@ export const SSOConfig = (email) => {
 /**
  * fetch request to get an array of participants's data based on the biomouthwash kit's kit status
  * @param {string} type - the kit status type as concept Id
+ * @param {Object} filters - an optional object containing filters to apply to the request
  * @returns {Array} - an array of custom objects based on participant's kit status
 */
 
-export const getParticipantsByKitStatus = async (kitStatus) => {
+export const getParticipantsByKitStatus = async (kitStatus, filters = {}) => {
     try {
         const idToken = await getIdToken();
-        const response = await fetch(`${api}api=getParticipantsByKitStatus&type=${kitStatus}`, {
+
+        const baseUrl = `${api}api=getParticipantsByKitStatus`;
+
+        const allParams = {
+            type: kitStatus,
+            ...filters // optional filters
+        };
+
+        const queryParams = new URLSearchParams(allParams);
+        console.log("queryParams", queryParams.toString());
+        const queryString = queryParams.toString();
+        console.log("🚀 ~ getParticipantsByKitStatus ~ queryString:", queryString)
+
+        console.log("Full URL", `${baseUrl}` + '&' + `${queryString}` )
+        const response = await fetch(`${baseUrl}` + '&' + `${queryString}`, {
             method: "GET",
             headers: {
                 Authorization: "Bearer " + idToken,

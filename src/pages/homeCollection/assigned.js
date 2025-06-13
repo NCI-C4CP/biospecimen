@@ -1,6 +1,6 @@
 import { getIdToken, showAnimation, hideAnimation, getParticipantsByKitStatus, escapeHTML } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
-import { kitStatusSelectionDropdown } from "./kitStatusReports.js";
+import { handleKitStatusSelectionDropdown } from "./kitStatusReports.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 

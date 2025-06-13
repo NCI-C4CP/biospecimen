@@ -64,7 +64,7 @@ export const activeHomeCollectionNavbar = () => {
         kitsCsvNavItem.classList.add("active");
         kitsCsvNavItem.style.backgroundColor = "#bbcffc85";
         kitsCsvNavItem.style.borderRadius = "4px 4px 0 0";
-    } else if (location.hash === "#kitStatusReports" || 
+    } else if (location.hash.startsWith("#kitStatusReports")  || 
         location.hash === "#allParticipants" || 
         location.hash === "#addressPrinted" || 
         location.hash === "#shipped" ||
