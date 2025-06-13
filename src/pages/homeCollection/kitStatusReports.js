@@ -255,14 +255,6 @@ export const handleKitStatusSelectionDropdown = () => {
 export const kitStatusSelectionOptions = {
     pending: { 
         conceptId: conceptIds.pending,
-        columnHeaders: [
-            'Date Assembled', 
-            'Return Kit Tracking Number', 
-            'Supply Kit ID', 
-            'Return Kit ID', 
-            'Cup ID', 
-            'Card ID'
-        ],
         headerName: 'Assembled Kits Pending Assignment',
         name: 'pending', 
         queryParam: 'status=pending',
@@ -300,16 +292,6 @@ export const kitStatusSelectionOptions = {
     },
     assigned: {
         conceptId: conceptIds.assigned, 
-        columnHeaders: [
-            'Connect ID',
-            'Full Name',
-            'Study Site',
-            'Supply Kit ID',
-            'Collection ID',
-            'Supply Kit Tracking Number',
-            'Return Kit Tracking Number',
-            'Kit Type (Initial, 2nd, 3rd)'
-        ],
         headerName: 'Assigned Kits',
         name: 'assigned', 
         queryParam: 'status=assigned',
@@ -359,21 +341,9 @@ export const kitStatusSelectionOptions = {
     },
     shipped: {
         conceptId: conceptIds.shipped, 
-        columnHeaders: [
-            'Connect ID', 
-            'Study Site', 
-            'Shipped Date', 
-            'Supply Kit ID', 
-            'Collection ID', 
-            'Supply Kit Tracking Number', 
-            'Return Kit Tracking Number', 
-            'Mouthwash Survey Completion Status', 
-            'Kit Type (Initial, 2nd, 3rd)'
-        ],
         headerName: 'Shipped Kits',
         name: 'shipped', 
         queryParam: 'status=shipped',
-
         columns: [
             {
             header: 'Connect ID',
@@ -428,13 +398,6 @@ export const kitStatusSelectionOptions = {
     },
     received: {
         conceptId: conceptIds.received,
-        columnHeaders: [
-            'Connect ID',
-            'Collection ID',
-            'Date Received',
-            'Return Kit Tracking Number',
-            'Kit Type (Initial, 2nd, 3rd)'
-        ],
         headerName: 'Received Kits',
         name: 'received', 
         queryParam: 'status=received',
@@ -461,7 +424,15 @@ export const kitStatusSelectionOptions = {
             },
             {
             header: 'Kit Type (Initial, 2nd, 3rd)',
-            key: 'kitIteration'
+            key: conceptIds.kitLevel,
+            renderer: (dataRow) => {
+                    const kitLevelMap = {
+                        [conceptIds.initialKit]: 'Initial',
+                        [conceptIds.replacementKit1]: '2nd',
+                        [conceptIds.replacementKit2]: '3rd'
+                    }
+                    return kitLevelMap[dataRow[conceptIds.kitLevel]] || '';
+                }
             }
         ]
     }
