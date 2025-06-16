@@ -1,8 +1,8 @@
-import { getIdToken, findParticipant, showAnimation, hideAnimation} from "../../shared.js";
-import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
+import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj, getCurrentDate, appState } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
+import { nonUserNavBar } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
+import { conceptIds } from "../../fieldToConceptIdMapping.js";
 
 export const displayKitStatusReportsScreen = async (auth) => {
     const user = auth.currentUser;
@@ -12,208 +12,443 @@ export const displayKitStatusReportsScreen = async (auth) => {
 };
 
 const kitStatusReportsTemplate = async (name) => {
-  let template = `
-    ${displayKitStatusReportsHeader()}
-    <div class="container-fluid">
-        <div id="root root-margin">
-          <div id="alert_placeholder"></div>
-            <div class="table-responsive">
-            <span> <h3 style="text-align: center; margin: 0 0 1rem;">Print Addresses </h3> </span>
-            <div class="sticky-header" style="overflow:auto; width:95.7%; margin:0 auto;">
-                    <table class="table table-bordered" id="participantData" 
-                        style="margin-bottom:0; position: relative;border-collapse:collapse; box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);">
-                        <thead> 
-                            <tr style="top: 0; position: sticky;">
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Select to print address</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">First Name</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Last Name</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Connect ID</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Supply Kit Status</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Address 1</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Address 2</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">City</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">State</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Zip Code</th>
-                                <th class="sticky-row" style="background-color: #f7f7f7;" scope="col">Date Requested</th>
-                            </tr>
-                        </thead>   
-                        <tbody>
+    let reportsData;
+    let template;
+    const status = appState.getState().kitStatus;
+    
+    if (status) { // get the kit status reports based on the selected status text ("pending", "assigned", "shipped", or "received") 
+        showAnimation();
+        const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+        const response = await getParticipantsByKitStatus(kitStatusConceptId);
 
-                        </tbody>
-                      </table>
+        reportsData = response.data;
+        hideAnimation();
+    }
+
+    template = `
+        ${displayKitStatusReportsHeader()}
+        ${ status && kitStatusSelectionOptions[status]?.conceptId === conceptIds.received 
+            ? createKitStatusFilterSection() // Exclusive to the received kits status report
+            : ''
+        }
+
+        ${reportsData && reportsData.length > 0
+            ? `
+                <div id="root root-margin">
+                    <div class="table">
+                        ${createKitStatusHeader()}
+                        ${createKitStatusTable(reportsData)}
+                    </div>
                 </div>
-        </div> 
-    </div>
-    <br />
-    <button type="button" id='generateCsv' class="btn btn-success btn-lg">Generate Address File</button>
-    </div>`;
+            `
+            : '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
+        }
+    `;
+                    
     document.getElementById("contentBody").innerHTML = template;
     document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
     activeHomeCollectionNavbar();
-    kitStatusSelectionDropdown();
+    handleKitStatusSelectionDropdown();
+    filterKitsHandler();
+    clearFiltersHandler();
 };
 
-// REFACTOR
-export const kitStatusSelectionDropdown = () => {
-    const participantDropdown = document.querySelector(".kitStatusSelectionDropdown");
-    // CHECKS THE CURRENT HASH AFTER ON LOAD AND SETS OPTION TO SELECTED
-    if (location.hash === "#kitStatusReports") { // TODO: enable only shipped  option, change this default later
-        document.getElementById("select-shipped").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#allParticipants") {
-        document.getElementById("select-all").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#addressPrinted") {
-        document.getElementById("select-address-printed").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#assigned") {
-        document.getElementById("select-assigned").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#shipped") {
-        document.getElementById("select-shipped").setAttribute("selected", "selected");
-    }
-    if (location.hash === "#received") {
-        document.getElementById("select-received").setAttribute("selected","selected");
+const createKitStatusTable =  (reportsData) => {
+
+    return `
+            <div class="sticky-header" style="overflow:auto;">
+                <table class="table table-bordered" id="kitStatusReportsTable" style="margin-bottom:1rem; 
+                    position:relative; border-collapse:collapse;">
+                    <thead> 
+                        <tr style="top: 0; position: sticky;">
+                        <!-- Create function to manipulate the display headers here  -->
+                            ${createColumnHeaders()}
+                        </tr>
+                    </thead>   
+                    <tbody>
+                        ${createColumnRows(reportsData)}
+                    </tbody>
+                </table>
+            </div>
+    `;
+};
+
+const createKitStatusHeader = () => { 
+    const status = appState.getState().kitStatus;
+    if (!status || !kitStatusSelectionOptions[status]?.headerName) return '';
+
+    return `
+        <h3 style="text-align: center; margin: 0 0 1rem;">
+            ${kitStatusSelectionOptions[status].headerName}
+        </h3>
+    `;
+};
+
+const createColumnHeaders = () => {
+    const status = appState.getState().kitStatus;
+    if (!status) return `Please select a kit status report from the dropdown to view the report.`;
+
+    const columns = kitStatusSelectionOptions?.[status]?.columns ?? [];
+
+    return columns.map(col => 
+        `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${col.header}</th>`
+    ).join('');
+};
+
+/**
+ * 
+ * Returns rows for the shipped kits table
+ * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
+ * @returns {string} - a string of table rows
+*/
+const createColumnRows = (reportsData) => {
+    let template = ``;
+    const status = appState.getState().kitStatus;
+
+    if (!reportsData || !Array.isArray(reportsData)) {
+        return template;
     }
 
-    participantDropdown.addEventListener("change", (e) => {
-        // Clear selected attribute from each child node
-        for (let i = 0; i < participantDropdown.children.length; i++) {
-            participantDropdown.children[i].removeAttribute("selected");
+    const columns = kitStatusSelectionOptions?.[status].columns ?? [];
+    if (columns.length === 0) return template;
+
+    for (const dataRow of reportsData) {
+        template += `<tr class="row-color-enrollment-dark participantRow">`;
+
+        // Loop through the column configuration
+        for (const column of columns) {
+            let displayValue;
+
+            if (column.renderer) {
+                displayValue = column.renderer(dataRow);
+            } else {
+                displayValue = dataRow[column.key];
+            }
+
+            template += `<td>${displayValue ?? ''}</td>`;
         }
 
-        // TODO: ADD MORE BASED ON UPCOMING DIFFERENT URL ROUTES
-        let selection = e.target.value;
-        if (selection === "pending") {
-            location.hash = "#participantselection";
-            return;
-        } else if (selection === "addressPrinted") {
-            location.hash = "#addressPrinted";
-            return;
-        } else if (selection === "assigned") {
-            location.hash = "#assigned";
-            return;
-        } else if (selection === "all") {
-            location.hash = "#allParticipants";
-            return;
-        } else if (selection === "shipped") {
-            location.hash = "#kitStatusReports";
-            return
-        } else if(selection === "received") {
-            location.hash = "#received"
-            return
-        } else return
-    });
-};
+        template += `</tr>`;
+    }
 
-const createParticipantRows = (participantRows) => {
-    let template = ``;
-    participantRows.forEach((i) => {
-        template += `
-                <tr class="row-color-enrollment-dark participantRow">
-                    <td> <input type="checkbox" class="ptSelection" data-participantHolder = ${storeParticipantInfo(
-                        i
-                    )} name="ptSelection"></td>
-                    <td>${i.first_name && i.first_name}</td>
-                    <td>${i.last_name && i.last_name}</td>
-                    <td>${i.connect_id && i.connect_id}</td>
-                    <td>Pending</td>
-                    <td>${i.address_1 && i.address_1}</td>
-                    <td>${i.address_2 != undefined ? i.address_2 : ``}</td>
-                    <td>${i.city && i.city}</td>
-                    <td>${i.state && i.state}</td>
-                    <td>${i.zip_code && i.zip_code}</td>
-                    <td>${i.date_requested && i.date_requested}</td>
-                </tr>`;
-    });
     return template;
 };
 
-const storeParticipantInfo = (i) => {
-    let participantHolder = {};
-    participantHolder["first_name"] = i.first_name && i.first_name;
-    participantHolder["last_name"] = i.last_name && i.last_name;
-    participantHolder["connect_id"] = i.connect_id && i.connect_id;
-    participantHolder["kit_status"] = "addressPrinted";
-    participantHolder["address_1"] = String(i.address_1 && i.address_1);
-    participantHolder["address_2"] = i.address_2 != undefined ? i.address_2 : ``;
-    participantHolder["city"] = i.city && i.city;
-    participantHolder["state"] = i.state && i.state;
-    participantHolder["zip_code"] = i.zip_code && i.zip_code;
-    participantHolder["study_site"] = i.study_site && i.study_site;
-    participantHolder["date_requested"] = i.date_requested && i.date_requested;
-    let schemaInfo = escape(JSON.stringify(participantHolder));
-    return schemaInfo;
+/**
+ * Returns the survey completion status (Not Started, In Progress, Completed) based on the status value
+ * @param {number} completionStatus - the concept Id status value of the mouthwash survey
+*/
+const convertSurveyCompletionStatus = (completionStatus) => {
+    switch (completionStatus) {
+        case conceptIds.modules.notStarted:
+            return "Not Started";
+        case conceptIds.modules.started:
+            return "Started";
+        case conceptIds.modules.submitted:
+            return "Submitted";
+        default:
+            return "Unknown Status";
+    }
+}
+
+export const handleKitStatusSelectionDropdown = () => {
+    const participantDropdown = document.querySelector(".kitStatusSelectionDropdown");
+    if (!participantDropdown) { 
+        location.hash = '#welcome';
+        return;
+    }
+
+    const baseHash = '#kitStatusReports';
+    let currentHash = window.location.hash;
+    let queryPart = currentHash.split('?')[1];
+    const queryParams = new URLSearchParams(queryPart);
+    const requestedStatus = queryParams.get('status');
+    
+    const validKitStatusOptions = Object.keys(kitStatusSelectionOptions);
+    if (requestedStatus && validKitStatusOptions.includes(requestedStatus.trim().toLowerCase())) { 
+        // Set the dropdown to the requested status
+        participantDropdown.value = requestedStatus.trim().toLowerCase();
+    } else {
+        // Set the dropdown to the default value
+        participantDropdown.value = '';
+    }
+
+    participantDropdown.addEventListener("change", (e) => {
+        let selection = e.target.value;
+        if (selection === '') {
+            location.hash = baseHash;
+        } else if (selection === "pending") {
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.pending.queryParam;
+        } else if (selection === "assigned") {
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.assigned.queryParam;
+        } else if (selection === "shipped") {
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.shipped.queryParam;
+        } else if(selection === "received") {
+            location.hash = baseHash + '?' + kitStatusSelectionOptions.received.queryParam;
+        }
+    });
 };
 
-const generateParticipantCsvGetter = () => {
-    const a = document.getElementById("generateCsv");
-    let holdParticipantResponse = [];
-    if (a) {
-        a.addEventListener("click", () => {
-            const participantRow = Array.from(
-                document.getElementsByClassName("participantRow")
-            );
-            if (participantRow) {
-                participantRow.forEach((element) => {
-                    const checkboxPt = element.getElementsByClassName("ptSelection")[0];
-                    checkboxPt.checked ? holdParticipantResponse.push(JSON.parse(unescape(checkboxPt.dataset.participantholder))) : ``;
-                });
+const createKitStatusFilterSection = () => {
+        return `
+                <div class="kit-status-filter-section" style="margin-bottom: 1rem;">
+                    <h5>Filter Kits</h5>
+                    <label for="connectId" class="form-label">Connect ID</label>
+                    <input type="text" class="form-control" id="connectId" placeholder="Enter Connect ID" style="margin-bottom: 1rem;">
+
+                    <label for="collectionId" class="form-label">Collection ID</label>
+                    <input type="text" class="form-control" id="collectionId" placeholder="Enter Collection ID" style="margin-bottom: 1rem;">
+
+                    <label for="returnKitTrackingNum" class="form-label">Return Kit Tracking Number</label>
+                    <input type="text" class="form-control" id="returnKitTrackingNum" placeholder="Enter Return Kit Tracking Number" style="margin-bottom: 1rem;>
+
+                    <label for="dateReceived" class="form-label">Date Received</label>
+                    <input type="date" class="form-control" id="dateReceived" max="${getCurrentDate()}" style="margin-bottom: 1rem;">
+
+                    <button class="btn btn-primary mt-2" id="filterKitsButton">Filter Kits</button>
+                    <button class="btn btn-secondary mt-2" id="clearFiltersButton">Clear Filters</button style="margin-bottom: 1rem;">
+                </div>
+        `;
+};
+
+function filterKitsHandler () { 
+    const filterButton = document.getElementById("filterKitsButton");
+
+    if (filterButton) {
+        filterButton.addEventListener("click", async () => {
+            try {
+                const getVal = id => document.getElementById(id)?.value.trim() || '';
+
+                const queryParams = new URLSearchParams(window.location.hash.split('?')[1]);
+                const status = queryParams.get('status');
+                const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+
+                const filters = {
+                    collectionId: getVal("collectionId"),
+                    connectId: getVal("connectId"),
+                    returnKitTrackingNum: getVal("returnKitTrackingNum"),
+                    dateReceived: document.getElementById("dateReceived")?.value || '',
+                };
+
+                showAnimation();
+                const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
+                
+                // Re-render the table with the new, filtered data
+                const newTableBody = createColumnRows(response.data, status);
+                document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+            } catch (error) {
+                console.error("Error filtering kits:", error);
+            } finally { 
+                hideAnimation();
             }
-            const response = setParticipantResponses(holdParticipantResponse);
-            if (response) {
-                generateParticipantCsv(holdParticipantResponse);
-            }
+            
         });
     }
 };
 
-const generateParticipantCsv = (items) => {
-  let csv = ``;
-  csv += `first_name, last_name, address_1, address_2, city, state, zip_code, study_site, \r\n`
-  for (let row = 0; row < (items.length); row++) {
-    let keysAmount = Object.keys(items[row]).length
-    let keysCounter = 0
-    for(let key in items[row]) {
-      if (key !== 'connect_id' && key !== 'kit_status' && key !== 'date_requested') { 
-        csv += items[row][key] + (keysCounter + 1 < keysAmount ? ',' : '\r\n') }
-      keysCounter++
-    }}
-    let link = document.createElement("a");
-    link.id = "download-csv";
-    link.setAttribute("href","data:text/plain;charset=utf-8," + encodeURIComponent(csv));
-    link.setAttribute("download",`${new Date().toLocaleDateString()}-participant-address-export.csv`);
-    document.body.appendChild(link);
-    document.querySelector("#download-csv").click();
-    document.body.removeChild(link);
-    let alertList = document.getElementById("alert_placeholder");
-    let template = ``;
-    template += `
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-              Success!
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-            </div>`;
-    alertList.innerHTML = template;
-};
+function clearFiltersHandler() { 
+    const clearButton = document.getElementById("clearFiltersButton");
 
-const setParticipantResponses = async (holdParticipantResponse) => {
-    const idToken = await getIdToken();
-    const response = await await fetch(
-        `https://us-central1-nih-nci-dceg-connect-dev.cloudfunctions.net/biospecimen?api=printAddresses`,
-        {
-            method: "POST",
-            body: JSON.stringify(holdParticipantResponse),
-            headers: {
-                Authorization: "Bearer " + idToken,
-                "Content-Type": "application/json",
+    if (clearButton) {
+        clearButton.addEventListener("click", () => {
+            // Reset all input fields to empty
+            const collectionIdInput = document.getElementById("collectionId");
+            const connectIdInput = document.getElementById("connectId");
+            const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
+            const dateReceivedInput = document.getElementById("dateReceived");
+
+            if (collectionIdInput) collectionIdInput.value = '';
+            if (connectIdInput) connectIdInput.value = '';
+            if (returnKitTrackingNumInput) returnKitTrackingNumInput.value = '';
+            if (dateReceivedInput) dateReceivedInput.value = '';
+        });
+    }
+}
+
+export const kitStatusSelectionOptions = {
+    pending: { 
+        conceptId: conceptIds.pending,
+        headerName: 'Assembled Kits Pending Assignment',
+        name: 'pending', 
+        queryParam: 'status=pending',
+        columns: [
+            {
+            header: 'Date Assembled',
+            key: conceptIds.pendingDateTimeStamp,
+
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.pendingDateTimeStamp];
+                return convertISODateTime(isoDate).split(/\s+/)[0];
+                }
             },
-        }
-    );
-    if (response.status === 200) {
-        return true;
-    } else {
-        alert("Error");
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Return Kit ID',
+            key: conceptIds.returnKitId
+            },
+            {
+            header: 'Cup ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Card ID',
+            key: conceptIds.collectionCardId
+            }
+        ]
+    },
+    assigned: {
+        conceptId: conceptIds.assigned, 
+        headerName: 'Assigned Kits',
+        name: 'assigned', 
+        queryParam: 'status=assigned',
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Full Name',
+            key: 'conceptIds.firstName',
+            renderer: (dataRow) => { 
+                const firstName = dataRow[conceptIds.firstName];
+                const lastName = dataRow[conceptIds.lastName];
+                return `${firstName} ${lastName}`;
+                }
+            },
+            {
+            header: 'Study Site',
+            key: conceptIds.healthcareProvider,
+            renderer: (dataRow) => {
+                const studySite = dataRow[conceptIds.healthcareProvider];
+                return keyToNameObj[studySite] || '';
+                }
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Supply Kit Tracking Number',
+            key: conceptIds.supplyKitTrackingNum
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: 'kitIteration'
+            }
+        ]
+    },
+    shipped: {
+        conceptId: conceptIds.shipped, 
+        headerName: 'Shipped Kits',
+        name: 'shipped', 
+        queryParam: 'status=shipped',
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Study Site',
+            key: conceptIds.healthcareProvider,
+            renderer: (dataRow) => {
+                const studySite = dataRow[conceptIds.healthcareProvider];
+                return keyToNameObj[studySite] || '';
+                }
+            },
+            {
+            header: 'Shipped Date',
+            key: conceptIds.shippedDateTime,
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.shippedDateTime];
+                if (!isoDate) return '';
+                return convertISODateTime(isoDate).split(/\s+/)[0];
+                }
+            },
+            {
+            header: 'Supply Kit ID',
+            key: conceptIds.supplyKitId
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Supply Kit Tracking Number',
+            key: conceptIds.supplyKitTrackingNum
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Mouthwash Survey Completion Status',
+            key: conceptIds.mouthwashSurveyCompletionStatus,
+            renderer: (dataRow) => {
+                const completionStatus = dataRow[conceptIds.mouthwashSurveyCompletionStatus];
+                return convertSurveyCompletionStatus(completionStatus);
+                }
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: 'kitIteration'
+            }
+        ]
+        
+    },
+    received: {
+        conceptId: conceptIds.received,
+        headerName: 'Received Kits',
+        name: 'received', 
+        queryParam: 'status=received',
+        columns: [
+            {
+            header: 'Connect ID',
+            key: 'Connect_ID'
+            },
+            {
+            header: 'Collection ID',
+            key: conceptIds.collectionCardId
+            },
+            {
+            header: 'Date Received',
+            key: conceptIds.receivedDateTime,
+            renderer: (dataRow) => {
+                const isoDate = dataRow[conceptIds.receivedDateTime];
+                if (!isoDate) return '';
+                return convertISODateTime(isoDate).split(/\s+/)[0]
+                }
+            },
+            {
+            header: 'Return Kit Tracking Number',
+            key: conceptIds.returnKitTrackingNum
+            },
+            {
+            header: 'Kit Type (Initial, 2nd, 3rd)',
+            key: conceptIds.kitLevel,
+            renderer: (dataRow) => {
+                    const kitLevelMap = {
+                        [conceptIds.initialKit]: 'Initial',
+                        [conceptIds.replacementKit1]: '2nd',
+                        [conceptIds.replacementKit2]: '3rd'
+                    }
+                    return kitLevelMap[dataRow[conceptIds.kitLevel]] || '';
+                }
+            }
+        ]
     }
 };
