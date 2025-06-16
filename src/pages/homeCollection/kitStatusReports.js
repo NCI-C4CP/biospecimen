@@ -1,20 +1,21 @@
-import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj, getCurrentDate } from "../../shared.js";
+import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODateTime, keyToNameObj, getCurrentDate, appState } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 
-export const displayKitStatusReportsScreen = async (auth, status) => {
+export const displayKitStatusReportsScreen = async (auth) => {
     const user = auth.currentUser;
     if (!user) return;
     const username = user.displayName ? user.displayName : user.email;
-    kitStatusReportsTemplate(username, status);
+    kitStatusReportsTemplate(username);
 };
 
-const kitStatusReportsTemplate = async (name, status) => {
+const kitStatusReportsTemplate = async (name) => {
     let reportsData;
     let template;
-
+    const status = appState.getState().kitStatus;
+    
     if (status) { // get the kit status reports based on the selected status text ("pending", "assigned", "shipped", or "received") 
         showAnimation();
         const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
@@ -27,18 +28,18 @@ const kitStatusReportsTemplate = async (name, status) => {
     template = `
         ${displayKitStatusReportsHeader()}
         ${ status && kitStatusSelectionOptions[status]?.conceptId === conceptIds.received 
-            ? createKitStatusFilterSection(status)
+            ? createKitStatusFilterSection() // Exclusive to the received kits status report
             : ''
         }
 
         ${reportsData && reportsData.length > 0
             ? `
-                    <div id="root root-margin">
-                        <div class="table">
-                            ${createKitStatusHeader(status)}
-                            ${createKitStatusTable(reportsData, status)}
-                        </div>
+                <div id="root root-margin">
+                    <div class="table">
+                        ${createKitStatusHeader()}
+                        ${createKitStatusTable(reportsData)}
                     </div>
+                </div>
             `
             : '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
         }
@@ -52,7 +53,8 @@ const kitStatusReportsTemplate = async (name, status) => {
     clearFiltersHandler();
 };
 
-const createKitStatusTable =  (reportsData, status) => {
+const createKitStatusTable =  (reportsData) => {
+
     return `
             <div class="sticky-header" style="overflow:auto;">
                 <table class="table table-bordered" id="kitStatusReportsTable" style="margin-bottom:1rem; 
@@ -60,18 +62,19 @@ const createKitStatusTable =  (reportsData, status) => {
                     <thead> 
                         <tr style="top: 0; position: sticky;">
                         <!-- Create function to manipulate the display headers here  -->
-                            ${createColumnHeaders(status)}
+                            ${createColumnHeaders()}
                         </tr>
                     </thead>   
                     <tbody>
-                        ${createColumnRows(reportsData, status)}
+                        ${createColumnRows(reportsData)}
                     </tbody>
                 </table>
             </div>
     `;
 };
 
-const createKitStatusHeader = (status) => { 
+const createKitStatusHeader = () => { 
+    const status = appState.getState().kitStatus;
     if (!status || !kitStatusSelectionOptions[status]?.headerName) return '';
 
     return `
@@ -81,7 +84,8 @@ const createKitStatusHeader = (status) => {
     `;
 };
 
-const createColumnHeaders = (status) => {
+const createColumnHeaders = () => {
+    const status = appState.getState().kitStatus;
     if (!status) return `Please select a kit status report from the dropdown to view the report.`;
 
     const columns = kitStatusSelectionOptions?.[status]?.columns ?? [];
@@ -97,8 +101,10 @@ const createColumnHeaders = (status) => {
  * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
  * @returns {string} - a string of table rows
 */
-const createColumnRows = (reportsData, status) => {
+const createColumnRows = (reportsData) => {
     let template = ``;
+    const status = appState.getState().kitStatus;
+
     if (!reportsData || !Array.isArray(reportsData)) {
         return template;
     }
@@ -130,10 +136,10 @@ const createColumnRows = (reportsData, status) => {
 
 /**
  * Returns the survey completion status (Not Started, In Progress, Completed) based on the status value
- * @param {number} status - the concept Id status value of the mouthwash survey
+ * @param {number} completionStatus - the concept Id status value of the mouthwash survey
 */
-const convertSurveyCompletionStatus = (status) => {
-    switch (status) {
+const convertSurveyCompletionStatus = (completionStatus) => {
+    switch (completionStatus) {
         case conceptIds.modules.notStarted:
             return "Not Started";
         case conceptIds.modules.started:
@@ -223,7 +229,6 @@ function filterKitsHandler () {
                     returnKitTrackingNum: getVal("returnKitTrackingNum"),
                     dateReceived: document.getElementById("dateReceived")?.value || '',
                 };
-                console.log("Filters applied:", filters);
 
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
@@ -370,6 +375,7 @@ export const kitStatusSelectionOptions = {
             key: conceptIds.shippedDateTime,
             renderer: (dataRow) => {
                 const isoDate = dataRow[conceptIds.shippedDateTime];
+                if (!isoDate) return '';
                 return convertISODateTime(isoDate).split(/\s+/)[0];
                 }
             },
@@ -393,8 +399,8 @@ export const kitStatusSelectionOptions = {
             header: 'Mouthwash Survey Completion Status',
             key: conceptIds.mouthwashSurveyCompletionStatus,
             renderer: (dataRow) => {
-                const status = dataRow[conceptIds.mouthwashSurveyCompletionStatus];
-                return convertSurveyCompletionStatus(status);
+                const completionStatus = dataRow[conceptIds.mouthwashSurveyCompletionStatus];
+                return convertSurveyCompletionStatus(completionStatus);
                 }
             },
             {
