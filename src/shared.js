@@ -3355,11 +3355,8 @@ export const getParticipantsByKitStatus = async (kitStatus, filters = {}) => {
         };
 
         const queryParams = new URLSearchParams(allParams);
-        console.log("queryParams", queryParams.toString());
         const queryString = queryParams.toString();
-        console.log("🚀 ~ getParticipantsByKitStatus ~ queryString:", queryString)
 
-        console.log("Full URL", `${baseUrl}` + '&' + `${queryString}` )
         const response = await fetch(`${baseUrl}` + '&' + `${queryString}`, {
             method: "GET",
             headers: {
