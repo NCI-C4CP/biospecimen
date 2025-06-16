@@ -1,4 +1,4 @@
-import { inactivityTime, urls } from "./src/shared.js";
+import { inactivityTime, urls, appState } from "./src/shared.js";
 import { firebaseConfig as devFirebaseConfig } from "./src/dev/config.js";
 import { firebaseConfig as stageFirebaseConfig } from "./src/stage/config.js";
 import { firebaseConfig as prodFirebaseConfig } from "./src/prod/config.js";
@@ -166,9 +166,11 @@ const userLoggedIn = () => {
 const handleKitStatusReportsRoute = (auth, route) => {
     const queryPart = route.split('?')[1];
     const queryParams = new URLSearchParams(queryPart);
-
     const requestedStatus = queryParams.get('status');
-    const status = requestedStatus?.trim()?.toLowerCase();
+
+    appState.setState({ "kitStatus": requestedStatus?.trim()?.toLowerCase() || '' });
+
+    const status = appState.getState().kitStatus;
     const allowedStatuses = ['pending', 'assigned', 'shipped', 'received'];
 
     if (route === "#kitStatusReports" && !queryPart) {
@@ -178,7 +180,7 @@ const handleKitStatusReportsRoute = (auth, route) => {
         && queryParams.has("status")
         && allowedStatuses.includes(status)
     ) {
-      displayKitStatusReportsScreen(auth, status);
+      displayKitStatusReportsScreen(auth);
     }
     else {
       window.location.hash = "#welcome";
