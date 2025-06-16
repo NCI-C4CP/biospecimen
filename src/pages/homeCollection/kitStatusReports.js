@@ -11,8 +11,7 @@ export const displayKitStatusReportsScreen = async (auth, status) => {
     kitStatusReportsTemplate(username, status);
 };
 
-
-const kitStatusReportsTemplate = async (name, status ) => {
+const kitStatusReportsTemplate = async (name, status) => {
     let reportsData;
     let template;
 
@@ -85,7 +84,7 @@ const createKitStatusHeader = (status) => {
 const createColumnHeaders = (status) => {
     if (!status) return `Please select a kit status report from the dropdown to view the report.`;
 
-    const columns = kitStatusSelectionOptions[status].columns;
+    const columns = kitStatusSelectionOptions?.[status]?.columns ?? [];
 
     return columns.map(col => 
         `<th class="sticky-row" style="background-color: #f7f7f7;" scope="col">${col.header}</th>`
@@ -99,13 +98,13 @@ const createColumnHeaders = (status) => {
  * @returns {string} - a string of table rows
 */
 const createColumnRows = (reportsData, status) => {
-    
     let template = ``;
     if (!reportsData || !Array.isArray(reportsData)) {
         return template;
     }
 
-    const columns = kitStatusSelectionOptions[status].columns;
+    const columns = kitStatusSelectionOptions?.[status].columns ?? [];
+    if (columns.length === 0) return template;
 
     for (const dataRow of reportsData) {
         template += `<tr class="row-color-enrollment-dark participantRow">`;
@@ -119,9 +118,10 @@ const createColumnRows = (reportsData, status) => {
             } else {
                 displayValue = dataRow[column.key];
             }
-            
+
             template += `<td>${displayValue ?? ''}</td>`;
         }
+
         template += `</tr>`;
     }
 
@@ -210,29 +210,33 @@ function filterKitsHandler () {
 
     if (filterButton) {
         filterButton.addEventListener("click", async () => {
-            const collectionIdInput = document.getElementById("collectionId");
-            const connectIdInput = document.getElementById("connectId");
-            const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
-            const dateReceivedInput = document.getElementById("dateReceived");
+            try {
+                const getVal = id => document.getElementById(id)?.value.trim() || '';
 
-            const queryParams = new URLSearchParams(window.location.hash.split('?')[1]);
-            const status = queryParams.get('status');
-            const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+                const queryParams = new URLSearchParams(window.location.hash.split('?')[1]);
+                const status = queryParams.get('status');
+                const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
 
-            const filters = {
-                collectionId: collectionIdInput.value.trim(),
-                connectId: connectIdInput.value.trim(),
-                returnKitTrackingNum: returnKitTrackingNumInput.value.trim(),
-                dateReceived: dateReceivedInput.value
-            };
+                const filters = {
+                    collectionId: getVal("collectionId"),
+                    connectId: getVal("connectId"),
+                    returnKitTrackingNum: getVal("returnKitTrackingNum"),
+                    dateReceived: document.getElementById("dateReceived")?.value || '',
+                };
+                console.log("Filters applied:", filters);
 
-            showAnimation();
-            const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
-            hideAnimation();
+                showAnimation();
+                const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
+                
+                // Re-render the table with the new, filtered data
+                const newTableBody = createColumnRows(response.data, status);
+                document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+            } catch (error) {
+                console.error("Error filtering kits:", error);
+            } finally { 
+                hideAnimation();
+            }
             
-            // Re-render the table with the new, filtered data
-            const newTableBody = createColumnRows(response.data, status);
-            document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
         });
     }
 };
