@@ -13,6 +13,7 @@ export const addressesPrintedScreen = async (auth, route) => {
 
 let kitAssignmentInfoText = "";
 
+// TODO : DELETE THIS FILE kitStatusReports.js has assigned status, this is deprecated file along with addressPrinted route
 const addressesPrintedTemplate = async (name, auth, route) => {
   showAnimation();
   const response = await getParticipantsByKitStatus("addressPrinted");

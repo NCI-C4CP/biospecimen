@@ -18,6 +18,7 @@ export const renderKitStatusList = () => {
     return `
         <div style="margin-top:10px; padding:15px 0 ;">
                 <div>
+                    <h5>Select a Kit Status</h5>
                     <label for="kitStatusSelection" class="col-form-label">Kit Status</label>
                     <select required class="col form-control kitStatusSelectionDropdown" id="kitStatusSelection">
                         <option id="select-dashboard" value="" >-- Select dashboard --</option>

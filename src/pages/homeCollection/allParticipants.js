@@ -12,6 +12,7 @@ export const allParticipantsScreen = async (auth, route) => {
     allParticipantsTemplate(username, auth, route);
 };
 
+// TODO : DELETE THIS FILE allParticipants NOT NEEDED ANYMORE
 const allParticipantsTemplate = async (name) => {
     showAnimation();
     const response = await getParticipantsByKitStatus("all");
