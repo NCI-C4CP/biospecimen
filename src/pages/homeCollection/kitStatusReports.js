@@ -97,7 +97,7 @@ const createColumnHeaders = () => {
 
 /**
  * 
- * Returns rows for the shipped kits table
+ * Returns rows for the Kit Status table
  * @param {Array} reportsData - an array of custom objects with values based on the participant's kit status or only based on unassigned kits (pending assignment kits)
  * @returns {string} - a string of table rows
 */
@@ -276,7 +276,7 @@ function clearFiltersHandler() {
                 
                 const status = appState.getState().kitStatus;
                 const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
-                
+
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 
