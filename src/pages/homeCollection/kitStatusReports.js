@@ -274,9 +274,10 @@ function clearFiltersHandler() {
                 if (returnKitTrackingNumInput) returnKitTrackingNumInput.value = '';
                 if (dateReceivedInput) dateReceivedInput.value = '';
                 
-                showAnimation();
                 const status = appState.getState().kitStatus;
                 const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+                
+                showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 
                 // Replace table body with no filters applied
