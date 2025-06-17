@@ -276,9 +276,7 @@ function clearFiltersHandler() {
                 
                 showAnimation();
                 const status = appState.getState().kitStatus;
-                console.log("status", status);
                 const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
-                console.log("🚀 ~ clearButton.addEventListener ~ kitStatusConceptId:", kitStatusConceptId)
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 
                 // Replace table body with no filters applied
