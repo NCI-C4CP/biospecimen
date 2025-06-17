@@ -97,8 +97,8 @@ const createColumnHeaders = () => {
 
 /**
  * 
- * Returns rows for the shipped kits table
- * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
+ * Returns rows for the Kit Status table
+ * @param {Array} reportsData - an array of custom objects with values based on the participant's kit status or only based on unassigned kits (pending assignment kits)
  * @returns {string} - a string of table rows
 */
 const createColumnRows = (reportsData) => {
@@ -205,7 +205,7 @@ const createKitStatusFilterSection = () => {
                     <label for="dateReceived" class="form-label">Date Received</label>
                     <input type="date" class="form-control" id="dateReceived" max="${getCurrentDate()}" style="margin-bottom: 1rem;">
 
-                    <button class="btn btn-primary mt-2" id="filterKitsButton">Filter Kits</button>
+                    <button class="btn btn-primary mt-2" id="filterKitsButton">Apply Filters</button>
                     <button class="btn btn-secondary mt-2" id="clearFiltersButton">Clear Filters</button style="margin-bottom: 1rem;">
                 </div>
         `;
@@ -234,7 +234,7 @@ function filterKitsHandler () {
                 const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
                 
                 // Re-render the table with the new, filtered data
-                const newTableBody = createColumnRows(response.data, status);
+                const newTableBody = createColumnRows(response.data);
                 document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
             } catch (error) {
                 console.error("Error filtering kits:", error);
@@ -246,21 +246,48 @@ function filterKitsHandler () {
     }
 };
 
+/**
+ * Clears the input fields, re-fetches the received kit status reports data, and updates the table
+*/
 function clearFiltersHandler() { 
     const clearButton = document.getElementById("clearFiltersButton");
 
     if (clearButton) {
-        clearButton.addEventListener("click", () => {
-            // Reset all input fields to empty
-            const collectionIdInput = document.getElementById("collectionId");
-            const connectIdInput = document.getElementById("connectId");
-            const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
-            const dateReceivedInput = document.getElementById("dateReceived");
+        clearButton.addEventListener("click", async () => {
+            try {
+                const collectionIdInput = document.getElementById("collectionId");
+                const connectIdInput = document.getElementById("connectId");
+                const returnKitTrackingNumInput = document.getElementById("returnKitTrackingNum");
+                const dateReceivedInput = document.getElementById("dateReceived");
 
-            if (collectionIdInput) collectionIdInput.value = '';
-            if (connectIdInput) connectIdInput.value = '';
-            if (returnKitTrackingNumInput) returnKitTrackingNumInput.value = '';
-            if (dateReceivedInput) dateReceivedInput.value = '';
+                const areAllInputsEmpty = 
+                    collectionIdInput.value.trim() === '' && 
+                    connectIdInput.value.trim() === '' && 
+                    returnKitTrackingNumInput.value.trim() === '' && 
+                    dateReceivedInput.value === '';
+
+                if (areAllInputsEmpty) return; // Prevent an API call if all inputs are already empty.
+
+                // clear inputs
+                if (collectionIdInput) collectionIdInput.value = '';
+                if (connectIdInput) connectIdInput.value = '';
+                if (returnKitTrackingNumInput) returnKitTrackingNumInput.value = '';
+                if (dateReceivedInput) dateReceivedInput.value = '';
+                
+                const status = appState.getState().kitStatus;
+                const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
+
+                showAnimation();
+                const response = await getParticipantsByKitStatus(kitStatusConceptId);
+                
+                // Replace table body with no filters applied
+                const newTableBody = createColumnRows(response.data);
+                document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+            } catch (error) {
+                console.error("Error clearing filters:", error);
+            } finally {
+                hideAnimation();
+            }
         });
     }
 }
