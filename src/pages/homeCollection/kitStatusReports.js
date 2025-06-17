@@ -98,7 +98,7 @@ const createColumnHeaders = () => {
 /**
  * 
  * Returns rows for the shipped kits table
- * @param {Array} reportsData - an array of custom objects with values from participants and kitAssembly collection that have a shipped kit status
+ * @param {Array} reportsData - an array of custom objects with values based on the participant's kit status or only based on unassigned kits (pending assignment kits)
  * @returns {string} - a string of table rows
 */
 const createColumnRows = (reportsData) => {
