@@ -261,9 +261,9 @@ function clearFiltersHandler() {
                 const dateReceivedInput = document.getElementById("dateReceived");
 
                 const areAllInputsEmpty = 
-                    collectionIdInput.value === '' && 
-                    connectIdInput.value === '' && 
-                    returnKitTrackingNumInput.value === '' && 
+                    collectionIdInput.value.trim() === '' && 
+                    connectIdInput.value.trim() === '' && 
+                    returnKitTrackingNumInput.value.trim() === '' && 
                     dateReceivedInput.value === '';
 
                 if (areAllInputsEmpty) return; // Prevent an API call if all inputs are already empty.
