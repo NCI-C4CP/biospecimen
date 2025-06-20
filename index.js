@@ -1,4 +1,4 @@
-import { inactivityTime, urls } from "./src/shared.js";
+import { inactivityTime, urls, appState } from "./src/shared.js";
 import { firebaseConfig as devFirebaseConfig } from "./src/dev/config.js";
 import { firebaseConfig as stageFirebaseConfig } from "./src/stage/config.js";
 import { firebaseConfig as prodFirebaseConfig } from "./src/prod/config.js";
@@ -13,11 +13,10 @@ import { kitAssemblyScreen } from "./src/pages/homeCollection/kitAssembly.js";
 import { printLabelsScreen } from "./src/pages/homeCollection/printLabels.js";
 import { assignKitsScreen } from "./src/pages/homeCollection/assignKits.js";
 import { kitsReceiptScreen } from "./src/pages/homeCollection/kitsReceipt.js";
-// import { displayKitStatusReportsScreen } from "./src/pages/homeCollection/kitStatusReports.js"; // TODO: This will be added back in once the new kitStatusReports page is created
+import { displayKitStatusReportsScreen } from "./src/pages/homeCollection/kitStatusReports.js";
 import { allParticipantsScreen } from "./src/pages/homeCollection/allParticipants.js";
 import { addressesPrintedScreen } from "./src/pages/homeCollection/assignKit.js";
 import { assignedScreen } from "./src/pages/homeCollection/assigned.js";
-import { displayKitStatusReportsShippedScreen } from "./src/pages/homeCollection/kitStatusReportsShipped.js";
 import { receivedKitsScreen } from "./src/pages/homeCollection/receivedKits.js";
 import { kitCsvScreen } from "./src/pages/homeCollection/kitCSV.js";
 import { kitShipmentScreen } from "./src/pages/homeCollection/kitShipment.js";
@@ -116,6 +115,7 @@ window.addEventListener('hashchange', function(e) { // prevent default smooth sc
 
 const manageRoutes = async () => {
     const route = window.location.hash || "#";
+
     if (await userLoggedIn()) {
         if (route === "#dashboard") userDashboard(auth, route);
         else if (route === "#shipping") shippingDashboard(auth, route);
@@ -126,7 +126,7 @@ const manageRoutes = async () => {
         else if (route === "#assignKits") assignKitsScreen(auth, route);
         else if (route === "#kitsReceipt") kitsReceiptScreen(auth, route);
         else if (route === "#kitsCsv") kitCsvScreen(auth, route);
-        else if (route === "#kitStatusReports") displayKitStatusReportsShippedScreen(auth, route); // Temporarily make kitStatusReports route call displayKitStatusReportsShippedScreen
+        else if (route.startsWith("#kitStatusReports")) handleKitStatusReportsRoute(auth, route);
         else if (route === "#allParticipants") allParticipantsScreen(auth, route);
         else if (route === "#addressPrinted") addressesPrintedScreen(auth, route);
         else if (route === "#assigned") assignedScreen(auth, route);
@@ -160,4 +160,29 @@ const userLoggedIn = () => {
             }
         });
     });
+};
+
+// Lock routes to only one query param called status, have query param value be an allowed status, and allow an no query param
+const handleKitStatusReportsRoute = (auth, route) => {
+    const queryPart = route.split('?')[1];
+    const queryParams = new URLSearchParams(queryPart);
+    const requestedStatus = queryParams.get('status');
+
+    appState.setState({ "kitStatus": requestedStatus?.trim()?.toLowerCase() || '' });
+
+    const status = appState.getState().kitStatus;
+    const allowedStatuses = ['pending', 'assigned', 'shipped', 'received'];
+
+    if (route === "#kitStatusReports" && !queryPart) {
+      displayKitStatusReportsScreen(auth);
+    } else if (
+        queryParams.size === 1
+        && queryParams.has("status")
+        && allowedStatuses.includes(status)
+    ) {
+      displayKitStatusReportsScreen(auth);
+    }
+    else {
+      window.location.hash = "#welcome";
+    }
 };

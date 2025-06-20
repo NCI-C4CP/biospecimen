@@ -425,7 +425,7 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
         'Volume Estimate': 'Assumed',
         'Volume Unit': 'ml (cc)',
         'Vial Warnings': '',
-        'Hemolyzed': '',
+        'Hemolyzed': getHemolyzedStatus(materialType),
         'Label Status': 'Barcoded',
         'Visit': 'BL'
     };
@@ -526,3 +526,17 @@ const generateFileToDownload = (blob, title, fileType) => {
   // Display success message
   triggerSuccessModal(`${title} file downloaded successfully!`);
 }
+
+/**
+ * Returns hemolyzed status based on material type using a predefined map.
+ * @param {string} materialType - Material type of the specimen (e.g., "Serum", "Plasma")
+ * @returns {string} Corresponding hemolyzed status, or an empty string if not found in the map
+*/
+const getHemolyzedStatus = (materialType) => {
+  const statusMap = {
+    'Serum': 'not hem (1)',
+    'Plasma': 'not hem (1)',
+  };
+
+  return statusMap[materialType] || '';
+};
