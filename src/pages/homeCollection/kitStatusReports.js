@@ -285,7 +285,7 @@ function clearFiltersHandler() {
                 
                 const status = appState.getState().kitStatus;
                 const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
-                
+
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 const responseData = response.data;
