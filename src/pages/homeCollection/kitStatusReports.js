@@ -21,10 +21,8 @@ const kitStatusReportsTemplate = async (name) => {
         showAnimation();
         const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
         const response = await getParticipantsByKitStatus(kitStatusConceptId);
-        console.log("🚀 ~ kitStatusReportsTemplate ~ response:", response)
 
         reportsData = response.data;
-        console.log("🚀 ~ kitStatusReportsTemplate ~ reportsData:", reportsData)
         }
     } catch (error) { 
         console.error("Error in kitStatusReportsTemplate, failed to fetch kit status data", error);
@@ -57,16 +55,15 @@ const kitStatusReportsTemplate = async (name) => {
 };
 
 const createTableContent = (reportsData) => {
-    // reportsData array is empty or undefined
     if (!reportsData || reportsData.length === 0) {
-        return '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>';
+        return `<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>`;
     }
 
     return `
         ${createKitStatusHeader()}
         ${createKitStatusTable(reportsData)}
     `;
-}
+};
 
 const createKitStatusTable = (reportsData) => {
     return `
@@ -242,24 +239,11 @@ function filterKitsHandler () {
                     returnKitTrackingNum: getVal("returnKitTrackingNum"),
                     dateReceived: document.getElementById("dateReceived")?.value || '',
                 };
-                // let tableContent = '';
 
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
                 const responseData = response.data;
 
-                // if (responseData.length > 0) {
-                //     tableContent = ` 
-                //         ${createKitStatusHeader()}
-                //         ${createKitStatusTable(responseData)}
-                //     `;
-                // } else {
-                //     tableContent = '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
-                // }
-                // Re-render the table with the new, filtered data
-                // const newTableBody = createColumnRows(response.data);
-                const element = document.querySelector('#root .table');
-                console.log("element", element)
                 document.querySelector("#root .table").innerHTML = createTableContent(responseData);
             } catch (error) {
                 console.error("Error filtering kits:", error);
@@ -301,25 +285,10 @@ function clearFiltersHandler() {
                 
                 const status = appState.getState().kitStatus;
                 const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
-                let tableContent = '';
                 
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 const responseData = response.data;
-
-                // if (responseData.length > 0) {
-                //     tableContent = ` 
-                //         ${createKitStatusHeader()}
-                //         ${createKitStatusTable(responseData)}
-                //     `;
-                // } else {
-                //     tableContent = '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
-                // }
-                
-                // Replace table body with no filters applied
-                const newTableBody = createColumnRows(responseData);
-                const element = document.querySelector('#root .table');
-                console.log("element filter process", element)
 
                 document.querySelector("#root .table").innerHTML = createTableContent(responseData);
             } catch (error) {
