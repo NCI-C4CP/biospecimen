@@ -38,7 +38,7 @@ const kitStatusReportsTemplate = async (name) => {
             : ''
         }
 
-        <div id="root root-margin">
+        <div id="tableContainer">
             <div class="table">
                 ${createTableContent(reportsData)}
             </div>
@@ -256,7 +256,7 @@ function filterKitsHandler () {
                 const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
                 const responseData = response.data;
 
-                document.querySelector("#root .table").innerHTML = createTableContent(responseData);
+                document.querySelector("#tableContainer > .table").innerHTML = createTableContent(responseData);
             } catch (error) {
                 console.error("Error filtering kits:", error);
             } finally { 
@@ -302,7 +302,7 @@ function clearFiltersHandler() {
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
                 const responseData = response.data;
 
-                document.querySelector("#root .table").innerHTML = createTableContent(responseData);
+                document.querySelector("#tableContainer > .table").innerHTML = createTableContent(responseData);
             } catch (error) {
                 console.error("Error clearing filters:", error);
             } finally {
