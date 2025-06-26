@@ -26,7 +26,6 @@ const kitStatusReportsTemplate = async (name) => {
         }
     } catch (error) { 
         console.error("Error in kitStatusReportsTemplate, failed to fetch kit status data", error);
-        reportsData = [];
     }
     finally {
         hideAnimation();
@@ -54,15 +53,28 @@ const kitStatusReportsTemplate = async (name) => {
     clearFiltersHandler();
 };
 
+/**
+ * Generates the HTML string for the kit status report table section.
+  * Depending on the input, it returns:
+ * - an error message paragraph if data fetching failed,
+ * - a no-data message paragraph if the data array is empty,
+ * - or a fully structured table block if data is available.
+ * 
+ * @param {Array<Object>|undefined|null} reportsData - An array of kit report objects,
+ * or undefined/null if data fetching failed.
+ * @returns {string} HTML string representing either a message paragraph or a full table section.
+ */
 const createTableContent = (reportsData) => {
-    if (!reportsData || reportsData.length === 0) {
+    if (reportsData === undefined || reportsData === null) {
+        return `<p>There was an error fetching the kit status reports data. Please try again later.</p>`;
+    } else if (reportsData.length === 0) {
         return `<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>`;
+    } else {
+        return `
+            ${createKitStatusHeader()}
+            ${createKitStatusTable(reportsData)}
+        `;
     }
-
-    return `
-        ${createKitStatusHeader()}
-        ${createKitStatusTable(reportsData)}
-    `;
 };
 
 const createKitStatusTable = (reportsData) => {
