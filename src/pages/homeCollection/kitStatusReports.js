@@ -15,36 +15,36 @@ const kitStatusReportsTemplate = async (name) => {
     let reportsData;
     let template;
     const status = appState.getState().kitStatus;
-    
-    if (status) { // get the kit status reports based on the selected status text ("pending", "assigned", "shipped", or "received") 
+
+    try {
+        if (status) { // get the kit status reports based on the selected status text ("pending", "assigned", "shipped", or "received") 
         showAnimation();
         const kitStatusConceptId = kitStatusSelectionOptions[status]?.conceptId;
         const response = await getParticipantsByKitStatus(kitStatusConceptId);
 
         reportsData = response.data;
+        }
+    } catch (error) { 
+        console.error("Error in kitStatusReportsTemplate, failed to fetch kit status data", error);
+    }
+    finally {
         hideAnimation();
     }
 
     template = `
         ${displayKitStatusReportsHeader()}
-        ${ status && kitStatusSelectionOptions[status]?.conceptId === conceptIds.received 
+        ${status && kitStatusSelectionOptions[status]?.conceptId === conceptIds.received 
             ? createKitStatusFilterSection() // Exclusive to the received kits status report
             : ''
         }
 
-        ${reportsData && reportsData.length > 0
-            ? `
-                <div id="root root-margin">
-                    <div class="table">
-                        ${createKitStatusHeader()}
-                        ${createKitStatusTable(reportsData)}
-                    </div>
-                </div>
-            `
-            : '<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>'
-        }
+        <div id="tableContainer">
+            <div class="table">
+                ${createTableContent(reportsData)}
+            </div>
+        </div>
     `;
-                    
+
     document.getElementById("contentBody").innerHTML = template;
     document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(name);
     activeHomeCollectionNavbar();
@@ -53,15 +53,37 @@ const kitStatusReportsTemplate = async (name) => {
     clearFiltersHandler();
 };
 
-const createKitStatusTable =  (reportsData) => {
+/**
+ * Generates the HTML string for the kit status report table section.
+  * Depending on the input, it returns:
+ * - an error message paragraph if data fetching failed,
+ * - a no-data message paragraph if the data array is empty,
+ * - or a fully structured table block if data is available.
+ * 
+ * @param {Array<Object>|undefined|null} reportsData - An array of kit report objects,
+ * or undefined/null if data fetching failed.
+ * @returns {string} HTML string representing either a message paragraph or a full table section.
+ */
+const createTableContent = (reportsData) => {
+    if (reportsData === undefined || reportsData === null) {
+        return `<p>There was an error fetching the kit status reports data. Please try again later.</p>`;
+    } else if (reportsData.length === 0) {
+        return `<p>The selected kit status report has no data to display. Please select a different kit status report from the dropdown.</p>`;
+    } else {
+        return `
+            ${createKitStatusHeader()}
+            ${createKitStatusTable(reportsData)}
+        `;
+    }
+};
 
+const createKitStatusTable = (reportsData) => {
     return `
             <div class="sticky-header" style="overflow:auto;">
                 <table class="table table-bordered" id="kitStatusReportsTable" style="margin-bottom:1rem; 
                     position:relative; border-collapse:collapse;">
                     <thead> 
                         <tr style="top: 0; position: sticky;">
-                        <!-- Create function to manipulate the display headers here  -->
                             ${createColumnHeaders()}
                         </tr>
                     </thead>   
@@ -232,10 +254,9 @@ function filterKitsHandler () {
 
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId, filters);
-                
-                // Re-render the table with the new, filtered data
-                const newTableBody = createColumnRows(response.data);
-                document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+                const responseData = response.data;
+
+                document.querySelector("#tableContainer > .table").innerHTML = createTableContent(responseData);
             } catch (error) {
                 console.error("Error filtering kits:", error);
             } finally { 
@@ -279,10 +300,9 @@ function clearFiltersHandler() {
 
                 showAnimation();
                 const response = await getParticipantsByKitStatus(kitStatusConceptId);
-                
-                // Replace table body with no filters applied
-                const newTableBody = createColumnRows(response.data);
-                document.querySelector("#kitStatusReportsTable tbody").innerHTML = newTableBody;
+                const responseData = response.data;
+
+                document.querySelector("#tableContainer > .table").innerHTML = createTableContent(responseData);
             } catch (error) {
                 console.error("Error clearing filters:", error);
             } finally {
