@@ -2797,7 +2797,8 @@ export const deprecatedResearchCollectionLocations = [
     // SFH
     'Sioux Falls Imagenetics', 
     'Bismarck Medical Center', 
-    'Fargo South University'
+    'Fargo South University',
+    'Sioux Falls Sanford Center'
 ]
 
 export const verificationConversion = {
