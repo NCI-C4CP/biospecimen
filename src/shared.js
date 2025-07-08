@@ -40,6 +40,8 @@ let api = '';
 
 if(location.host === urls.prod) api = 'https://api-myconnect.cancer.gov/biospecimen?';
 else if(location.host === urls.stage) api = 'https://api-myconnect-stage.cancer.gov/biospecimen?';
+//TODO: remove this!! This is for local dev only.
+else if(location.host.startsWith('localhost')) api = 'http://localhost:5001/nih-nci-dceg-connect-dev/us-central1/biospecimen?';
 else api = 'https://us-central1-nih-nci-dceg-connect-dev.cloudfunctions.net/biospecimen?';
 export const baseAPI = api;
 
@@ -312,6 +314,7 @@ export const toggleNavbarMobileView = () => {
 export const performSearch = async (query) => {
     showAnimation();
     const response = await findParticipant(query);
+    console.log("🚀 ~ performSearch ~ response:", response)
     hideAnimation();
     const verifiedParticipants = response.data.filter(dt => dt['821247024'] === 197316935);
 
@@ -507,9 +510,10 @@ export const showNotificationsSelectableList = (message, items, onCancel, onCont
  *  
  * @param {string} collectionID - the collection ID to display in the modal.
  * @param {string} firstName - the participant's first name to display in the modal.
+ * @param {string} lastName - the participant's last name to display in the modal.
  * @returns {Promise<string>} - the user's choice on button click: 'cancel', 'back', or 'confirmed'.
 */
-export const showConfirmationModal =  (collectionID, firstName) => {
+export const showConfirmationModal =  (collectionID, firstName, lastName) => {
     return new Promise((resolve) => {
         const modalContainer = document.createElement('div');
         modalContainer.classList.add('modal', 'fade');
@@ -522,20 +526,20 @@ export const showConfirmationModal =  (collectionID, firstName) => {
         modalContent.classList.add('modal-dialog', 'modal-dialog-centered');
         modalContent.setAttribute('role', 'document');
 
+        // Ask if there should be bolding on full name or collection ID
         const modalBody = `
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Confirm Collection ID</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-result="cancel">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Collection ID: ${collectionID}</p>
-                    <p>Confirm ID is correct for participant: ${firstName}</p>
+                    <p>Collection ID ${collectionID} is linked to ${firstName} ${lastName}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" data-result="cancel">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" data-result="cancel">Cancel</button>
                     <button type="button" class="btn btn-info" data-result="back" data-dismiss="modal">Confirm and Exit</button>
                     <button type="button" class="btn btn-success" data-result="confirmed" data-dismiss="modal">Confirm and Continue</button>
                 </div>
@@ -549,9 +553,11 @@ export const showConfirmationModal =  (collectionID, firstName) => {
         modalContainer.classList.add('show');
         modalContainer.style.display = 'block';
         modalContainer.addEventListener('click', (event) => {
-            const result = event.target.getAttribute('data-result');
-            if (result) 
-            {
+            console.log("click event", event);
+            const button = event.target.closest('[data-result]')
+            
+            if (button) {
+                const result = button.getAttribute('data-result');
                 document.body.removeChild(modalContainer);
                 resolve(result);
             }

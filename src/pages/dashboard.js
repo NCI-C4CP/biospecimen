@@ -22,11 +22,21 @@ export const userDashboard = (auth, route, goToSpecimenSearch) => {
 
 export const searchTemplate = (goToSpecimenSearch) => {
     if(document.getElementById('navBarParticipantCheckIn')) document.getElementById('navBarParticipantCheckIn').classList.add('disabled');
+    console.log("dashboard state",getWorkflow());
     const contentBody = document.getElementById('contentBody');
+    const inputNote = getWorkflow() === 'research' 
+        ? `<p class="input-note">Ask the participant for their name and date of birth and enter below:</p>` 
+        : `<p class="input-note">Enter the participant's name and date of birth from the clinical label:</p>`;
+
     let template = `
         <div class="row">
             <div class="col-lg">
                 <h5>Participant Lookup</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg">
+                ${inputNote}
             </div>
         </div>
         <div class="row">
@@ -46,13 +56,13 @@ export const searchTemplate = (goToSpecimenSearch) => {
                             <input class="form-control" type="date" id="dob" required/>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-outline-primary">Search</button>
+                            <button type="submit" class="btn btn-outline-primary button-fixed-width">Search</button>
                         </div>
                         <div class="form-group">
                             <br/>
                         </div>
                         <div class="form-group">
-                            <button type="button" id="btnClearAll" class="btn btn-outline-danger">Clear All</button>
+                            <button type="button" id="btnClearAll" class="btn btn-outline-danger button-fixed-width">Clear All</button>
                         </div>
                     </form>
                 </div>

@@ -814,9 +814,10 @@ const btnsClicked = async (connectId, formData) => {
     const collectionID = formData?.collectionId || scanSpecimenID;
     const firstNameCidString = conceptIds.firstName.toString();
     const firstName = document.getElementById(firstNameCidString).innerText || ""
+    const lastNameCidString = conceptIds.lastName.toString();
+    const lastName = document.getElementById(lastNameCidString).innerText || ""
 
-
-    const confirmVal = await showConfirmationModal(collectionID, firstName);
+    const confirmVal = await showConfirmationModal(collectionID, firstName, lastName);
 
     if (confirmVal === "cancel") return;
 

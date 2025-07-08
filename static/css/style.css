@@ -483,3 +483,13 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 .specimenLinkParticipantInfo {
     font-size: 1.15rem;
 }
+
+.input-note {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 1.3rem;
+}
+
+.button-fixed-width {
+    width: 86.125px;
+}

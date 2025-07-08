@@ -24,10 +24,21 @@ export const specimenTemplate = async (data, formData) => {
         <div class="row">
             <h5>Specimen Link</h5>
         </div>
+        <div class="row"> 
+            <p class="input-note">
+                Double check participant name and DOB before completing Specimen Link
+            </p>  
+        </div>
         </br>
         <div class="row">
             <div class="col">
-                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span></p></div>
+                <div class="row specimenLinkParticipantInfo">
+                    <p>
+                        <strong>Participant Name: </strong> 
+                        <span id="${conceptIds.lastName}">${data[conceptIds.lastName]}</span>, 
+                        <span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span>
+                    </p>
+                </div>
                 <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
                 <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
             </div>
