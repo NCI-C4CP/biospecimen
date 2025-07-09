@@ -881,7 +881,10 @@ const btnsClicked = async (connectId, formData) => {
 const clinicalBtnsClicked = async (participantData, formData) => { 
     removeAllErrors();
     const connectId = document.getElementById('clinicalSpecimenContinue').dataset.connectId;
-    const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
+    const participantFirstName = document.getElementById(conceptIds.firstName.toString()).innerText.trim() || "";
+    const participantLastName = document.getElementById(conceptIds.lastName.toString()).innerText.trim() || "";
+    const participantFullName = `${participantFirstName} ${participantLastName}`;
+    // const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
 
     const accessionID1 = document.getElementById('accessionID1');
     const accessionID2 = document.getElementById('accessionID2');
@@ -899,7 +902,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     const modalContext = {
         accessionID2,
         accessionID4,
-        participantName,
+        participantFullName,
         selectedVisit,
         formData,
         connectId,
@@ -1020,7 +1023,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 };
 
 const triggerConfirmationModal = (modalData) => {
-    const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
+    const { accessionID2, accessionID4, participantFullName, selectedVisit, formData, connectId } = modalData.modalContext;
 
     const button = document.createElement('button');
     button.dataset.target = '#modalShowMoreData';
@@ -1033,11 +1036,13 @@ const triggerConfirmationModal = (modalData) => {
     const body = document.getElementById('modalBody');
     header.innerHTML = `Confirm Accession ID`
 
-    let template =  `Blood Accession ID: ${accessionID2.value ? accessionID2.value : 'N/A' } <br />
-    Urine Accession ID: ${accessionID4.value ? accessionID4.value : 'N/A' } <br />
-    Confirm ID is correct for participant: ${participantName}`
+    let template = `
+        <p>Blood Accession ID: ${accessionID2.value || 'N/A' }</p>
+        <p>Urine Accession ID: ${accessionID4.value || 'N/A' }</p>
+        <p>Accession IDs are linked to ${participantFullName}</p>
+    `;
+
     template += `
-    <br />
     <div style="display:inline-block; margin-top:20px;">
         <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancel">Cancel</button>
@@ -1052,9 +1057,13 @@ const triggerConfirmationModal = (modalData) => {
 
     const yesBtn = document.getElementById('proceedNextPage');
     yesBtn.addEventListener("click", async e => {
+        const inputNote = document.querySelector('.input-note');
+        console.log("🚀 ~ triggerConfirmationModal ~ inputNote:", inputNote)
         if (accessionID2.value) {
             showAnimation();
             await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
+            inputNote && (inputNote.textContent = "");
+            console.log("🚀 ~ triggerConfirmationModal ~ inputNote: Inside", inputNote)
             hideAnimation();
         } else {
             showAnimation();
@@ -2818,7 +2827,7 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
  * @param {object} modalContext - Modal data including specimen collection info
  * @param {HTMLElement} modalContext.accessionID2 - The blood accession ID confirm input
  * @param {HTMLElement} modalContext.accessionID4 - The urine accession ID confirm input
- * @param {string} modalContext.participantName - The participant's first name
+ * @param {string} modalContext.participantFullName - The participant's first name and last name, , e.g. "Bob Ross"
  * @param {string} modalContext.selectedVisit - The selected visit concept ID [Ex. 266600170 - baseline visit]
  * @param {object} modalContext.formData - An object from the participant's data [ Ex. { conceptIds.healthcareProvider: 13, siteAcronym: "NIH" } ]
  * @param {string} modalContext.connectID - The participant's Connect ID

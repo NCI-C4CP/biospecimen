@@ -110,6 +110,8 @@ export const specimenTemplate = async (data, formData) => {
             </div>`;
 
     } else if(isSpecimenLinkForm2) {// clinical specimen page 2
+        console.log("input note", document.querySelector('.input-note'));
+        document.querySelector('.input-note').style.display = 'none';
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
                             <div class="column">
@@ -181,7 +183,8 @@ export const specimenTemplate = async (data, formData) => {
         </br>`;
 
     document.getElementById('contentBody').innerHTML = template;
-     
+    
+
     if (workflow === 'research') {
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
         
@@ -196,7 +199,7 @@ export const specimenTemplate = async (data, formData) => {
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
         autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
-
+        document.querySelector('.input-note').style.display = 'none';
 
         addEventClinicalSpecimenLinkForm2(formData);
     } else {//clinical specimen page 1

@@ -487,9 +487,23 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 .input-note {
     font-weight: bold;
     color: #dc3545;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
 }
+
+.input-note.collection-data-entry {
+    /* font-size: 1.0625rem; */
+}
+
+/* .table thead th {
+    border-top: 1px solid white;
+} */
 
 .button-fixed-width {
     width: 86.125px;
 }
+
+/*
+20px to rem is 1.25rem
+
+17px to rem is 1.0625rem
+*/

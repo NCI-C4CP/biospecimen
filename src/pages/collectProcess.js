@@ -44,6 +44,9 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
             }
         </div>
         </br>
+        <div class="row">
+            <p class="input-note collection-data-entry">Enter Data AFTER specimens have been collected</p>
+        </div>
         <form id="biospecimenCollectionForm" method="POST">
             <div class="row">
                 <table class="table collection-table">
@@ -63,6 +66,14 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                         </tr>
                     </thead>
                     <tbody>`
+
+                    template += `
+                        <tr>
+                            <td colspan="100%" class="align-left">
+                                <p class="input-note collection-data-entry">Enter Data AFTER specimens have been collected</p>
+                            </td>
+                        </tr>
+                    `;
                     
                     let siteTubesList = getSiteTubesLists(biospecimenData);
                     checkTubeDataConsistency(siteTubesList, biospecimenData);
