@@ -6,8 +6,6 @@ import { conceptIds } from '../fieldToConceptIdMapping.js';
 export const tubeCollectedTemplate = (participantData, biospecimenData) => {
     const isCheckedIn = checkedIn(participantData);
 
-    console.log("getWorkflow()", getWorkflow());
-
     let template = `
         </br>
         <div class="row">
@@ -81,7 +79,7 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
 
     const collectionFinalized = (biospecimenData[conceptIds.collection.isFinalized] === conceptIds.yes);
     
-    if(!siteTubesList || siteTubesList?.length === 0) siteTubesList = [];
+    if (!siteTubesList || siteTubesList?.length === 0) siteTubesList = [];
 
     siteTubesList?.forEach((obj, index) => {
         const notCollectedOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].tubeNotCollectedOptions;

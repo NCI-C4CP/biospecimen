@@ -1018,13 +1018,12 @@ const triggerConfirmationModal = (modalData) => {
     const yesBtn = document.getElementById('proceedNextPage');
     yesBtn.addEventListener("click", async e => {
         const inputNote = document.querySelector('.input-note');
-        console.log("🚀 ~ triggerConfirmationModal ~ inputNote:", inputNote)
         modalFooter?.remove();
+
         if (accessionID2.value) {
             showAnimation();
             await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
             inputNote && (inputNote.textContent = "");
-            console.log("🚀 ~ triggerConfirmationModal ~ inputNote: Inside", inputNote)
             hideAnimation();
         } else {
             showAnimation();
@@ -1037,7 +1036,7 @@ const triggerConfirmationModal = (modalData) => {
 
 const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
     const bloodAccessionId = await checkAccessionId({ accessionId: +accessionID1.value, accessionIdType: `${conceptIds.collection.bloodAccessionNumber}` });
-    console.log("🚀 ~ proceedToSpecimenPage ~ bloodAccessionId:", bloodAccessionId)
+
     if (bloodAccessionId.code == 200) {
         if (bloodAccessionId.data) {
             const dynamicFooter = document.getElementById('dynamicFooter');
@@ -1071,7 +1070,6 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
             const yesBtn = document.getElementById('addCollection');
             yesBtn.addEventListener("click", async () => {
                 formData.collectionId = bloodAccessionId?.data?.[conceptIds.collection.id];
-                console.log("formData.collectionId:", formData.collectionId);
                 formData[conceptIds.collection.selectedVisit] =  selectedVisit;
                 
                 btnsClicked(connectId, formData); // needs code reformat/enhancement

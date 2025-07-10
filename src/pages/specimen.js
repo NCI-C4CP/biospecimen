@@ -120,7 +120,6 @@ export const specimenTemplate = async (data, formData) => {
             </div>`;
 
     } else if(isSpecimenLinkForm2) {// clinical specimen page 2
-        console.log("input note", document.querySelector('.input-note'));
         document.querySelector('.input-note').style.display = 'none';
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
@@ -229,4 +228,4 @@ export const specimenTemplate = async (data, formData) => {
     generateBarCode('connectIdBarCode', data.Connect_ID);
     addEventBackToSearch('navBarSearch');
     addEventNavBarParticipantCheckIn();
-}
+};

@@ -123,7 +123,6 @@ body {
 #search1 input {
     width: 100%;
     max-width: 450px;
-    
 }
 
 .form-row {
@@ -504,9 +503,3 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 .button-fixed-width {
     width: 86.125px;
 }
-
-/*
-20px to rem is 1.25rem
-
-17px to rem is 1.0625rem
-*/

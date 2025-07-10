@@ -314,7 +314,6 @@ export const toggleNavbarMobileView = () => {
 export const performSearch = async (query) => {
     showAnimation();
     const response = await findParticipant(query);
-    console.log("🚀 ~ performSearch ~ response:", response)
     hideAnimation();
     const verifiedParticipants = response.data.filter(dt => dt['821247024'] === 197316935);
 
@@ -553,7 +552,6 @@ export const showConfirmationModal =  (collectionID, firstName, lastName) => {
         modalContainer.classList.add('show');
         modalContainer.style.display = 'block';
         modalContainer.addEventListener('click', (event) => {
-            console.log("click event", event);
             const button = event.target.closest('[data-result]')
             
             if (button) {

@@ -22,11 +22,11 @@ export const userDashboard = (auth, route, goToSpecimenSearch) => {
 
 export const searchTemplate = (goToSpecimenSearch) => {
     if(document.getElementById('navBarParticipantCheckIn')) document.getElementById('navBarParticipantCheckIn').classList.add('disabled');
-    console.log("dashboard state",getWorkflow());
+
     const contentBody = document.getElementById('contentBody');
     const inputNote = getWorkflow() === 'research' 
         ? `<p class="input-note">Ask the participant for their name and date of birth and enter below:</p>` 
-        : `<p class="input-note">Enter the participant's name and date of birth from the clinical label:</p>`;
+        : `<p class="input-note">Enter participant's name and date of birth from the clinical specimen label:</p>`;
 
     let template = `
         <div class="row">
