@@ -1039,26 +1039,32 @@ const triggerConfirmationModal = (modalData) => {
     let template = `
         <p>Blood Accession ID: ${accessionID2.value || 'N/A' }</p>
         <p>Urine Accession ID: ${accessionID4.value || 'N/A' }</p>
-        <p>Accession IDs are linked to ${participantFullName}</p>
+        <p style="margin-bottom:0;">Accession IDs are linked to <strong>${participantFullName}</strong>.</p>
     `;
 
-    template += `
-    <div style="display:inline-block; margin-top:20px;">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancel">Cancel</button>
-        </div>
-    </div>`
     body.innerHTML = template;
+
+    body.insertAdjacentHTML('afterend', `
+        <div id="dynamicFooter" class="modal-footer justify-content-start">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancel">Cancel</button>
+            </div>
+        </div>
+    `);
+
+    const modalFooter = document.getElementById('dynamicFooter');
 
     const noBtn = document.getElementById('cancel');
     noBtn.addEventListener("click", async e => {
+        modalFooter?.remove();
         return;
-    })
+    });
 
     const yesBtn = document.getElementById('proceedNextPage');
     yesBtn.addEventListener("click", async e => {
         const inputNote = document.querySelector('.input-note');
         console.log("🚀 ~ triggerConfirmationModal ~ inputNote:", inputNote)
+        modalFooter?.remove();
         if (accessionID2.value) {
             showAnimation();
             await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
@@ -1075,10 +1081,12 @@ const triggerConfirmationModal = (modalData) => {
 
 
 const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    const bloodAccessionId = await checkAccessionId({accessionId: +accessionID1.value, accessionIdType: '646899796'});
+    const bloodAccessionId = await checkAccessionId({ accessionId: +accessionID1.value, accessionIdType: `${conceptIds.collection.bloodAccessionNumber}` });
+    console.log("🚀 ~ proceedToSpecimenPage ~ bloodAccessionId:", bloodAccessionId)
     if (bloodAccessionId.code == 200) {
         if (bloodAccessionId.data) {
-            hideAnimation();
+            const dynamicFooter = document.getElementById('dynamicFooter');
+            dynamicFooter?.remove();
             const button = document.createElement('button');
             button.dataset.target = '#biospecimenModal';
             button.dataset.toggle = 'modal';
@@ -1087,43 +1095,45 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
             document.getElementById('root').removeChild(button);
             const header = document.getElementById('biospecimenModalHeader');
             const body = document.getElementById('biospecimenModalBody');
-            header.innerHTML = `Existing Accession ID`
-            let template =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[820476880]}. Choose an action`
-            template += `
-            <br />
-            <div style="display:inline-block; margin-top:20px;">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
-                </div>
-            </div>`
+            header.innerHTML = `Existing Accession ID`;
+            let template =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[conceptIds.collection.id]}. Choose an action`;
+
             body.innerHTML = template;
+
+            body.insertAdjacentHTML('afterend', `
+                <div  id="dynamicFooter" class="modal-footer justify-content-start">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
+                </div>
+            </div>`);
+
             const noBtn = document.getElementById('cancelSelection');
             noBtn.addEventListener("click", async e => {
                 await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
                 return
-            })
+            });
 
             const yesBtn = document.getElementById('addCollection');
-            yesBtn.addEventListener("click", async e => {
-                formData.collectionId = bloodAccessionId?.data?.[820476880];
-                formData['331584571'] =  selectedVisit;
+            yesBtn.addEventListener("click", async () => {
+                formData.collectionId = bloodAccessionId?.data?.[conceptIds.collection.id];
+                console.log("formData.collectionId:", formData.collectionId);
+                formData[conceptIds.collection.selectedVisit] =  selectedVisit;
                 
                 btnsClicked(connectId, formData); // needs code reformat/enhancement
                 await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
                 return
-            }) 
-        }
-        else {
+            });
+        } else {
             await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
             return
         }
     }
-}
+};
 
 const redirectSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    if(accessionID1?.value) formData = {...formData, '646899796': +accessionID1.value || ''};
-    if(accessionID3?.value) formData['928693120'] = +accessionID3.value || '';
-    if(selectedVisit) formData['331584571'] =  +selectedVisit;
+    if (accessionID1?.value) formData = { ...formData, [conceptIds.collection.bloodAccessionNumber]: +accessionID1.value || '' };
+    if (accessionID3?.value) formData[conceptIds.collection.urineAccessionNumber] = +accessionID3.value || '';
+    if (selectedVisit) formData[conceptIds.collection.selectedVisit] =  +selectedVisit;
     let query = `connectId=${parseInt(connectId)}`;
     const response = await findParticipant(query);
     const data = response.data[0];
@@ -2975,6 +2985,10 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
 const displayClinicalSpecimenMissingModal = (modalData) => { 
     const { accessionID2, accessionID4 } = modalData?.modalContext;
 
+    // Clears existing dynamic footer if it exists
+    const modalFooter = document.getElementById('dynamicFooter');
+    modalFooter?.remove();
+
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModalExtra';
     button.dataset.toggle = 'modal';
@@ -2996,15 +3010,15 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
         return;
     }
 
-    template += `
-        <br />
-        <div style="display:inline-block; margin-top:20px;">
+    body.innerHTML = template;
+
+    body.insertAdjacentHTML('afterend', `
+        <div id="dynamicFooter" class="modal-footer justify-content-start">
             <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
-            </div>
-        </div>`;
-    body.innerHTML = template;
-    
+        </div>
+    `);
+
     return new Promise ((resolve) => {
         const noBtn = document.getElementById('noTrigger_Modal2');
         noBtn.addEventListener("click", () => {
@@ -3016,7 +3030,7 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
             resolve(modalData);
         });
     })
-}
+};
 
 /**
  * Adds event listeners to the accession ID inputs to check for matching values.

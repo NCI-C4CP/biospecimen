@@ -32,15 +32,25 @@ export const specimenTemplate = async (data, formData) => {
         </br>
         <div class="row">
             <div class="col">
-                <div class="row specimenLinkParticipantInfo">
+                <div class="row specimenLinkParticipantInfo" data-section="name">
                     <p>
                         <strong>Participant Name: </strong> 
                         <span id="${conceptIds.lastName}">${data[conceptIds.lastName]}</span>, 
                         <span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span>
                     </p>
                 </div>
-                <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
-                <div class="row specimenLinkParticipantInfo"> <p> <strong>Connect ID:</strong> </p> <svg id="connectIdBarCode"></svg></div>
+                <div class="row specimenLinkParticipantInfo" data-section="dob">
+                    <p>
+                        <strong>Date of Birth:</strong> 
+                        ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}
+                    </p>
+                </div>
+                <div class="row specimenLinkParticipantInfo">
+                    <p> 
+                        <strong>Connect ID:</strong> 
+                    </p> 
+                    <svg id="connectIdBarCode"></svg>
+                </div>
             </div>
         </div>
 

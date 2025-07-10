@@ -22,10 +22,10 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                 <div class="row"><h5>${participantData[conceptIds.lastName] && participantData[conceptIds.lastName]}, ${participantData[conceptIds.firstName] && participantData[conceptIds.firstName]}</h5></div>
                 <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
                 <div class="row">
-                    ${specimenData[conceptIds.collection.bloodAccessNumber] ? `Blood Accesion ID: ${specimenData[conceptIds.collection.bloodAccessNumber]}` : ''}
+                    ${specimenData[conceptIds.collection.bloodAccessionNumber] ? `Blood Accesion ID: ${specimenData[conceptIds.collection.bloodAccessionNumber]}` : ''}
                 </div>
                 <div class="row">
-                    ${specimenData[conceptIds.collection.urineAccessNumber] ? `Urine Accession ID: ${specimenData[conceptIds.collection.urineAccessNumber]}` : ''}
+                    ${specimenData[conceptIds.collection.urineAccessionNumber] ? `Urine Accession ID: ${specimenData[conceptIds.collection.urineAccessionNumber]}` : ''}
                 </div>
                 <div class="row">Collection ID: ${specimenData[conceptIds.collection.id]}</div>
                 <div class="row">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(specimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(specimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div>
