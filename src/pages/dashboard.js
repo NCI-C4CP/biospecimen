@@ -1,5 +1,5 @@
 import { userAuthorization, removeActiveClass, getWorkflow, checkedIn, participantCanCheckIn, verificationConversion, restrictNonBiospecimenUser, participationConversion } from "./../shared.js"
-import {  addGoToCheckInEvent, addGoToSpecimenLinkEvent, addEventSearchForm1, addEventBackToSearch, addEventSearchForm2, addEventSearchForm3, addEventSearchForm4, addEventSearchSpecimen, addEventNavBarSpecimenSearch, addEventClearAll } from "./../events.js";
+import {  addGoToCheckInEvent, addGoToSpecimenLinkEvent, addEventSearchForm1, addEventBackToSearch, addEventSearchSpecimen, addEventNavBarSpecimenSearch, addEventClearAll } from "./../events.js";
 import { homeNavBar, bodyNavBar } from '../navbar.js';
 
 export const userDashboard = (auth, route, goToSpecimenSearch) => {
@@ -67,56 +67,15 @@ export const searchTemplate = (goToSpecimenSearch) => {
                     </form>
                 </div>
             </div>
-            <div class="col-lg">
-                <div class="row form-row">
-                    <form id="search4" method="POST">
-                        <div class="form-group">
-                            <label class="col-form-label search-label">Connect ID</label>
-                            <input class="form-control" autocomplete="off" required type="text" maxlength="10" id="connectId" placeholder="Enter ConnectID"/>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-outline-primary">Search</button>
-                        </div>
-                    </form>
-                </div>
-                ${contentBody.dataset.workflow && contentBody.dataset.workflow === 'clinical' ? ``
-                :`
-                    <div class="row form-row">
-                        <form id="search2" method="POST">
-                            <div class="form-group">
-                                <label class="col-form-label search-label">Email</label>
-                                <input class="form-control" required autocomplete="off" type="email" id="email" placeholder="Enter email"/>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-outline-primary">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="row form-row">
-                        <form id="search3" method="POST">
-                            <div class="form-group">
-                                <label class="col-form-label search-label">Phone no.</label>
-                                <input class="form-control" autocomplete="off" required type="text" maxlength="12" id="phone" placeholder="XXX-XXX-XXXX" pattern="\\d{3}-\\d{3}-\\d{4}"/>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-outline-primary">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                `}
-            </div>
         </div>
     `;
     
     contentBody.innerHTML = template;
     bodyNavBar();
     addEventSearchForm1();
-    addEventSearchForm2();
-    addEventSearchForm3();
-    addEventSearchForm4();
     addEventClearAll();
     addEventNavBarSpecimenSearch();
-    if(goToSpecimenSearch) document.getElementById('navBarSpecimenSearch').click();
+    if (goToSpecimenSearch) document.getElementById('navBarSpecimenSearch').click();
 }
 
 export const searchBiospecimenTemplate = () => {

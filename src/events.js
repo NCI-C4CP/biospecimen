@@ -67,42 +67,6 @@ export const addEventSearchForm1 = () => {
     })
 };
 
-export const addEventSearchForm2 = () => {
-    const form = document.getElementById('search2');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        let query = '';
-        if (email) query += `email=${email}`;
-        performSearch(query);
-    })
-};
-
-export const addEventSearchForm3 = () => {
-    const form = document.getElementById('search3');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const phone = document.getElementById('phone').value.replaceAll("-", "");
-        let query = '';
-        if (phone) query += `phone=${phone}`;
-        performSearch(query);
-    })
-};
-
-export const addEventSearchForm4 = () => {
-    const form = document.getElementById('search4');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const connectId = document.getElementById('connectId').value;
-        let query = '';
-        if (connectId) query += `connectId=${connectId}`;
-        performSearch(query);
-    })
-};
-
 export const addEventClearAll = () => {
 
     const btnClearAll = document.getElementById('btnClearAll');
@@ -110,22 +74,13 @@ export const addEventClearAll = () => {
     btnClearAll.addEventListener('click', () => {
 
         const firstName = document.getElementById('firstName');
-        if(firstName) firstName.value = '';
+        if (firstName) firstName.value = '';
 
         const lastName = document.getElementById('lastName');
-        if(lastName) lastName.value = '';
+        if (lastName) lastName.value = '';
 
         const dob = document.getElementById('dob');
-        if(dob) dob.value = '';
-
-        const connectID = document.getElementById('connectId');
-        if(connectID) connectID.value = '';
-
-        const email = document.getElementById('email');
-        if(email) email.value = '';
-
-        const phone = document.getElementById('phone');
-        if(phone) phone.value = '';
+        if (dob) dob.value = '';
     });
 };
 
