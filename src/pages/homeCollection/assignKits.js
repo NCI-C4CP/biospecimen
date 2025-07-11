@@ -230,22 +230,29 @@ const clickConfirmButton = () => {
             "Content-Type": "application/json",
           },
         });
-        const processedResponse = await response.json();
-        const data = processedResponse.data;
-        
-        if(data?.success === 'true') {
-            triggerSuccessModal("Participant address marked as undeliverable");
-            clearForm();
-            const filteredParticipants = appState.getState().participants.filter((participant) => {
-              return participant['connect_id'] !== connectId;
-            });
-            appState.setState({ participants: filteredParticipants });
-            populateSidePaneRows();
-        } else {
-          console.error('Response with error', response);
-          triggerErrorModal("Error updating participant.");
+        try {
+          const processedResponse = await response.json();
+          const data = processedResponse.data;
+          
+          if(data?.success === 'true') {
+              triggerSuccessModal("Participant address marked as undeliverable");
+              clearForm();
+              clearParticipantFromQueue(connectId);
+          } else {
+            if(data?.removeFromQueue === 'true') {
+              clearForm();
+              clearParticipantFromQueue(connectId);
+            }
+            triggerErrorModal(data?.error || 'Error updating participant.');
+            console.error('Response with error', response);
+          }
+          hideAnimation();
+        } catch(err) {
+          console.error('Error when processing response', err);
+            triggerErrorModal(`Error updating participant: ${err.message || err}`);
+
         }
-        hideAnimation();
+       
     });  
 };
 
@@ -283,29 +290,42 @@ const confirmAssignment = () => {
         participantObj[conceptIds.supplyKitTrackingNum] = scannedBarcode;
         participantObj[conceptIds.supplyKitId] = document.getElementById('scanSupplyKit').value.trim();
         participantObj['Connect_ID'] = document.getElementById('Connect_ID')?.value;
-        const assignmentStatus = await processConfirmedAssignment(participantObj);
+        const responseJson = await processConfirmedAssignment(participantObj);
+        const assignmentStatus = responseJson.success;
 
         if (assignmentStatus === true) {
+          triggerSuccessModal('The kit has been assigned to the participant.')
           clearForm();
-          const filteredParticipants = appState.getState().participants.filter((participant) => {
-            return participant['connect_id'] !== parseInt(participantObj['Connect_ID']);
-          });
-          appState.setState({ participants: filteredParticipants });
-          populateSidePaneRows()
+          clearParticipantFromQueue(participantObj['Connect_ID']);
           return;
         } 
         else {
-          triggerErrorModal(assignmentStatus, 'danger');
+          if(responseJson.message) {
+            console.error(responseJson.message);
+          }
+          if(responseJson.removeFromQueue) {
+            clearForm();
+            clearParticipantFromQueue(participantObj['Connect_ID']);
+          }
+          triggerErrorModal(responseJson.message || `Unable to assign a kit to the participant. Please check the supply kit and connect the ID.`, 'danger');
           return;
         }
       } catch (error) {
         console.error(error);
-        triggerErrorModal('An error occurred:' + error, 'danger');
+        triggerErrorModal('An error occurred:' + (error?.message || error), 'danger');
       } finally {
         confirmAssignmentInAction = false;
       }
     })
   }
+}
+
+const clearParticipantFromQueue = (connectId) => {
+  const filteredParticipants = appState.getState().participants.filter((participant) => {
+    return participant['connect_id'] !== +connectId;
+  });
+  appState.setState({ participants: filteredParticipants });
+  populateSidePaneRows();
 }
 
 const processConfirmedAssignment = async (assignment) => {
@@ -320,19 +340,7 @@ const processConfirmedAssignment = async (assignment) => {
         },
     });
     hideAnimation();
-    const responseJson = await response.json();
-    const responseStatus = responseJson.success;
-    if (responseStatus === true) {
-        triggerSuccessModal('The kit has been assigned to the participant.')
-        return true
-    }
-    else {
-      if(responseJson.logText) {
-        console.error(responseJson.logText);
-      }
-        triggerErrorModal(`Unable to assign a kit to the participant. Please check the supply kit and connect the ID.`)
-        return responseJson.message;
-    }
+    return await response.json();  
 }
 
 export const getEligibleParticipantsForKitAssignment = async () => {

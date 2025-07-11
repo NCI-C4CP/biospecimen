@@ -45,7 +45,7 @@ const verifyScannedCode = async () => {
   if (scannedCodeInput) {
     scannedCodeInput.addEventListener("change", async () => {
       showAnimation();
-      const isScannedCodeValid = await checkScannedCodeValid(scannedCodeInput.value)
+      const isScannedCodeValid = await checkScannedCodeValid(scannedCodeInput.value);
       isScannedCodeValid.data?.valid ? confirmPickupTemplate(isScannedCodeValid.data?.uniqueKitID) : tryAgainTemplate();
       hideAnimation();
     });
@@ -140,7 +140,11 @@ const setShippedResponse = async (data) => {
     };
     
     await sendInstantNotification(requestData);
+  } else if (returnedPtInfo.status) {
+    triggerErrorModal(`Error in shipping: ${returnedPtInfo.status}`);
   } else {
+    // Leave this console log in; it's useful for debugging in the event of reported errors
+    console.log('returnedPtInfo', returnedPtInfo);
     triggerErrorModal('Error in shipping: Please check the tracking number.');
   }
   

@@ -290,7 +290,11 @@ const storePackageReceipt = async (data) => {
     openModal();
     displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
     appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
+  } else if (returnedPtInfo.status) {
+    triggerErrorModal(`Error during kit receipt. ${returnedPtInfo.status}`);
   } else {
+    // Leave this console log in; it's useful for debugging
+    console.log('returnedPtInfo', returnedPtInfo);
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }
 };
