@@ -33,8 +33,8 @@ export const addEventSearchForm1 = () => {
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        const firstName = document.getElementById('firstName').value?.toLowerCase();
-        const lastName = document.getElementById('lastName').value?.toLowerCase();
+        const firstName = document.getElementById('firstName').value?.trim().toLowerCase();
+        const lastName = document.getElementById('lastName').value?.trim().toLowerCase();
         const dobEl = document.getElementById('dob');
         let dob = dobEl.value;
 
@@ -767,10 +767,8 @@ const btnsClicked = async (connectId, formData) => {
     if (collectionLocation) formData[conceptIds.collectionLocation] = parseInt(collectionLocation.value);
 
     const collectionID = formData?.collectionId || scanSpecimenID;
-    const firstNameCidString = conceptIds.firstName.toString();
-    const firstName = document.getElementById(firstNameCidString).innerText || ""
-    const lastNameCidString = conceptIds.lastName.toString();
-    const lastName = document.getElementById(lastNameCidString).innerText || ""
+    const firstName = document.getElementById(`${conceptIds.firstName}`).innerText || ""
+    const lastName = document.getElementById(`${conceptIds.lastName}`).innerText || ""
 
     const confirmVal = await showConfirmationModal(collectionID, firstName, lastName);
 
@@ -839,7 +837,6 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     const participantFirstName = document.getElementById(conceptIds.firstName.toString()).innerText.trim() || "";
     const participantLastName = document.getElementById(conceptIds.lastName.toString()).innerText.trim() || "";
     const participantFullName = `${participantFirstName} ${participantLastName}`;
-    // const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
 
     const accessionID1 = document.getElementById('accessionID1');
     const accessionID2 = document.getElementById('accessionID2');
@@ -989,36 +986,31 @@ const triggerConfirmationModal = (modalData) => {
 
     const header = document.getElementById('modalHeader');
     const body = document.getElementById('modalBody');
-    header.innerHTML = `Confirm Accession ID`
+    header.innerHTML = `Confirm Accession ID`;
 
-    let template = `
-        <p>Blood Accession ID: ${accessionID2.value || 'N/A' }</p>
-        <p>Urine Accession ID: ${accessionID4.value || 'N/A' }</p>
-        <p style="margin-bottom:0;">Accession IDs are linked to <strong>${participantFullName}</strong>.</p>
-    `;
+    body.style.padding = '0rem'; // removes default padding from modal body so footer can take full width
 
-    body.innerHTML = template;
-
-    body.insertAdjacentHTML('afterend', `
-        <div id="dynamicFooter" class="modal-footer justify-content-start">
+    body.innerHTML = `
+        <div style="padding: 1rem;">
+            <p>Blood Accession ID: ${accessionID2.value || 'N/A' }</p>
+            <p>Urine Accession ID: ${accessionID4.value || 'N/A' }</p>
+            <p style="margin-bottom:0;">Accession IDs are linked to <strong>${participantFullName}</strong>.</p>
+        </div>
+        <div class="modal-footer justify-content-start">
             <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancel">Cancel</button>
             </div>
         </div>
-    `);
-
-    const modalFooter = document.getElementById('dynamicFooter');
+    `;
 
     const noBtn = document.getElementById('cancel');
     noBtn.addEventListener("click", async e => {
-        modalFooter?.remove();
         return;
     });
 
     const yesBtn = document.getElementById('proceedNextPage');
     yesBtn.addEventListener("click", async e => {
         const inputNote = document.querySelector('.input-note');
-        modalFooter?.remove();
 
         if (accessionID2.value) {
             showAnimation();
@@ -1039,32 +1031,32 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
 
     if (bloodAccessionId.code == 200) {
         if (bloodAccessionId.data) {
-            const dynamicFooter = document.getElementById('dynamicFooter');
-            dynamicFooter?.remove();
             const button = document.createElement('button');
             button.dataset.target = '#biospecimenModal';
             button.dataset.toggle = 'modal';
             document.getElementById('root').appendChild(button);
             button.click();
             document.getElementById('root').removeChild(button);
+
             const header = document.getElementById('biospecimenModalHeader');
             const body = document.getElementById('biospecimenModalBody');
+
             header.innerHTML = `Existing Accession ID`;
-            let template =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[conceptIds.collection.id]}. Choose an action`;
+            let bodyMessage =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[conceptIds.collection.id]}. Choose an action`;
+            body.style.padding = '0rem';
 
-            body.innerHTML = template;
-
-            body.insertAdjacentHTML('afterend', `
-                <div  id="dynamicFooter" class="modal-footer justify-content-start">
+            body.innerHTML = `
+                <p style="padding:1rem; margin-bottom:0;">${bodyMessage}</p>
+                <div class="modal-footer justify-content-start">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
                 </div>
-            </div>`);
+            `;
 
             const noBtn = document.getElementById('cancelSelection');
             noBtn.addEventListener("click", async e => {
-                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-                return
+                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+                return;
             });
 
             const yesBtn = document.getElementById('addCollection');
@@ -1073,12 +1065,12 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
                 formData[conceptIds.collection.selectedVisit] =  selectedVisit;
                 
                 btnsClicked(connectId, formData); // needs code reformat/enhancement
-                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-                return
+                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+                return;
             });
         } else {
-            await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-            return
+            await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+            return;
         }
     }
 };
@@ -2938,10 +2930,6 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
 const displayClinicalSpecimenMissingModal = (modalData) => { 
     const { accessionID2, accessionID4 } = modalData?.modalContext;
 
-    // Clears existing dynamic footer if it exists
-    const modalFooter = document.getElementById('dynamicFooter');
-    modalFooter?.remove();
-
     const button = document.createElement('button');
     button.dataset.target = '#biospecimenModalExtra';
     button.dataset.toggle = 'modal';
@@ -2951,26 +2939,27 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
 
     const header = document.getElementById('biospecimenModalExtraHeader');
     const body = document.getElementById('biospecimenModalBodyExtraBody');
-    let template;
+    body.style.padding = '0';
+
+    let bodyMessage;
 
     if (accessionID2 && accessionID2.value) {
         header.innerHTML = 'Urine Accession Id is Missing';
-        template = 'You have not entered a Urine Accession Id. Do you want to continue?';
+        bodyMessage = 'You have not entered a Urine Accession Id. Do you want to continue?';
     } else if (accessionID4 && accessionID4.value) {
         header.innerHTML = 'Blood Accession Id is Missing';
-        template = 'You have not entered a Blood Accession Id. Do you want to continue?';
+        bodyMessage = 'You have not entered a Blood Accession Id. Do you want to continue?';
     } else {
         return;
     }
 
-    body.innerHTML = template;
-
-    body.insertAdjacentHTML('afterend', `
-        <div id="dynamicFooter" class="modal-footer justify-content-start">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
+    body.innerHTML = `
+        <p style="padding:1rem; margin-bottom:0;">${bodyMessage}</p>
+        <div class="modal-footer justify-content-start">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
         </div>
-    `);
+    `;
 
     return new Promise ((resolve) => {
         const noBtn = document.getElementById('noTrigger_Modal2');

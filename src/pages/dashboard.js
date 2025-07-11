@@ -44,15 +44,15 @@ export const searchTemplate = (goToSpecimenSearch) => {
                 <div class="row form-row">
                     <form id="search1" method="POST">
                         <div class="form-group">
-                            <label class="col-form-label search-label">First name</label>
+                            <label class="col-form-label search-label" for="firstName">First name</label>
                             <input class="form-control" autocomplete="off" type="text" id="firstName" placeholder="Enter First Name"/>
                         </div>
                         <div class="form-group">
-                            <label class="col-form-label search-label">Last name</label>
+                            <label class="col-form-label search-label" for="lastName">Last name</label>
                             <input class="form-control" autocomplete="off" type="text" id="lastName" placeholder="Enter Last Name"/>
                         </div>
                         <div class="form-group">
-                            <label class="col-form-label search-label">Date of Birth</label>
+                            <label class="col-form-label search-label" for="dob">Date of Birth</label>
                             <input class="form-control" type="date" id="dob" required/>
                         </div>
                         <div class="form-group">

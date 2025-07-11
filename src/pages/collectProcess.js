@@ -114,7 +114,7 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
             template += 
                 `<td>`
 
-                    if(notCollectedOptions) {
+                    if (notCollectedOptions) {
                         template += `
                             <select 
                                 data-connect-id="${participantData.Connect_ID}" 
@@ -126,8 +126,15 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                                 <option value=""> -- Select Reason -- </option>`
 
                                 notCollectedOptions.forEach(option => {
-                                    template += `<option ${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected] == option.concept ? 'selected' : ''} value=${option.concept}>${option.label}</option>`;
-                                })
+                                    template += `
+                                        <option 
+                                            ${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected] == option.concept ? 
+                                            'selected' : ''} 
+                                            value=${option.concept}>
+                                                ${option.label}
+                                            </option>
+                                    `;
+                                });
 
                         template += `</select>`    
                     }

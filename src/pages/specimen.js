@@ -22,7 +22,7 @@ export const specimenTemplate = async (data, formData) => {
         </br>
 
         <div class="row">
-            <h5>Specimen Link</h5>
+            <h4>Specimen Link</h4>
         </div>
         <div class="row"> 
             <p class="input-note">
@@ -54,7 +54,8 @@ export const specimenTemplate = async (data, formData) => {
             </div>
         </div>
 
-        </br>`
+        </br>
+    `;
 
     template += `<div id="specimenLinkForm" data-participant-token="${data.token}" data-connect-id="${data.Connect_ID}">`;
         
@@ -119,8 +120,7 @@ export const specimenTemplate = async (data, formData) => {
                 </div>
             </div>`;
 
-    } else if(isSpecimenLinkForm2) {// clinical specimen page 2
-        document.querySelector('.input-note').style.display = 'none';
+    } else if (isSpecimenLinkForm2) { // clinical specimen page 2
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
                             <div class="column">
@@ -146,7 +146,7 @@ export const specimenTemplate = async (data, formData) => {
                                 <button class="btn btn-outline-primary float-right" data-connect-id="${data.Connect_ID}" type="submit" id="clinicalSpecimenContinueTwo">Submit</button>
                             </div>
                         </div>`
-    } else {// clinical specimen page 1
+    } else { // clinical specimen page 1
         template += `<div class="form-group row">`
         const siteAcronym = getSiteAcronym();
         template += `<select class="custom-select" id="visit-select">

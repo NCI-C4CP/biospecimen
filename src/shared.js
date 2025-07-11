@@ -523,7 +523,6 @@ export const showConfirmationModal =  (collectionID, firstName, lastName) => {
         modalContent.classList.add('modal-dialog', 'modal-dialog-centered');
         modalContent.setAttribute('role', 'document');
 
-        // Ask if there should be bolding on full name or collection ID
         const modalBody = `
             <div class="modal-content">
                 <div class="modal-header">
