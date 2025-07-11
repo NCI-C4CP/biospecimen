@@ -174,7 +174,7 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
             <td>
         `;
                     
-        if(obj.deviationChkBox) {
+        if (obj.deviationChkBox) {
             template += `
                 <select 
                     data-connect-id="${participantData.Connect_ID}" 
