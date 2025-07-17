@@ -532,7 +532,7 @@ export const showConfirmationModal =  (collectionID, firstName, lastName) => {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p style="margin-bottom:0;">Collection ID ${collectionID} is linked to <strong>${firstName} ${lastName}</strong>.</p>
+                    <p style="margin-bottom:0;">Collection ID ${escapeHTML(collectionID)} is linked to <strong>${escapeHTML(firstName)} ${escapeHTML(lastName)}</strong>.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" data-result="cancel">Cancel</button>
