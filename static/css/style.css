@@ -132,11 +132,13 @@ body {
     color: #868484;
 }
 
-#search1,
-#search2,
-#search3,
-#search4 {
+#search1 {
     width: 100%;
+}
+
+#search1 input {
+    width: 100%;
+    max-width: 450px;
 }
 
 .form-row {
@@ -506,6 +508,21 @@ canvas.drawingBuffer {
 
 .specimenLinkParticipantInfo {
     font-size: 1.15rem;
+}
+
+.specimenLinkParticipantInfo[data-section="name"],
+.specimenLinkParticipantInfo[data-section="dob"] {
+    font-size: 1.5rem;
+}
+
+.input-note {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 1.25rem;
+}
+
+.button-fixed-width {
+    width: 86.125px;
 }
 
 @media print {

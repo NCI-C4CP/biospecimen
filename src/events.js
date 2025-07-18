@@ -33,8 +33,8 @@ export const addEventSearchForm1 = () => {
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-        const firstName = document.getElementById('firstName').value?.toLowerCase();
-        const lastName = document.getElementById('lastName').value?.toLowerCase();
+        const firstName = document.getElementById('firstName').value?.trim().toLowerCase();
+        const lastName = document.getElementById('lastName').value?.trim().toLowerCase();
         const dobEl = document.getElementById('dob');
         let dob = dobEl.value;
 
@@ -67,42 +67,6 @@ export const addEventSearchForm1 = () => {
     })
 };
 
-export const addEventSearchForm2 = () => {
-    const form = document.getElementById('search2');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        let query = '';
-        if (email) query += `email=${email}`;
-        performSearch(query);
-    })
-};
-
-export const addEventSearchForm3 = () => {
-    const form = document.getElementById('search3');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const phone = document.getElementById('phone').value.replaceAll("-", "");
-        let query = '';
-        if (phone) query += `phone=${phone}`;
-        performSearch(query);
-    })
-};
-
-export const addEventSearchForm4 = () => {
-    const form = document.getElementById('search4');
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const connectId = document.getElementById('connectId').value;
-        let query = '';
-        if (connectId) query += `connectId=${connectId}`;
-        performSearch(query);
-    })
-};
-
 export const addEventClearAll = () => {
 
     const btnClearAll = document.getElementById('btnClearAll');
@@ -110,22 +74,13 @@ export const addEventClearAll = () => {
     btnClearAll.addEventListener('click', () => {
 
         const firstName = document.getElementById('firstName');
-        if(firstName) firstName.value = '';
+        if (firstName) firstName.value = '';
 
         const lastName = document.getElementById('lastName');
-        if(lastName) lastName.value = '';
+        if (lastName) lastName.value = '';
 
         const dob = document.getElementById('dob');
-        if(dob) dob.value = '';
-
-        const connectID = document.getElementById('connectId');
-        if(connectID) connectID.value = '';
-
-        const email = document.getElementById('email');
-        if(email) email.value = '';
-
-        const phone = document.getElementById('phone');
-        if(phone) phone.value = '';
+        if (dob) dob.value = '';
     });
 };
 
@@ -811,11 +766,10 @@ const btnsClicked = async (connectId, formData) => {
     if (collectionLocation) formData[conceptIds.collectionLocation] = parseInt(collectionLocation.value);
 
     const collectionID = formData?.collectionId || scanSpecimenID;
-    const firstNameCidString = conceptIds.firstName.toString();
-    const firstName = document.getElementById(firstNameCidString).innerText || ""
+    const firstName = document.getElementById(`${conceptIds.firstName}`).innerText || ""
+    const lastName = document.getElementById(`${conceptIds.lastName}`).innerText || ""
 
-
-    const confirmVal = await showConfirmationModal(collectionID, firstName);
+    const confirmVal = await showConfirmationModal(collectionID, firstName, lastName);
 
     if (confirmVal === "cancel") return;
 
@@ -879,7 +833,9 @@ const btnsClicked = async (connectId, formData) => {
 const clinicalBtnsClicked = async (participantData, formData) => { 
     removeAllErrors();
     const connectId = document.getElementById('clinicalSpecimenContinue').dataset.connectId;
-    const participantName = document.getElementById('clinicalSpecimenContinue').dataset.participantName;
+    const participantFirstName = document.getElementById(conceptIds.firstName.toString()).innerText.trim() || "";
+    const participantLastName = document.getElementById(conceptIds.lastName.toString()).innerText.trim() || "";
+    const participantFullName = `${participantFirstName} ${participantLastName}`;
 
     const accessionID1 = document.getElementById('accessionID1');
     const accessionID2 = document.getElementById('accessionID2');
@@ -897,7 +853,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     const modalContext = {
         accessionID2,
         accessionID4,
-        participantName,
+        participantFullName,
         selectedVisit,
         formData,
         connectId,
@@ -1018,7 +974,7 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 };
 
 const triggerConfirmationModal = (modalData) => {
-    const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
+    const { accessionID2, accessionID4, participantFullName, selectedVisit, formData, connectId } = modalData.modalContext;
 
     const button = document.createElement('button');
     button.dataset.bsTarget = '#modalShowMoreData';
@@ -1029,30 +985,36 @@ const triggerConfirmationModal = (modalData) => {
 
     const header = document.getElementById('modalHeader');
     const body = document.getElementById('modalBody');
-    header.innerHTML = `Confirm Accession ID`
+    header.innerHTML = `Confirm Accession ID`;
 
-    let template =  `Blood Accession ID: ${accessionID2.value ? accessionID2.value : 'N/A' } <br />
-    Urine Accession ID: ${accessionID4.value ? accessionID4.value : 'N/A' } <br />
-    Confirm ID is correct for participant: ${participantName}`
-    template += `
-    <br />
-    <div style="display:inline-block; margin-top:20px;">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancel">Cancel</button>
+    body.style.padding = '0rem'; // removes default padding from modal body so footer can take full width
+
+    body.innerHTML = `
+        <div style="padding: 1rem;">
+            <p>Blood Accession ID: ${accessionID2.value || 'N/A' }</p>
+            <p>Urine Accession ID: ${accessionID4.value || 'N/A' }</p>
+            <p style="margin-bottom:0;">Accession IDs are linked to <strong>${participantFullName}</strong>.</p>
         </div>
-    </div>`
-    body.innerHTML = template;
+        <div class="modal-footer justify-content-start">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancel">Cancel</button>
+            </div>
+        </div>
+    `;
 
     const noBtn = document.getElementById('cancel');
     noBtn.addEventListener("click", async e => {
         return;
-    })
+    });
 
     const yesBtn = document.getElementById('proceedNextPage');
     yesBtn.addEventListener("click", async e => {
+        const inputNote = document.querySelector('.input-note');
+
         if (accessionID2.value) {
             showAnimation();
             await proceedToSpecimenPage(accessionID2, accessionID4, selectedVisit, formData, connectId);
+            inputNote && (inputNote.textContent = "");
             hideAnimation();
         } else {
             showAnimation();
@@ -1064,55 +1026,58 @@ const triggerConfirmationModal = (modalData) => {
 
 
 const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    const bloodAccessionId = await checkAccessionId({accessionId: +accessionID1.value, accessionIdType: '646899796'});
+    const bloodAccessionId = await checkAccessionId({ accessionId: +accessionID1.value, accessionIdType: `${conceptIds.collection.bloodAccessionNumber}` });
+
     if (bloodAccessionId.code == 200) {
         if (bloodAccessionId.data) {
-            hideAnimation();
             const button = document.createElement('button');
             button.dataset.bsTarget = '#biospecimenModal';
             button.dataset.bsToggle = 'modal';
             document.getElementById('root').appendChild(button);
             button.click();
             document.getElementById('root').removeChild(button);
+
             const header = document.getElementById('biospecimenModalHeader');
             const body = document.getElementById('biospecimenModalBody');
-            header.innerHTML = `Existing Accession ID`
-            let template =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[820476880]}. Choose an action`
-            template += `
-            <br />
-            <div style="display:inline-block; margin-top:20px;">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
+
+            header.innerHTML = `Existing Accession ID`;
+            let bodyMessage =  `Accession ID entered is already assigned to Collection ID ${bloodAccessionId?.data?.[conceptIds.collection.id]}. Choose an action`;
+            body.style.padding = '0rem';
+
+            body.innerHTML = `
+                <p style="padding:1rem; margin-bottom:0;">${bodyMessage}</p>
+                <div class="modal-footer justify-content-start">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
                 </div>
-            </div>`
-            body.innerHTML = template;
+            `;
+
             const noBtn = document.getElementById('cancelSelection');
             noBtn.addEventListener("click", async e => {
-                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-                return
-            })
+                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+                return;
+            });
 
             const yesBtn = document.getElementById('addCollection');
-            yesBtn.addEventListener("click", async e => {
-                formData.collectionId = bloodAccessionId?.data?.[820476880];
-                formData['331584571'] =  selectedVisit;
+            yesBtn.addEventListener("click", async () => {
+                formData.collectionId = bloodAccessionId?.data?.[conceptIds.collection.id];
+                formData[conceptIds.collection.selectedVisit] =  selectedVisit;
                 
                 btnsClicked(connectId, formData); // needs code reformat/enhancement
-                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-                return
-            }) 
-        }
-        else {
-            await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId)
-            return
+                await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+                return;
+            });
+        } else {
+            await redirectSpecimenPage(accessionID1, accessionID3, selectedVisit, formData, connectId);
+            return;
         }
     }
-}
+};
 
 const redirectSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    if(accessionID1?.value) formData = {...formData, '646899796': +accessionID1.value || ''};
-    if(accessionID3?.value) formData['928693120'] = +accessionID3.value || '';
-    if(selectedVisit) formData['331584571'] =  +selectedVisit;
+    if (accessionID1?.value) formData = { ...formData, [conceptIds.collection.bloodAccessionNumber]: +accessionID1.value || '' };
+    if (accessionID3?.value) formData[conceptIds.collection.urineAccessionNumber] = +accessionID3.value || '';
+    if (selectedVisit) formData[conceptIds.collection.selectedVisit] =  +selectedVisit;
     let query = `connectId=${parseInt(connectId)}`;
     const response = await findParticipant(query);
     const data = response.data[0];
@@ -2814,7 +2779,7 @@ const searchAvailableCollectionsForSpecimen = (specimenId) => {
  * @param {object} modalContext - Modal data including specimen collection info
  * @param {HTMLElement} modalContext.accessionID2 - The blood accession ID confirm input
  * @param {HTMLElement} modalContext.accessionID4 - The urine accession ID confirm input
- * @param {string} modalContext.participantName - The participant's first name
+ * @param {string} modalContext.participantFullName - The participant's first name and last name, , e.g. "Bob Ross"
  * @param {string} modalContext.selectedVisit - The selected visit concept ID [Ex. 266600170 - baseline visit]
  * @param {object} modalContext.formData - An object from the participant's data [ Ex. { conceptIds.healthcareProvider: 13, siteAcronym: "NIH" } ]
  * @param {string} modalContext.connectID - The participant's Connect ID
@@ -2971,27 +2936,28 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
 
     const header = document.getElementById('biospecimenModalExtraHeader');
     const body = document.getElementById('biospecimenModalBodyExtraBody');
-    let template;
+    body.style.padding = '0';
+
+    let bodyMessage;
 
     if (accessionID2 && accessionID2.value) {
         header.innerHTML = 'Urine Accession Id is Missing';
-        template = 'You have not entered a Urine Accession Id. Do you want to continue?';
+        bodyMessage = 'You have not entered a Urine Accession Id. Do you want to continue?';
     } else if (accessionID4 && accessionID4.value) {
         header.innerHTML = 'Blood Accession Id is Missing';
-        template = 'You have not entered a Blood Accession Id. Do you want to continue?';
+        bodyMessage = 'You have not entered a Blood Accession Id. Do you want to continue?';
     } else {
         return;
     }
 
-    template += `
-        <br />
-        <div style="display:inline-block; margin-top:20px;">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" data-bs-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
-            </div>
-        </div>`;
-    body.innerHTML = template;
-    
+    body.innerHTML = `
+        <p style="padding:1rem; margin-bottom:0;">${bodyMessage}</p>
+        <div class="modal-footer justify-content-start">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" data-bs-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
+        </div>
+    `;
+
     return new Promise ((resolve) => {
         const noBtn = document.getElementById('noTrigger_Modal2');
         noBtn.addEventListener("click", () => {
@@ -3003,7 +2969,7 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
             resolve(modalData);
         });
     })
-}
+};
 
 /**
  * Adds event listeners to the accession ID inputs to check for matching values.

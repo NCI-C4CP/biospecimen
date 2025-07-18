@@ -22,18 +22,40 @@ export const specimenTemplate = async (data, formData) => {
         </br>
 
         <div class="row">
-            <h5>Specimen Link</h5>
+            <h4>Specimen Link</h4>
+        </div>
+        <div class="row"> 
+            <p class="input-note">
+                Double check participant name and DOB before completing Specimen Link
+            </p>  
         </div>
         </br>
         <div class="row">
             <div class="col">
-                <div class="row specimenLinkParticipantInfo"><p><strong>Participant Name: </strong> ${data[conceptIds.lastName]},<span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span></p></div>
-                <div class="row specimenLinkParticipantInfo"><p><strong>Date of Birth:</strong> ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}</span></p></div>
-                <div class="row specimenLinkParticipantInfo"> <p class="col-auto"> <strong>Connect ID:</strong> </p> <div class="col"><svg id="connectIdBarCode"></svg></div>
+                <div class="row specimenLinkParticipantInfo" data-section="name">
+                    <p>
+                        <strong>Participant Name: </strong> 
+                        <span id="${conceptIds.lastName}">${data[conceptIds.lastName]}</span>, 
+                        <span id="${conceptIds.firstName}">${data[conceptIds.firstName]}</span>
+                    </p>
+                </div>
+                <div class="row specimenLinkParticipantInfo" data-section="dob">
+                    <p>
+                        <strong>Date of Birth:</strong> 
+                        ${data[conceptIds.birthMonth]}/${data[conceptIds.birthDay]}/${data[conceptIds.birthYear]}
+                    </p>
+                </div>
+                <div class="row specimenLinkParticipantInfo">
+                    <p> 
+                        <strong>Connect ID:</strong> 
+                    </p> 
+                    <svg id="connectIdBarCode"></svg>
+                </div>
             </div>
         </div>
 
-        </br>`
+        </br>
+    `;
 
     template += `<div id="specimenLinkForm" data-participant-token="${data.token}" data-connect-id="${data.Connect_ID}">`;
         
@@ -103,7 +125,7 @@ export const specimenTemplate = async (data, formData) => {
                 </div>
             </div>`;
 
-    } else if(isSpecimenLinkForm2) {// clinical specimen page 2
+    } else if (isSpecimenLinkForm2) { // clinical specimen page 2
         let visit = visitType.filter(visit => visit.concept === formData['331584571'].toString())[0];
             template += `<div class="row">
                             <div class="column">
@@ -129,7 +151,7 @@ export const specimenTemplate = async (data, formData) => {
                                 <button class="btn btn-outline-primary float-end" data-connect-id="${data.Connect_ID}" type="submit" id="clinicalSpecimenContinueTwo">Submit</button>
                             </div>
                         </div>`
-    } else {// clinical specimen page 1
+    } else { // clinical specimen page 1
         template += `<div class="mb-3 row">`
         const siteAcronym = getSiteAcronym();
         template += `<select class="form-select" id="visit-select">
@@ -175,7 +197,8 @@ export const specimenTemplate = async (data, formData) => {
         </br>`;
 
     document.getElementById('contentBody').innerHTML = template;
-     
+    
+
     if (workflow === 'research') {
         document.getElementById('scanSpecimenID2').onpaste = e => e.preventDefault();
         
@@ -190,7 +213,7 @@ export const specimenTemplate = async (data, formData) => {
 
         collectionInputValidator(['scanSpecimenID', 'scanSpecimenID2']);
         autoTabInputField('scanSpecimenID', 'scanSpecimenID2');
-
+        document.querySelector('.input-note').style.display = 'none';
 
         addEventClinicalSpecimenLinkForm2(formData);
     } else {//clinical specimen page 1
@@ -210,4 +233,4 @@ export const specimenTemplate = async (data, formData) => {
     generateBarCode('connectIdBarCode', data.Connect_ID);
     addEventBackToSearch('navBarSearch');
     addEventNavBarParticipantCheckIn();
-}
+};

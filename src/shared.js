@@ -504,9 +504,10 @@ export const showNotificationsSelectableList = (message, items, onCancel, onCont
  *  
  * @param {string} collectionID - the collection ID to display in the modal.
  * @param {string} firstName - the participant's first name to display in the modal.
+ * @param {string} lastName - the participant's last name to display in the modal.
  * @returns {Promise<string>} - the user's choice on button click: 'cancel', 'back', or 'confirmed'.
 */
-export const showConfirmationModal =  (collectionID, firstName) => {
+export const showConfirmationModal =  (collectionID, firstName, lastName) => {
     return new Promise((resolve) => {
         const modalContainer = document.createElement('div');
         modalContainer.classList.add('modal', 'fade');
@@ -523,15 +524,14 @@ export const showConfirmationModal =  (collectionID, firstName) => {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Confirm Collection ID</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-result="cancel">
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Collection ID: ${collectionID}</p>
-                    <p>Confirm ID is correct for participant: ${firstName}</p>
+                    <p style="margin-bottom:0;">Collection ID ${escapeHTML(collectionID)} is linked to <strong>${escapeHTML(firstName)} ${escapeHTML(lastName)}</strong>.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-bs-dismiss="modal" data-result="cancel">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-result="cancel">Cancel</button>
                     <button type="button" class="btn btn-info" data-result="back" data-bs-dismiss="modal">Confirm and Exit</button>
                     <button type="button" class="btn btn-success" data-result="confirmed" data-bs-dismiss="modal">Confirm and Continue</button>
                 </div>
@@ -545,9 +545,10 @@ export const showConfirmationModal =  (collectionID, firstName) => {
         modalContainer.classList.add('show');
         modalContainer.style.display = 'block';
         modalContainer.addEventListener('click', (event) => {
-            const result = event.target.getAttribute('data-result');
-            if (result) 
-            {
+            const button = event.target.closest('[data-result]')
+            
+            if (button) {
+                const result = button.getAttribute('data-result');
                 document.body.removeChild(modalContainer);
                 resolve(result);
             }
