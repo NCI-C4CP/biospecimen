@@ -34,9 +34,9 @@ export const userNavBar = (name) => {
             </li>
         </div>
         ${dashboardSelectionStr}
-        <div class="navbar-nav ml-auto" id="userAccountWrapper">
+        <div class="navbar-nav ms-auto" id="userAccountWrapper">
             <div class="grid-elements dropdown">
-                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i> ${name}
                 </button>
                 <div class="dropdown-menu navbar-dropdown" aria-labelledby="navbarDropdown">
@@ -61,9 +61,9 @@ export const nonUserNavBar = (name, isBPTLUser) => {
             </li>
         </div>` : ``}
         ${dashboardSelectionStr}
-        <div class="navbar-nav ml-auto" id="userAccountWrapper">
+        <div class="navbar-nav ms-auto" id="userAccountWrapper">
             <div class="grid-elements dropdown">
-                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i> ${name}
                 </button>
                 <div class="dropdown-menu navbar-dropdown" aria-labelledby="navbarDropdown">
@@ -81,7 +81,7 @@ export const unAuthorizedUser = () => {
                 <a class="nav-link" href="#welcome" id="welcome" title="Home"><i class="fas fa-home"></i> Home</a>
             </li>
         </div>
-        <div class="navbar-nav ml-auto">
+        <div class="navbar-nav ms-auto">
             <li class="nav-item">
                 <a class="nav-link" href="#sign_out" id="signOut" title="Sign Out"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
             </li>
@@ -116,9 +116,9 @@ export const adminNavBar = (name) => {
                 <a class="nav-link" href="#manage_users" id="manageUsers" title="Manage users"><i class="fas fa-users"></i> Manage users</a>
             </li>
         </div>
-        <div class="navbar-nav ml-auto">
+        <div class="navbar-nav ms-auto">
             <div class="grid-elements dropdown">
-                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user"></i> ${name}
                 </button>
                 <div class="dropdown-menu navbar-dropdown" aria-labelledby="navbarDropdown">
@@ -132,7 +132,7 @@ export const adminNavBar = (name) => {
 export const bodyNavBar = () => {
     const workflow = getWorkflow();
     let template = `
-        <ul class="nav nav-tabs row">
+        <ul class="nav nav-tabs d-print-none">
             <li class="nav-item">
                 <button class="nav-link active navbar-btn" id="navBarSearch">Participant Search</button>
             </li>
@@ -158,7 +158,7 @@ export const bodyNavBar = () => {
 
 export const reportSideNavBar = () => {
     return `
-        <ul class="nav nav-tabs flex-column" id="reportTabs">
+        <ul class="nav nav-tabs flex-column  d-print-none" id="reportTabs">
             <li class="nav-item">
                 <a class="nav-link active" href="#reports" id="navBarShippingReport">Shipping Report</a>
             </li>
@@ -194,7 +194,7 @@ export const reportSideNavBar = () => {
  */
 export const shippingNavBar = () => {
     return `
-        <ul class="nav nav-tabs row">
+        <ul class="nav nav-tabs d-print-none">
             <li class="nav-item col-auto">
                 <button class="nav-link navbar-btn" id="navBarShippingDash">Packaging</button>
             </li>
@@ -229,11 +229,11 @@ function getDashboardSelectionStr() {
  */
 export function generateDashboardSelectionStrForNavbar(dashboardSelection) {
     if (dashboardSelection === 'research') {
-        return `<div class="ml-auto hide-on-not-large-screen" id="dashboardSelectionInNavbar">
+        return `<div class="ms-auto hide-on-not-large-screen" id="dashboardSelectionInNavbar">
         <span class="text-research">Research Dashboard</span>
         </div>`;
     } else if (dashboardSelection === 'clinical') {
-        return `<div class="ml-auto hide-on-not-large-screen" id="dashboardSelectionInNavbar">
+        return `<div class="ms-auto hide-on-not-large-screen" id="dashboardSelectionInNavbar">
         <span class="text-clinical" >Clinical Dashboard</span>
         </div>`;
     } else {

@@ -33,25 +33,25 @@ export const searchTemplate = (goToSpecimenSearch) => {
             <div class="col-lg">
                 <div class="row form-row">
                     <form id="search1" method="POST">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="col-form-label search-label">First name</label>
                             <input class="form-control" autocomplete="off" type="text" id="firstName" placeholder="Enter First Name"/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="col-form-label search-label">Last name</label>
                             <input class="form-control" autocomplete="off" type="text" id="lastName" placeholder="Enter Last Name"/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="col-form-label search-label">Date of Birth</label>
                             <input class="form-control" type="date" id="dob" required/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary">Search</button>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <br/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="button" id="btnClearAll" class="btn btn-outline-danger">Clear All</button>
                         </div>
                     </form>
@@ -60,11 +60,11 @@ export const searchTemplate = (goToSpecimenSearch) => {
             <div class="col-lg">
                 <div class="row form-row">
                     <form id="search4" method="POST">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="col-form-label search-label">Connect ID</label>
                             <input class="form-control" autocomplete="off" required type="text" maxlength="10" id="connectId" placeholder="Enter ConnectID"/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary">Search</button>
                         </div>
                     </form>
@@ -73,22 +73,22 @@ export const searchTemplate = (goToSpecimenSearch) => {
                 :`
                     <div class="row form-row">
                         <form id="search2" method="POST">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="col-form-label search-label">Email</label>
                                 <input class="form-control" required autocomplete="off" type="email" id="email" placeholder="Enter email"/>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <button type="submit" class="btn btn-outline-primary">Search</button>
                             </div>
                         </form>
                     </div>
                     <div class="row form-row">
                         <form id="search3" method="POST">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="col-form-label search-label">Phone no.</label>
                                 <input class="form-control" autocomplete="off" required type="text" maxlength="12" id="phone" placeholder="XXX-XXX-XXXX" pattern="\\d{3}-\\d{3}-\\d{4}"/>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <button type="submit" class="btn btn-outline-primary">Search</button>
                             </div>
                         </form>
@@ -122,11 +122,11 @@ export const searchBiospecimenTemplate = () => {
                 Find by Collection ID
                 <div class="row form-row">
                     <form id="specimenLookupForm" method="POST">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="search-label">Collection ID</label>
                             <input class="form-control" autocomplete="off" required type="text" id="masterSpecimenId" placeholder="Enter/Scan Collection ID"/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary">Search</button>
                         </div>
                     </form>

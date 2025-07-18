@@ -20,15 +20,15 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
         <div class="row">
             <div class="col">
                 <div class="row"><h5>${participantData[conceptIds.lastName] && participantData[conceptIds.lastName]}, ${participantData[conceptIds.firstName] && participantData[conceptIds.firstName]}</h5></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row"><div class="col-auto">Connect ID: </div><div class="col"><svg id="connectIdBarCode"></svg></div></div>
                 <div class="row">
                     ${specimenData[conceptIds.collection.bloodAccessNumber] ? `Blood Accesion ID: ${specimenData[conceptIds.collection.bloodAccessNumber]}` : ''}
                 </div>
                 <div class="row">
                     ${specimenData[conceptIds.collection.urineAccessNumber] ? `Urine Accession ID: ${specimenData[conceptIds.collection.urineAccessNumber]}` : ''}
                 </div>
-                <div class="row">Collection ID: ${specimenData[conceptIds.collection.id]}</div>
-                <div class="row">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(specimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(specimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div>
+                <div class="row"><div class="col">Collection ID: ${specimenData[conceptIds.collection.id]}</div></div>
+                <div class="row"><div class="col">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(specimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(specimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div></div>
                 ${getWorkflow() === 'research' ? `
                 ${bptlCollectionFlag === true ? 
                     `<div class="row">
@@ -48,7 +48,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                 ${bptlCollectionFlag === true ? `<div class="row"> Site: ${keyToNameObj[participantData[conceptIds.healthcareProvider]]} </div>` : ``}
             </div>
             ${specimenData[conceptIds.collection.selectedVisit] ? `
-                <div class="ml-auto form-group">
+                <div class="ms-auto mb-3 col-auto">
                     Visit: ${visitType.filter(visit => visit.concept == specimenData[conceptIds.collection.selectedVisit])[0]?.visitType}
                 </div>
             ` : ``
@@ -97,7 +97,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
             </table>
             </br>
             <form id="finalizeForm" method="POST">
-                <div class="form-group row">
+                <div class="mb-3 row">
                     <div class="col">
                         <label for="finalizedAdditionalNotes">Additional Notes (Optional)</label>
                         </br>
@@ -106,16 +106,16 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                 </div>
                 </br>
                 ${bptlCollectionFlag === true ? 
-                    `<div class="form-group row">
+                    `<div class="mb-3 row">
                         <div class="col-auto">
                             <button class="btn btn-outline-danger" type="button" id="returnToSpecimenSearch">Return to Search</button>
                         </div>
                     </div>
-                    ` :`<div class="form-group row">
+                    ` :`<div class="mb-3 row">
                 <div class="col-auto">
                     <button class="btn btn-outline-danger" type="button" data-connect-id="${participantData.Connect_ID}" id="returnToCollectProcess" data-master-specimen-id="${specimenData[conceptIds.collection.id]}">${getWorkflow() === 'research' ? 'Return to Collection Data Entry' : 'Return to Collection Data Entry'}</button>
                 </div>
-                <div class="ml-auto">
+                <div class="col-auto ms-auto">
                     <button class="btn btn-outline-warning" data-connect-id="${participantData.Connect_ID}" data-master-specimen-id="${specimenData[conceptIds.collection.id]}" type="button" id="finalizedSaveExit">Exit</button>
                 </div>
                 <div class="col-auto">
@@ -125,18 +125,18 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
             </form>
             <div class="modal-wrapper" id="modal1">
                 <div class="modal-dialog model-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content" style="--bs-modal-bg: white; --bs-modal-color: black; --bs-modal-border-width: 1px solid; --bs-modal-border-color: black; --bs-modal-border-radius: 0.5rem;  --bs-modal-padding: 1rem;">
+                    <div class="modal-header" style="--bs-modal-header-padding: 1rem; --bs-modal-header-border-width: 1px; --bs-modal-header-border-color: #dee2e6;">
                     <h5 class="modal-title">Confirm
                         Collection</h5>
-                    <button type="button" class="close modal-close"><span>&times;</span>
+                    <button type="button" class="btn-close modal-close">
                     </button>
                     </div>
                     <div class="modal-body">
                     Once “Confirm” is clicked, the collection data entered will be
                     finalized and will NOT be editable.
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="--bs-modal-footer-gap: 1rem; --bs-modal-footer-padding: 1rem; --bs-modal-footer-border-width: 1px; --bs-modal-footer-border-color: #dee2e6;">
                     <button type="button"
                         class="btn btn-outline-secondary modal-close">Close</button>
                     <button type="button" class="btn btn-outline-primary modal-open" id="finalizedConfirmButton" data-modal-id="modal2">Confirm</button>
@@ -146,17 +146,17 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
             </div>
             <div class="modal-wrapper" id="modal2">
                 <div class="modal-dialog model-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content" style="--bs-modal-bg: white; --bs-modal-color: black; --bs-modal-border-width: 1px solid; --bs-modal-border-color: black; --bs-modal-border-radius: 0.5rem;  --bs-modal-padding: 1rem;">
+                    <div class="modal-header" style="--bs-modal-header-padding: 1rem; --bs-modal-header-border-width: 1px; --bs-modal-header-border-color: #dee2e6;">
                     <h5 class="modal-title">Specimen
                         Finalized</h5>
-                        <button type="button" class="close modal-close"><span>&times;</span>
+                        <button type="button" class="btn-close modal-close">
                         </button>
                     </div>
                     <div class="modal-body">
                     Collection Finalized Successfully!
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="--bs-modal-footer-gap: 1rem; --bs-modal-footer-padding: 1rem; --bs-modal-footer-border-width: 1px; --bs-modal-footer-border-color: #dee2e6;">
                     <button type="button"
                         class="btn btn-outline-secondary modal-close" id="model2CloseButton" >Close</button>
                     </div>

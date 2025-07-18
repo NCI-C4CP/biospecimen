@@ -54,8 +54,8 @@ export const inactivityTime = () => {
             }, 300000)
             // Show warning after 20 minutes of no activity.
             const button = document.createElement('button');
-            button.dataset.toggle = 'modal';
-            button.dataset.target = '#biospecimenModal'
+            button.dataset.bsToggle = 'modal';
+            button.dataset.bsTarget = '#biospecimenModal'
 
             document.getElementById('root').appendChild(button);
             button.click();
@@ -68,8 +68,8 @@ export const inactivityTime = () => {
 
             body.innerHTML = `You were inactive for 20 minutes, would you like to extend your session?
                             <div class="modal-footer">
-                                <button type="button" title="Close" class="btn btn-dark log-out-user" data-dismiss="modal">Log Out</button>
-                                <button type="button" title="Continue" class="btn btn-primary extend-user-session" data-dismiss="modal">Continue</button>
+                                <button type="button" title="Close" class="btn btn-dark log-out-user" data-bs-dismiss="modal">Log Out</button>
+                                <button type="button" title="Continue" class="btn btn-primary extend-user-session" data-bs-dismiss="modal">Continue</button>
                             </div>`
             
             Array.from(document.getElementsByClassName('log-out-user')).forEach(e => {
@@ -327,8 +327,8 @@ export const performSearch = async (query) => {
 // Current use: shimpent completion success notification. Show the success modal above the loading animation.
 export const showNotifications = (data, zIndex) => {
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -337,8 +337,7 @@ export const showNotifications = (data, zIndex) => {
     const header = document.getElementById('biospecimenModalHeader');
     const body = document.getElementById('biospecimenModalBody');
     header.innerHTML = `<h5 class="modal-title">${data.title}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>`;
     body.innerHTML = `
         <div class="row">
@@ -348,8 +347,8 @@ export const showNotifications = (data, zIndex) => {
         </div>
         </br></br>
         <div class="row">
-            <div class="ml-auto" style="margin-right: 1rem;">
-                <button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Close</button>
+            <div class="ms-auto col-auto" style="margin-right: 1rem;">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close">Close</button>
             </div>
         </div>
 `;
@@ -364,8 +363,8 @@ export const showNotifications = (data, zIndex) => {
  */
 export const showNotificationsCancelOrContinue = (message, zIndex, onCancel, onContinue) => {
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -375,8 +374,7 @@ export const showNotificationsCancelOrContinue = (message, zIndex, onCancel, onC
     const continueButtonText = message.continueButtonText || 'Continue';
     const cancelButtonText = message.cancelButtonText || 'Cancel';
     header.innerHTML = `<h5 class="modal-title">${message.title}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>`;
     body.innerHTML = `
         <div class="row">
@@ -386,8 +384,8 @@ export const showNotificationsCancelOrContinue = (message, zIndex, onCancel, onC
         </div>
         <br><br>
         <div class="row">
-            <div class="ml-auto" style="margin-right: 1rem;">
-                <button type="button" class="btn btn-outline-dark" id="modalCancelBtn" data-dismiss="modal">Cancel</button>
+            <div class="ms-auto col-auto" style="margin-right: 1rem;">
+                <button type="button" class="btn btn-outline-dark" id="modalCancelBtn" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="modalContinueBtn">Continue</button>
             </div>
         </div>`;
@@ -423,8 +421,8 @@ export const showNotificationsCancelOrContinue = (message, zIndex, onCancel, onC
  */
 export const showNotificationsSelectableList = (message, items, onCancel, onContinue, zIndex) => {
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -434,8 +432,7 @@ export const showNotificationsSelectableList = (message, items, onCancel, onCont
     const body = document.getElementById('biospecimenModalBody');
     header.innerHTML = `
         <h5 class="modal-title">${message.title}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>`;
     
     // Generate list of items
@@ -462,8 +459,8 @@ export const showNotificationsSelectableList = (message, items, onCancel, onCont
 
     const modalBodyButtons = `
         <div class="row">
-            <div class="ml-auto" style="margin-right: 1rem;">
-                <button type="button" class="btn btn-outline-dark" id="modalCancelBtn" data-dismiss="modal">Cancel</button>
+            <div class="ms-auto col-auto" style="margin-right: 1rem;">
+                <button type="button" class="btn btn-outline-dark" id="modalCancelBtn" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="modalContinueBtn">Continue</button>
             </div>
         </div>`;
@@ -526,8 +523,7 @@ export const showConfirmationModal =  (collectionID, firstName) => {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Confirm Collection ID</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
@@ -535,9 +531,9 @@ export const showConfirmationModal =  (collectionID, firstName) => {
                     <p>Confirm ID is correct for participant: ${firstName}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" data-result="cancel">Cancel</button>
-                    <button type="button" class="btn btn-info" data-result="back" data-dismiss="modal">Confirm and Exit</button>
-                    <button type="button" class="btn btn-success" data-result="confirmed" data-dismiss="modal">Confirm and Continue</button>
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal" data-result="cancel">Cancel</button>
+                    <button type="button" class="btn btn-info" data-result="back" data-bs-dismiss="modal">Confirm and Exit</button>
+                    <button type="button" class="btn btn-success" data-result="confirmed" data-bs-dismiss="modal">Confirm and Continue</button>
                 </div>
             </div>
         `;
@@ -561,8 +557,8 @@ export const showConfirmationModal =  (collectionID, firstName) => {
 
 export const showTimedNotifications = (data, zIndex, timeInMilliseconds = 2600) => {
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
     const rootElement = document.getElementById('root');
     rootElement.appendChild(button);
     button.click();
@@ -581,8 +577,8 @@ export const showTimedNotifications = (data, zIndex, timeInMilliseconds = 2600) 
         </div>
         </br></br>
         <div class="row">
-            <div class="ml-auto" style="margin-right: 1rem;">
-                <button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close" style="display:none">Close</button>
+            <div class="ms-auto col-auto" style="margin-right: 1rem;">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close" style="display:none">Close</button>
             </div>
         </div>`;
 
@@ -614,7 +610,7 @@ const closeBiospecimenModal = () => {
  * Targets close button on biospecimen bootstrap modal and closes it. Can be used to close and dismiss modal for other buttons on the modal.
  * */  
 export const dismissBiospecimenModal = () => { 
-    const closeButton = document.querySelector('#biospecimenModal .btn[data-dismiss="modal"]');
+    const closeButton = document.querySelector('#biospecimenModal .btn[data-bs-dismiss="modal"]');
 
     if (closeButton) closeButton.click();
 }
@@ -646,8 +642,8 @@ export const errorMessage = (id, msg, focus, offset, icon) => {
 
 export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckStatus, currShippingLocationNumber) => {
   const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -656,8 +652,7 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
     const body = document.getElementById('biospecimenModalBody');
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:2rem;">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
                         </button>`;
     body.innerHTML = `
         <div class="row">
@@ -669,8 +664,8 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Yes</button>
-          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" aria-label="Close" style="padding:6px 25px;">No</button>
+          <button id="shipManifestConfirm" type="button" class="btn btn-primary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Yes</button>
+          <button type="button" class="btn btn-outline-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="padding:6px 25px;">No</button>
         </div>
 `;
   const shipManifestConfirmButton = document.getElementById("shipManifestConfirm")
@@ -681,8 +676,8 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
 
 export const shippingDuplicateMessage = (duplicateIdNumber) => {
   const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -691,8 +686,7 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
     const body = document.getElementById('biospecimenModalBody');
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:2rem;">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
                         </button>`;
     body.innerHTML = `
         <div class="row">
@@ -704,14 +698,14 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
         </div>`;
 }
 
 export const shippingNonAlphaNumericStrMessage = () => {
   const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
 
     document.getElementById('root').appendChild(button);
     button.click();
@@ -720,8 +714,7 @@ export const shippingNonAlphaNumericStrMessage = () => {
     const body = document.getElementById('biospecimenModalBody');
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size:2rem;">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
                         </button>`;
     body.innerHTML = `
         <div class="row">
@@ -733,7 +726,7 @@ export const shippingNonAlphaNumericStrMessage = () => {
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
         </div>`;
 }
 
@@ -2853,8 +2846,8 @@ export const addEventBarCodeScanner = (id, start, end) => {
     
     document.getElementById(id).addEventListener('click', () => {
         const btn = document.createElement('button');
-		btn.dataset.toggle = 'modal';
-		btn.dataset.target = '#livestream_scanner';
+		btn.dataset.bsToggle = 'modal';
+		btn.dataset.bsTarget = '#livestream_scanner';
 		btn.hidden = true;
 		document.body.appendChild(btn);
         btn.click();
@@ -2902,7 +2895,7 @@ export const addEventBarCodeScanner = (id, start, end) => {
                     // addEventClearScannedBarcode('clearScanAccessionID');
                     document.getElementById(elementID).value = start !== undefined && end !== undefined ? result.codeResult.code.substr(start, end-1) : result.codeResult.code;
                     Quagga.stop();
-                    document.querySelector('[data-dismiss="modal"]').click();
+                    document.querySelector('[data-bs-dismiss="modal"]').click();
                     return
                 }
                 if(elementID === 'accessionID3') {
@@ -2910,7 +2903,7 @@ export const addEventBarCodeScanner = (id, start, end) => {
                     // addEventClearScannedBarcode('clearScanAccessionID');
                     document.getElementById(elementID).value = start !== undefined && end !== undefined ? result.codeResult.code.substr(start, end-1) : result.codeResult.code;
                     Quagga.stop();
-                    document.querySelector('[data-dismiss="modal"]').click();
+                    document.querySelector('[data-bs-dismiss="modal"]').click();
                     return
                 }
                 if(elementID === 'masterSpecimenId') {
@@ -2959,7 +2952,7 @@ export const addEventBarCodeScanner = (id, start, end) => {
                     else{
                         document.getElementById('submitMasterSpecimenId').click(); 
                     }
-                    document.querySelector('[data-dismiss="modal"]').click();
+                    document.querySelector('[data-bs-dismiss="modal"]').click();
                     return;
                 }
                 if(!masterSpecimenIDRequirement.regExp.test(barcode.substr(0,masterSpecimenIDRequirement.length))) return;
@@ -2969,7 +2962,7 @@ export const addEventBarCodeScanner = (id, start, end) => {
                 }
                 document.getElementById(elementID).value = start !== undefined && end !== undefined ? result.codeResult.code.substr(start, end-1) : result.codeResult.code;
                 Quagga.stop();
-                document.querySelector('[data-dismiss="modal"]').click();
+                document.querySelector('[data-bs-dismiss="modal"]').click();
             }
         });
         
@@ -2978,7 +2971,7 @@ export const addEventBarCodeScanner = (id, start, end) => {
                 if (Quagga){
                     Quagga.stop();
                 }
-                document.querySelector('[data-dismiss="modal"]').click();
+                document.querySelector('[data-bs-dismiss="modal"]').click();
             })
         });
     });
@@ -3818,8 +3811,7 @@ export const triggerErrorModal = (message, alertType) => {
     alertList.innerHTML = `
         <div class="alert alert-${alertType} alert-dismissible fade show" role="alert">
             ${message}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 </button>
         </div>`;
     }
@@ -3831,8 +3823,7 @@ export const triggerSuccessModal = (message) => {
         alertList.innerHTML = `
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 ${message}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                     </button>
             </div>`;
     }
@@ -4052,16 +4043,15 @@ export const showModalNotification = (title, body, closeButtonName, continueButt
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">${title}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           </button>
         </div>
         <div class="modal-body">
           ${body}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-dark" data-dismiss="modal" id="closeBtn">${closeButtonName}</button>
-          <button type="button" class="btn btn-success" data-value="confirmed" data-dismiss="modal" id="continueBtn">${continueButtonName}</button>
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" id="closeBtn">${closeButtonName}</button>
+          <button type="button" class="btn btn-success" data-value="confirmed" data-bs-dismiss="modal" id="continueBtn">${continueButtonName}</button>
         </div>
       </div>
     `;

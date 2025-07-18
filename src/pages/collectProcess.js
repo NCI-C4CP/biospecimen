@@ -15,17 +15,18 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
         <div class="row">
             <div class="col">
                 <div class="row"><h5>${participantData[conceptIds.lastName]}, ${participantData[conceptIds.firstName]}</h5></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row"><div class="col-auto">Connect ID: </div><div class="col"><svg id="connectIdBarCode"></svg></div></div>
                 <div class="row">
-                    ${biospecimenData[conceptIds.collection.bloodAccessNumber] ? `Blood Accesion ID: ${biospecimenData[conceptIds.collection.bloodAccessNumber]}` : ''}
+                    ${biospecimenData[conceptIds.collection.bloodAccessNumber] ? `<div class="col">Blood Accesion ID: ${biospecimenData[conceptIds.collection.bloodAccessNumber]}</div>` : ''}
                 </div>
                 <div class="row">
-                    ${biospecimenData[conceptIds.collection.urineAccessNumber] ? `Urine Accession ID: ${biospecimenData[conceptIds.collection.urineAccessNumber]}` : ''}
+                    ${biospecimenData[conceptIds.collection.urineAccessNumber] ? `<div class="col">Urine Accession ID: ${biospecimenData[conceptIds.collection.urineAccessNumber]}</div>` : ''}
                 </div>
-                <div class="row">Collection ID: ${biospecimenData[conceptIds.collection.id]}</div>
-                <div class="row">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(biospecimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(biospecimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div>
+                <div class="row"><div class="col">Collection ID: ${biospecimenData[conceptIds.collection.id]}</div></div>
+                <div class="row"><div class="col">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(biospecimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(biospecimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div></div>
                 <div class="row">
-                    <div>${getWorkflow() === 'research' ? `Collection Phlebotomist Initials:&nbsp` : `Initials of team member completing Collection Data Entry:&nbsp`}</div>
+                    <div class="col-auto">${getWorkflow() === 'research' ? `Collection Phlebotomist Initials:&nbsp` : `Initials of team member completing Collection Data Entry:&nbsp`}</div>
+                    <div class="col-auto">
                     <input 
                         type="text"
                         ${biospecimenData[conceptIds.collection.phlebotomistInitials] ? `value=${biospecimenData[conceptIds.collection.phlebotomistInitials]}` : ``}
@@ -34,10 +35,11 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                         onpaste="return false;"
                         required
                     /> 
+                    </div>
                 </div>
             </div>
             ${biospecimenData[conceptIds.collection.selectedVisit] ? `
-                <div class="ml-auto form-group">
+                <div class="ms-auto mb-3 col-auto">
                     Visit: ${visitType.filter(visit => visit.concept == biospecimenData[conceptIds.collection.selectedVisit])[0]?.visitType}
                 </div>
             ` : ``
@@ -217,10 +219,10 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                     <button class="btn btn-outline-danger" type="button" id="backToSearch">Return to Search</button>
                 </div>
                 ${isCheckedIn ?
-                `<div class="ml-auto" style="display:none">
+                `<div class="ms-auto col-auto" style="display:none">
                     <button class="btn btn-outline-primary text-nowrap" data-connect-id=${participantData.Connect_ID} type="button" id="collectionCheckout">Go to Check-Out</button>
                 </div>` : ``}               
-                <div class="ml-auto">
+                <div class="ms-auto col-auto">
                     <button class="btn btn-info" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionSave">Save</button>
                 </div>
                 <div class="col-auto">

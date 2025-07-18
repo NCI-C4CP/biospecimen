@@ -432,21 +432,20 @@ export const addEventModalBtn = (role, userEmail) => {
         const header = document.getElementById('biospecimenModalHeader');
         const body = document.getElementById('biospecimenModalBody');
         header.innerHTML = `<h5 class="modal-title">Add user</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             </button>`;
 
         body.innerHTML = `
             <form id="addNewUser" method="POST">
-                <div class="form-group">
+                <div class="mb-3">
                     <label class="col-form-label search-label">Name</label>
                     <input class="form-control" required type="name" autocomplete="off" id="userName" placeholder="Enter name"/>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label class="col-form-label search-label">Email</label>
                     <input class="form-control" required autocomplete="off" type="email" autocomplete="off" id="userEmail" placeholder="Enter name"/>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <label class="col-form-label search-label">Role</label>
                     <select class="form-control" required id="userRole">
                         <option value="">-- Select role --</option>
@@ -1022,8 +1021,8 @@ const triggerConfirmationModal = (modalData) => {
     const { accessionID2, accessionID4, participantName, selectedVisit, formData, connectId } = modalData.modalContext;
 
     const button = document.createElement('button');
-    button.dataset.target = '#modalShowMoreData';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#modalShowMoreData';
+    button.dataset.bsToggle = 'modal';
     document.getElementById('root').appendChild(button);
     button.click();
     document.getElementById('root').removeChild(button);
@@ -1038,8 +1037,8 @@ const triggerConfirmationModal = (modalData) => {
     template += `
     <br />
     <div style="display:inline-block; margin-top:20px;">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="proceedNextPage">Confirm & Continue</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancel">Cancel</button>
         </div>
     </div>`
     body.innerHTML = template;
@@ -1070,8 +1069,8 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
         if (bloodAccessionId.data) {
             hideAnimation();
             const button = document.createElement('button');
-            button.dataset.target = '#biospecimenModal';
-            button.dataset.toggle = 'modal';
+            button.dataset.bsTarget = '#biospecimenModal';
+            button.dataset.bsToggle = 'modal';
             document.getElementById('root').appendChild(button);
             button.click();
             document.getElementById('root').removeChild(button);
@@ -1082,8 +1081,8 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
             template += `
             <br />
             <div style="display:inline-block; margin-top:20px;">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="addCollection">Add Specimens to existing Collection ID</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="cancelSelection">Cancel</button>
                 </div>
             </div>`
             body.innerHTML = template;
@@ -1971,20 +1970,20 @@ export const populateTrackingQuery = async (boxIdAndBagsObj) => {
         let trackNumConfirm = boxIdArray[i] && shipping?.[boxIdArray[i]]?.["confirmTrackNum"];
         toBeInnerHTML +=`
         <div class = "row" style="justify-content:space-around">
-                            <div class="form-group" style="margin-top:30px; width:380px;">
+                            <div class="mb-3" style="margin-top:30px; width:380px;">
                                 <label style="float:left;margin-top:5px">`+'Enter / Scan Shipping Tracking Number for ' + `<span style="font-weight:600;display:block;">${boxIdArray[i]}</span>` + `</label>
                                 <br>
                                 <div style="float:left;">
-                                    <input class="form-control boxTrackingId shippingTrackingInput" type="text" id="` + boxIdArray[i] + 'trackingId' + `" placeholder="Enter/Scan Tracking Number" value="${trackNum ?? ""}" data-toggle="tooltip" data-placement="top" title="Scan or manually type tracking number" autocomplete="off"/>
+                                    <input class="form-control boxTrackingId shippingTrackingInput" type="text" id="` + boxIdArray[i] + 'trackingId' + `" placeholder="Enter/Scan Tracking Number" value="${trackNum ?? ""}" data-bs-toggle="tooltip" data-placement="top" title="Scan or manually type tracking number" autocomplete="off"/>
                                     <p style="font-size:.8rem; margin-top:.5rem;">Ex. 457424072905</p>
                                     <p id="${boxIdArray[i]}trackingIdErrorMsg" class="text-danger"></p>
                                 </div>
                             </div>
-                            <div class="form-group" style="margin-top:30px; width:380px;">
+                            <div class="mb-3" style="margin-top:30px; width:380px;">
                                 <label style="float:left;margin-top:5px">`+'Confirm Shipping Tracking Number for '+ `<span style="font-weight:600;display:block;">${boxIdArray[i]}</span>` + `</label>
                                 <br>
                                 <div style="float:left;">
-                                    <input class="form-control boxTrackingIdConfirm shippingTrackingInput" type="text" id="` + boxIdArray[i] + 'trackingIdConfirm' + `" placeholder="Enter/Scan Tracking Number" value="${trackNumConfirm ?? ""}" data-toggle="tooltip" data-placement="top" title="Scan or manually type to confirm the correct tracking number" autocomplete="off"/>
+                                    <input class="form-control boxTrackingIdConfirm shippingTrackingInput" type="text" id="` + boxIdArray[i] + 'trackingIdConfirm' + `" placeholder="Enter/Scan Tracking Number" value="${trackNumConfirm ?? ""}" data-bs-toggle="tooltip" data-placement="top" title="Scan or manually type to confirm the correct tracking number" autocomplete="off"/>
                                     <p style="font-size:.8rem; margin-top:.5rem;">Ex. 457424072905</p>
                                     <p id="${boxIdArray[i]}trackingIdConfirmErrorMsg" class="text-danger"></p>
                                 </div>
@@ -2178,13 +2177,12 @@ export const addEventContactInformationModal = (data) => {
         const header = document.getElementById('biospecimenModalHeader');
         const body = document.getElementById('biospecimenModalBody');
         header.innerHTML = `<h5 class="modal-title">Contact Information</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             </button>`;
         body.innerHTML = `
             <div class="row">
                 <div class="col">${data['736251808']}, ${data['471168198']}</div>
-                <div class="ml-auto">Connect ID: <svg id="connectIdBarCodeModal"></svg></div>
+                <div class="ms-auto col-auto">Connect ID: <svg id="connectIdBarCodeModal"></svg></div>
             </div>
             <div class="row">
                 <div class="col">
@@ -2210,7 +2208,7 @@ export const addEventContactInformationModal = (data) => {
             </br>
             <div class="row">
                 <div class="col">
-                    <button type="button" class="btn btn-outline-success" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal" aria-label="Close">
                         Information verified
                     </button>
                 </div>
@@ -2227,8 +2225,7 @@ export const addEventQRCodeBtn = () => {
             const header = document.getElementById('biospecimenModalHeader');
             const body = document.getElementById('biospecimenModalBody');
             header.innerHTML = `<h5 class="modal-title">QR Code</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                 </button>`;
 
             body.innerHTML = `
@@ -2238,7 +2235,7 @@ export const addEventQRCodeBtn = () => {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close">Close</button>
+                    <button type="submit" class="btn btn-outline-dark" data-bs-dismiss="modal" aria-label="Close">Close</button>
                 </div>
             `;
         });
@@ -2838,8 +2835,8 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
         }
 
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModal';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
     document.getElementById('root').appendChild(button);
     button.click();
     document.getElementById('root').removeChild(button);
@@ -2850,8 +2847,8 @@ const displayClinicalSpecimenCollectedModal = (modalContext) => {
     const modalButtons = `
                         <br />
                         <div style="display:inline-block; margin-top:20px;">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger">No</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" id="yesTrigger">Yes</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="noTrigger">No</button>
                             </div>
                         </div>
                         `;
@@ -2920,8 +2917,8 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
     }
     
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenCollected';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenCollected';
+    button.dataset.bsToggle = 'modal';
     document.getElementById('root').appendChild(button);
     button.click();
     document.getElementById('root').removeChild(button);
@@ -2937,8 +2934,8 @@ const displayResearchSpecimenCollectedModal = async (participantData) => {
     template += `
         <br />
         <div style="display:inline-block; margin-top:20px;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" data-bs-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
             </div>
         </div>`;
     body.innerHTML = template;
@@ -2966,8 +2963,8 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
     const { accessionID2, accessionID4 } = modalData?.modalContext;
 
     const button = document.createElement('button');
-    button.dataset.target = '#biospecimenModalExtra';
-    button.dataset.toggle = 'modal';
+    button.dataset.bsTarget = '#biospecimenModalExtra';
+    button.dataset.bsToggle = 'modal';
     document.getElementById('root').appendChild(button);
     button.click();
     document.getElementById('root').removeChild(button);
@@ -2989,8 +2986,8 @@ const displayClinicalSpecimenMissingModal = (modalData) => {
     template += `
         <br />
         <div style="display:inline-block; margin-top:20px;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" data-toggle="modal" id="yesTrigger_Modal2">Yes</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" data-bs-toggle="modal" id="yesTrigger_Modal2">Yes</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank" id="noTrigger_Modal2">No</button>
             </div>
         </div>`;
     body.innerHTML = template;

@@ -70,8 +70,7 @@ const packagesInTransitTemplate = async (username, auth, route) => {
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div>
-                    <button style="font-size:2.5rem;padding:1rem;" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <button style="font-size:2.5rem;padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div id="manifest-modal-body" class="modal-body"></div>  
@@ -151,8 +150,8 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     const buttonEle = document.createElement('button');
                     buttonEle.className = 'manifest-button btn-primary';
                     buttonEle.textContent = 'Manifest';
-                    buttonEle.setAttribute('data-toggle', 'modal');
-                    buttonEle.setAttribute('data-target', '#manifestModal');
+                    buttonEle.setAttribute('data-bs-toggle', 'modal');
+                    buttonEle.setAttribute('data-bs-target', '#manifestModal');
                     cellEle.appendChild(buttonEle);
                     break;
 
@@ -203,7 +202,7 @@ const manifestButton = (allBoxesShippedBySiteAndNotReceived, bagIdArr, manifestM
                     <div class="col-md-4">
                         <p><strong>Tracking Number:</strong> ${trackingNumber ? trackingNumber : ""} </p>
                     </div>
-                    <div class="col-md-4 ml-auto">
+                    <div class="col-md-4 ms-auto">
                         <p><strong>Site:</strong> ${site ? site : ""} </p>
                     </div>
                 </div>
@@ -211,7 +210,7 @@ const manifestButton = (allBoxesShippedBySiteAndNotReceived, bagIdArr, manifestM
                     <div class="col-md-4">
                         <p><strong>Shipped Date and Time:</strong> ${date ? convertTime(date) : ""}</p>
                     </div>
-                    <div class="col-md-4 ml-auto">
+                    <div class="col-md-4 ms-auto">
                         <p><strong>Location:</strong> ${location ? (conceptIdToSiteSpecificLocation[location].length > 14 ? "<br>" + conceptIdToSiteSpecificLocation[location] : conceptIdToSiteSpecificLocation[location]) : ""}</p>
                     </div>
                 </div>

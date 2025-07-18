@@ -155,8 +155,7 @@ const headsupBanner = () => {
     let alertList = document.getElementById('alert_placeholder');
     template += `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <center> Warning: This is a test environment, <b> do not use real participant data  </b> </center>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 </button>
                 </div>`
     

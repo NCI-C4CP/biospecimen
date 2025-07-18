@@ -32,7 +32,7 @@ const kitsReceiptTemplate = async (name) => {
                   <div id="alert_placeholder"></div>
                   <div class="mt-3" >
                   <br />
-                  <div class="row form-group">
+                  <div class="row mb-3">
                     <label class="col-form-label col-md-4" for="scannedBarcode">Scan Return Kit Tracking Number</label>
                     <div style="display:inline-block;">
                       <input autocomplete="off" required="" class="col-md-8" type="text" id="scannedBarcode" style="width: 600px;" placeholder="Scan Barcode">
@@ -43,7 +43,7 @@ const kitsReceiptTemplate = async (name) => {
                     </div>
                   </div>
                   
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
                        <div style="display:inline-block; max-width:90%;"> 
                           <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
@@ -60,33 +60,33 @@ const kitsReceiptTemplate = async (name) => {
                           </select>
                      </div>
                   </div>
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
                       <textarea class="col-md-8 form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
                   </div>
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
                       <input autocomplete="off" required class="col-md-8 form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
                   </div>
                   <div id="collectionCard">
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4 for="collectionCheckBox">Check if Collection Card Missing</label>
                           <input type="checkbox" name="collectionCheckBox" id="collectionCheckBox">
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionId">Collection ID</label>
                           <input autocomplete="off" class="col-md-8 form-control" type="text" id="collectionId" placeholder="Scan or Enter a Collection ID">
                           <span id="showCollectionErrorMsg" style="font-size: 14px;"></span>
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
                           <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
                           <input autocomplete="off" class="col-md-8 form-control" type="time" id="timeCollectionCard">
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionComments">Comments on Card Returned</label>
                           <textarea class="col-md-8 form-control" id="collectionComments" cols="30" rows="3" placeholder="Comments on the card?"></textarea>
                       </div>
@@ -94,7 +94,7 @@ const kitsReceiptTemplate = async (name) => {
                   
                   <div class="mt-4 mb-4" style="display:inline-block;">
                       <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
-                      <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modalShowMoreData" id="save">Save</button>
+                      <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" id="save">Save</button>
                   </div>
               </div>
           </div>`;
@@ -303,8 +303,8 @@ const openModal = () => {
   const openModalButton = document.createElement('button');
 
   openModalButton.style.display = 'none';
-  openModalButton.setAttribute('data-target', '#modalShowMoreData');
-  openModalButton.setAttribute('data-toggle', 'modal');
+  openModalButton.setAttribute('data-bs-target', '#modalShowMoreData');
+  openModalButton.setAttribute('data-bs-toggle', 'modal');
   openModalButton.id = 'openShowMoreDataModalButton';
 
   document.body.appendChild(openModalButton);

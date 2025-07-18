@@ -180,12 +180,12 @@ const buildReportsManifestTemplate = (siteAcronym, shippingLocation, trackingNum
             </tr>
         </table>
     </div>
-    <div class="row" style="margin-top:100px">
+    <div class="row d-print-none" style="margin-top:100px">
         <div style="float: left;width: 33%;" id="boxManifestCol1">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToReports">Return to Reports</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToReports">Return to Reports</button>
         </div>
         <div style="float: left;width: 33%;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="printBox">Print Box Manifest</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="printBox">Print Box Manifest</button>
         </div>
         <div style="float:left;width: 33%;" id="boxManifestCol3">
         </div>

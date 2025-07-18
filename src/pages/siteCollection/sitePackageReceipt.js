@@ -28,7 +28,7 @@ const packageReceiptTemplate = async (name) => {
             <span> <h3 style="text-align: center; margin: 0 0 1rem;">Site Package Receipt</h3> </span>
             <div class="mt-3" >
                 <br>
-                <div class="row form-group">
+                <div class="row mb-3">
                     <label class="col-form-label col-md-4" for="scannedBarcode">Scan FedEx/USPS Barcode</label>
                     <div style="display:inline-block;">
                     <input autocomplete="off" required="" class="col-md-8" type="text" id="scannedBarcode"  style="width: 600px;" placeholder="Scan a Fedex or USPS barcode">
@@ -41,7 +41,7 @@ const packageReceiptTemplate = async (name) => {
                 </div>
             </div>
 
-            <div class="row form-group">
+            <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
                 <div style="display:inline-block; max-width:90%;"> 
                     <select required class="col form-control" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
@@ -69,17 +69,17 @@ const packageReceiptTemplate = async (name) => {
                 </div>
             </div>
 
-            <div class="row form-group">
+            <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
                 <textarea class="col-md-8 form-control" id="receivePackageComments" cols="30" rows="5" placeholder="Any comments?" ></textarea>
             </div>
-            <div class="row form-group">
+            <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
                 <input autocomplete="off" required class="col-md-8 form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
             </div>
             <div class="mt-4 mb-4" style="display:inline-block;">
                 <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
-                <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modalShowMoreData" id="save">Save</button>
+                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" id="save">Save</button>
             </div>
         </div>
     `;
@@ -567,8 +567,7 @@ const uspsFirstThreeNumbersCheck = (input) => {
 
 export const displayInvalidPackageInformationModal = (modalHeaderEl, modalBodyEl) => {
     modalHeaderEl.innerHTML = `
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
     `;
     modalBodyEl.innerHTML = `
@@ -584,7 +583,7 @@ export const displayInvalidPackageInformationModal = (modalHeaderEl, modalBodyEl
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
         </div>
         </div>
     `;
@@ -601,8 +600,7 @@ export const checkSelectPackageConditionsList = () => {
 
 export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl) => {
     modalHeaderEl.innerHTML = `
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
         `;
     modalBodyEl.innerHTML = `
@@ -618,7 +616,7 @@ export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
         </div>
     `;
 }
@@ -627,8 +625,7 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
     modalHeaderEl.innerHTML = `
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
     `;
     modalBodyEl.innerHTML = `
@@ -645,8 +642,8 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button id="confirmPackageConditionButton" type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
+            <button id="confirmPackageConditionButton" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
         </div>
     `;
 
@@ -657,8 +654,7 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
 const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitReceipt) => {
     modalHeaderEl.innerHTML = `
         <h5>Confirmation</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
     `;
     modalBodyEl.innerHTML = `
@@ -666,8 +662,8 @@ const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitRecei
             <span>Confirm package receipt</span>
             <br >
             <div style="display:inline-block;">
-                <button type="submit" class="btn btn-primary" data-dismiss="modal" id="confirmReceipt" target="_blank">Confirm</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="confirmReceipt" target="_blank">Confirm</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
             </div>
         </div>
     `;
@@ -733,8 +729,7 @@ const handleUnsavedChangesListeners = (hasUnsavedChanges) => {
 
 export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage) => {
     modalHeaderEl.innerHTML = `
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
     `;
     modalBodyEl.innerHTML = `
@@ -749,7 +744,7 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
         </div>
     `;
 };

@@ -31,51 +31,51 @@ const kitAssemblyTemplate = (name) => {
               <div class="col">
               <div id="alert_placeholder"></div>
                   <form>
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <label for="scannedBarcode" class="col-md-4 col-form-label">Return Kit Tracking Number</label>
                           <div class="col-md-8">
-                            <div class="form-group row">
+                            <div class="mb-3 row">
                               <input type="text" class="form-control" id="scannedBarcode" placeholder="Scan Barcode" required />
                               <span id="showMsg" style="font-size: 14px;"></span>
                             </div>
-                            <label for="scannedBarcode2" class="sr-only">Confirm Return Kit Tracking Number</label>
-                            <div class="form-group row">
+                            <label for="scannedBarcode2" class="visually-hidden">Confirm Return Kit Tracking Number</label>
+                            <div class="mb-3 row">
                               <input autocomplete="off" type="text" class="form-control" id="scannedBarcode2" placeholder="Re-Enter (scan/type) Barcode" required />
                               <span id="showErrorMsg" style="font-size: 14px;"></span>
                             </div>
                           </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <label for="supplyKitId" class="col-md-4 col-form-label">Supply Kit ID</label>
                           <div class="col-md-8">
                             <input type="text" class="form-control" id="supplyKitId" placeholder="Enter Supply Kit ID" required />
                           </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <label for="returnKitId" class="col-md-4 col-form-label">Return Kit ID</label>
                           <div class="col-md-8">
                             <input type="text" class="form-control" id="returnKitId" placeholder="Enter Return Kit ID" required />
                             <span id="showReturnKitErrorMsg" style="font-size: 14px; color: red;"></span>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <label for="cupId" class="col-md-4 col-form-label">Cup ID</label>
                           <div class="col-md-8">
                             <input type="text" class="form-control" id="cupId" placeholder="Enter Cup ID" required />
                           </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="mb-3 row">
                           <label for="cardId" class="col-md-4 col-form-label">Card ID</label>
                           <div class="col-md-8">
                             <input type="text" class="form-control" id="cardId" placeholder="Enter Card ID" required />
                             <span id="showCardIdErrorMsg" style="font-size: 14px; color: red;"></span>
                           </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="mb-3 row">
                         <label for="kitType" class="col-md-4 col-form-label">Kit Type</label>
                           <div class="col-md-8">
                             <div class="dropdown">
-                              <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               Select Kit Type
                               </button>
                                 <ul class="dropdown-menu scrollable-menu" id="dropdownMenuButtonSites" aria-labelledby="dropdownMenuButton">
@@ -322,8 +322,7 @@ const alertTemplate = (message, status = "warn", duration = 3000) => {
     const alertHtml = `
     <div id="alert-success" class="alert alert-success alert-dismissible fade show" role="alert">
       <strong>${message}</strong>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
       </button>
     </div>`
     ;
@@ -332,8 +331,7 @@ const alertTemplate = (message, status = "warn", duration = 3000) => {
   } else if (status === "warn") {
     const alertHtml = `<div id="alert-warning" class="alert alert-danger alert-dismissible fade show" role="alert">
     <strong>${message}</strong>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
     </button>
   </div>`;
     contentBody.insertAdjacentHTML("afterbegin", alertHtml);

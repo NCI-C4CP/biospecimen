@@ -1031,13 +1031,13 @@ export const shipmentTracking = async (boxIdAndBagsObj, userName, boxWithTempMon
         </div>
         <div class="row" style="margin-top:100px">
             <div style="float: left;width: 33%;" id="boxManifestCol1">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
             </div>
             <div style="float: left;width: 33%;" id="boxManifestCol2">  
             </div>
             <div style="float:left;width: 33%;" id="boxManifestCol3">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveTracking" style="margin-right:.5rem;">Save</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="completeTracking">Save and Continue</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="saveTracking" style="margin-right:.5rem;">Save</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="completeTracking">Save and Continue</button>
             </div>
         </div>
     `;
@@ -1105,7 +1105,7 @@ const renderScanOrEnterSpecimenId = () => {
                     <label for="masterSpecimenId">
                         <h5>To start packing the shipping boxes, scan specimen bag ID or Full Specimen ID here:</h5>
                     </label>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <div class="input-group">
                             <input class="form-control" required type="text" id="masterSpecimenId" placeholder="Enter/Scan" autocomplete="off"/>
                             <div class="input-group-append">
@@ -1114,8 +1114,8 @@ const renderScanOrEnterSpecimenId = () => {
                         </div>
                     </div>
                 </form>
-                <button href="#" id="submitMasterSpecimenId" type="submit" class="btn btn-outline-primary" data-toggle="modal" data-target="#shippingModal" data-backdrop="static" style = "display:none">Add specimen to box</button>
-                <button href="#" id="submitSpecimenIdProxyButton" type="submit" class="btn btn-outline-primary" data-toggle="modal" data-target="#shippingModal" data-backdrop="static" style = "display:none">Add specimen to box</button>
+                <button href="#" id="submitMasterSpecimenId" type="submit" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shippingModal" data-backdrop="static" style = "display:none">Add specimen to box</button>
+                <button href="#" id="submitSpecimenIdProxyButton" type="submit" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#shippingModal" data-backdrop="static" style = "display:none">Add specimen to box</button>
                 <br><br>
             </div>
         </div>
@@ -1186,11 +1186,11 @@ const renderTempTubeReminder = () => {
 const renderSelectBoxes = () => {
     return `
         <div class="row" style="margin-bottom:1rem">
-            <div class="col-9 no-gutters">
+            <div class="col-9 g-0">
                 <h4 style="text-align:start;">Select one or more boxes to ship</h4>
             </div>
-            <div class="col-3 no-gutters">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="completePackaging" style="margin:auto;display:block;">Continue to Review Shipment Contents</button>
+            <div class="col-3 g-0">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="completePackaging" style="margin:auto;display:block;">Continue to Review Shipment Contents</button>
             </div>
         </div>
         <div style="border: 1px solid black; overflow: auto; margin-bottom: 0.5rem; height: 400px;">
@@ -1228,8 +1228,8 @@ const renderSpecimenVerificationModal = () => {
                         <button type="button" class="btn btn-primary" id="modalAddBoxButton">Create New Box</button>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="addToBoxButton">Add to Box</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="shippingModalCancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="addToBoxButton">Add to Box</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="shippingModalCancel">Cancel</button>
                     </div>  
                 </div>
             </div>
@@ -1270,11 +1270,11 @@ const renderBoxManifestTemplate = (currInstitute, currLocation) => {
                 </div>
             </div>
             <div class="row" style="margin-top:3.125rem; display: flex; justify-content: space-between;">
-                <div id="boxManifestCol1">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
+                <div id="boxManifestCol1" class="col-auto">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
                 </div>
-                <div id="boxManifestCol3">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="printBox">Print Box Manifest</button>
+                <div id="boxManifestCol3" class="col-auto">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="printBox">Print Box Manifest</button>
                 </div>
         </div>
     `;
@@ -1283,8 +1283,7 @@ const renderBoxManifestTemplate = (currInstitute, currLocation) => {
 export const renderShippingModalHeader = () => {
     const header = document.getElementById('shippingModalHeader');
         header.innerHTML = `<h5 class="modal-title">Specimen Verification</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="shippingCloseButton">
-        <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="shippingCloseButton">
         </button>`;
 }
 
@@ -1376,13 +1375,13 @@ export const renderShippingManifestTemplate = (boxIdArray, isTempMonitorIncluded
         </div>
         <div class="row" style="margin-top:100px">
             <div style="float: left;width: 33%;" id="boxManifestCol1">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
             </div>
             <div style="float: left;width: 33%;">
-                <button type="button" class="btn btn-primary print-manifest" data-dismiss="modal" id="printBox">Optional: Print Shipment Manifest</button>
+                <button type="button" class="btn btn-primary print-manifest" data-bs-dismiss="modal" id="printBox">Optional: Print Shipment Manifest</button>
             </div>
             <div style="float:left;width: 33%;" id="boxManifestCol3">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="assignTrackingNumberPage">Continue to Assign Tracking Number</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="assignTrackingNumberPage">Continue to Assign Tracking Number</button>
             </div>
         </div>
     `;
@@ -1414,13 +1413,13 @@ const renderFinalShipmentTrackingTemplate = (shipmentCourier, userName) => {
         
         <div class="row" style="margin-top:100px">
             <div style="float: left;width: 33%;" id="boxManifestCol1">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToTracking">Back to Assign Tracking Information</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToTracking">Back to Assign Tracking Information</button>
             </div>
             <div style="float: left;width: 33%;">
                 
             </div>
             <div style="float:left;width: 33%;" id="boxManifestCol3">
-                <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#finalizeModal" id="completeShippingButton">Finalize</button>
+                <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#finalizeModal" id="completeShippingButton">Finalize</button>
             </div>
         </div>
 
@@ -1445,7 +1444,7 @@ const renderFinalShipmentTrackingTemplate = (shipmentCourier, userName) => {
                     <div class="modal-footer">
                     
                         <button type="button" class="btn btn-primary" id="finalizeModalSign">Sign</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="finalizeModalCancel">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="finalizeModalCancel">Close</button>
                     </div>  
                 </div>
             </div>
