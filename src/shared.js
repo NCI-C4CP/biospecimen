@@ -699,7 +699,7 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+          <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
         </div>`;
 }
 
@@ -727,7 +727,7 @@ export const shippingNonAlphaNumericStrMessage = () => {
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+          <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
         </div>`;
 }
 

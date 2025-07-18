@@ -755,7 +755,7 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Close</button>
         </div>
     `;
 };

@@ -58,9 +58,13 @@ const confirmPickupTemplate = (uniqueKitID) => {
                   <div class="card-body">
                       <span id="pickupDate"> Pickup Date </span>  : <input required type="text" name="inputDate" id="inputDate" value=${new Date().toLocaleDateString()} style="text-align:center" />
                         <br />
-                        <div class="form-check" style="padding-top: 20px;">
-                            <input class="form-check-input" name="options" type="checkbox" id="defaultCheck" checked>
-                            <label class="form-check-label" for="defaultCheck3">Confirm Pickup </label> 
+                        <div class="row">
+                          <div class="col-auto offset-md-4">
+                            <div class="form-check" style="padding-top: 20px;">
+                              <input class="form-check-input" name="options" type="checkbox" id="defaultCheck" checked="">
+                              <label class="form-check-label" for="defaultCheck3">Confirm Pickup </label> 
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div style="display:inline-block; padding: 10px 10px;">
