@@ -5,6 +5,9 @@ import { conceptIds } from '../fieldToConceptIdMapping.js';
 
 export const tubeCollectedTemplate = (participantData, biospecimenData) => {
     const isCheckedIn = checkedIn(participantData);
+    const inputNote = getWorkflow() === 'research' 
+        ? 'Enter Data AFTER specimens have been collected' 
+        : 'Enter data ONLY for tubes received from the clinical lab';
 
     let template = `
         </br>
@@ -45,12 +48,9 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
         </div>
         </br>
         
-        ${getWorkflow() === 'research' ? `
-            <div class="row">
-                <p class="input-note collection-data-entry">Enter Data AFTER specimens have been collected</p>
-            </div>
-        ` : ''
-        }
+        <div class="row">
+            <p class="input-note collection-data-entry">${inputNote}</p>
+        </div>
 
         <form id="biospecimenCollectionForm" method="POST">
             <div class="row">
