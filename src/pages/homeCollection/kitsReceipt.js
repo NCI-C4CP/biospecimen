@@ -34,8 +34,8 @@ const kitsReceiptTemplate = async (name) => {
                   <br />
                   <div class="row mb-3">
                     <label class="col-form-label col-md-4" for="scannedBarcode">Scan Return Kit Tracking Number</label>
-                    <div style="display:inline-block;">
-                      <input autocomplete="off" required="" class="col-md-8" type="text" id="scannedBarcode" style="width: 600px;" placeholder="Scan Barcode">
+                    <div style="display:inline-block;" class="col-md-8">
+                      <input autocomplete="off" required="" type="text" id="scannedBarcode" style="width: 600px;" placeholder="Scan Barcode">
                       <span id="showMsg" style="padding-left: 10px;"></span>
                       <br />
                       <br />
@@ -45,8 +45,8 @@ const kitsReceiptTemplate = async (name) => {
                   
                   <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                       <div style="display:inline-block; max-width:90%;"> 
-                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
+                       <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                          <select required class="select-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
                               <option id="select-dashboard" value="">-- Select Package Condition --</option>
                               <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
                               <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
@@ -62,33 +62,47 @@ const kitsReceiptTemplate = async (name) => {
                   </div>
                   <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
-                      <textarea class="col-md-8 form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
+                      <div class="col-md-8">
+                        <textarea class="form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
+                      </div>
                   </div>
                   <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
-                      <input autocomplete="off" required class="col-md-8 form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                      <div class="col-md-8">
+                        <input autocomplete="off" required class="form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                      </div>
                   </div>
                   <div id="collectionCard">
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4 for="collectionCheckBox">Check if Collection Card Missing</label>
-                          <input type="checkbox" name="collectionCheckBox" id="collectionCheckBox">
+                          <div class="col-md-8">
+                            <input type="checkbox" name="collectionCheckBox" id="collectionCheckBox">
+                          </div>
                       </div>
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionId">Collection ID</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="text" id="collectionId" placeholder="Scan or Enter a Collection ID">
-                          <span id="showCollectionErrorMsg" style="font-size: 14px;"></span>
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="text" id="collectionId" placeholder="Scan or Enter a Collection ID">
+                            <span id="showCollectionErrorMsg" style="font-size: 14px;"></span>
+                          </div>
                       </div>
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="date" id="dateCollectionCard">
+                          </div>
                       </div>
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="time" id="timeCollectionCard">
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="time" id="timeCollectionCard">
+                          </div>
                       </div>
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionComments">Comments on Card Returned</label>
-                          <textarea class="col-md-8 form-control" id="collectionComments" cols="30" rows="3" placeholder="Comments on the card?"></textarea>
+                          <div class="col-md-8">
+                            <textarea class="form-control" id="collectionComments" cols="30" rows="3" placeholder="Comments on the card?"></textarea>
+                          </div>
                       </div>
                     </div>
                   

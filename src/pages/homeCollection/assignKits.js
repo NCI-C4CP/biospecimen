@@ -202,8 +202,10 @@ const selectParticipants = () => {
               </div>
           </div>
           <div class="row" style="display:flex; justify-content:center;">
+            <div class="col-auto">
               <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
               <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            </div>
           </div>
       `);
       clickConfirmButton();

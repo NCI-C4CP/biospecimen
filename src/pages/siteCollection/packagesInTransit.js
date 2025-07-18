@@ -69,8 +69,8 @@ const packagesInTransitTemplate = async (username, auth, route) => {
     <div class="modal fade" id="manifestModal" tabindex="-1" aria-labelledby="manifestModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
-                <div>
-                    <button style="font-size:2.5rem;padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <div class="ms-auto">
+                    <button style="padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div id="manifest-modal-body" class="modal-body"></div>  

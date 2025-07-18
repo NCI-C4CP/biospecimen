@@ -1029,7 +1029,7 @@ export const shipmentTracking = async (boxIdAndBagsObj, userName, boxWithTempMon
                 </div>
             </div>
         </div>
-        <div class="row" style="margin-top:100px">
+        <div class="row d-print-none" style="margin-top:100px">
             <div style="float: left;width: 33%;" id="boxManifestCol1">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
             </div>
@@ -1269,7 +1269,7 @@ const renderBoxManifestTemplate = (currInstitute, currLocation) => {
                     </div>
                 </div>
             </div>
-            <div class="row" style="margin-top:3.125rem; display: flex; justify-content: space-between;">
+            <div class="row d-print-none" style="margin-top:3.125rem; display: flex; justify-content: space-between;">
                 <div id="boxManifestCol1" class="col-auto">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
                 </div>
@@ -1373,7 +1373,7 @@ export const renderShippingManifestTemplate = (boxIdArray, isTempMonitorIncluded
         <div class="row" id="tempCheckList">
             ${tempSelectStringRender({boxIdArray, isTempMonitorIncluded})}
         </div>
-        <div class="row" style="margin-top:100px">
+        <div class="row d-print-none" style="margin-top:100px">
             <div style="float: left;width: 33%;" id="boxManifestCol1">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToPackaging">Return to Packaging</button>
             </div>

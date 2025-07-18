@@ -30,21 +30,22 @@ const packageReceiptTemplate = async (name) => {
                 <br>
                 <div class="row mb-3">
                     <label class="col-form-label col-md-4" for="scannedBarcode">Scan FedEx/USPS Barcode</label>
-                    <div style="display:inline-block;">
-                    <input autocomplete="off" required="" class="col-md-8" type="text" id="scannedBarcode"  style="width: 600px;" placeholder="Scan a Fedex or USPS barcode">
-                    <span id="showMsg" style="padding-left: 10px;"></span>
-                    <br>
-                    <br>
-                    <span>
-                        <p><i>Press command/control while clicking with the mouse to make multiple selections</i></p>
-                    </span>
+                    <div class="col-md-8">
+                        <input autocomplete="off" required="" type="text" id="scannedBarcode"  style="width: 600px;" placeholder="Scan a Fedex or USPS barcode">
+                        <span id="showMsg" style="padding-left: 10px;"></span>
+                        <br>
+                        <br>
+                        <span>
+                            <p><i>Press command/control while clicking with the mouse to make multiple selections</i></p>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                <div style="display:inline-block; max-width:90%;"> 
-                    <select required class="col form-control" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
+                <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                    <select required class="form-select" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
                         <option id="select-dashboard" value="">-- Select Package Condition --</option>
                         <option id="select-packageGoodCondition" value=${fieldMapping.packageGood}>Package in good condition</option>
                         <option id="select-noIcePack" value=${fieldMapping.coldPacksNone}>No Ice Pack</option>
@@ -71,11 +72,15 @@ const packageReceiptTemplate = async (name) => {
 
             <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
-                <textarea class="col-md-8 form-control" id="receivePackageComments" cols="30" rows="5" placeholder="Any comments?" ></textarea>
+                <div class="col-md-8">
+                    <textarea class="form-control" id="receivePackageComments" cols="30" rows="5" placeholder="Any comments?" ></textarea>
+                </div>
             </div>
             <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
-                <input autocomplete="off" required class="col-md-8 form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                <div class="col-md-8">
+                    <input autocomplete="off" required class="form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                </div>
             </div>
             <div class="mt-4 mb-4" style="display:inline-block;">
                 <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
@@ -583,7 +588,9 @@ export const displayInvalidPackageInformationModal = (modalHeaderEl, modalBodyEl
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            </div>
         </div>
         </div>
     `;
@@ -616,7 +623,9 @@ export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            </div>
         </div>
     `;
 }
@@ -642,8 +651,10 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button id="confirmPackageConditionButton" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            <div class="col-auto">
+                <button id="confirmPackageConditionButton" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target= target="_blank" style="margin-right: 15px;">Confirm</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            </div>
         </div>
     `;
 
@@ -682,7 +693,7 @@ const displaySelectedPackageConditionList = (parseSelectPackageConditionsList) =
 
 const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
     const confirmPackageConditionButtondocument = document.getElementById("confirmPackageConditionButton");
-    confirmPackageConditionButtondocument.addEventListener("click", () => {
+    confirmPackageConditionButtondocument.addEventListener("click", async () => {
         displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
         if (isKitReceipt) { 
             confirmKitReceipt(); 

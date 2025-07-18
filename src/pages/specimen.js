@@ -46,10 +46,11 @@ export const specimenTemplate = async (data, formData) => {
                     </p>
                 </div>
                 <div class="row specimenLinkParticipantInfo">
-                    <p> 
+                    <p class="col-auto"> 
                         <strong>Connect ID:</strong> 
                     </p> 
-                    <svg id="connectIdBarCode"></svg>
+                    <div class="col">
+                        <svg id="connectIdBarCode"></svg>
                 </div>
             </div>
         </div>
@@ -138,12 +139,16 @@ export const specimenTemplate = async (data, formData) => {
 
                         <div class="mb-3 row">
                             <label class="col-md-4 col-form-label" for="scanSpecimenID">Scan/Type Collection ID from Label Sheet</label>
-                            <input autocomplete="off" type="text" class="form-control col-md-5" placeholder="Scan/Type Collection ID from Label Sheet" id="scanSpecimenID" data-isscanned="false" /> 
+                            <div class="col-md-5">
+                                <input autocomplete="off" type="text" class="form-control" placeholder="Scan/Type Collection ID from Label Sheet" id="scanSpecimenID" data-isscanned="false" /> 
+                            </div>
                         </div>
                         </br>
                         <div class="mb-3 row">
                             <label class="col-md-4 col-form-label" for="scanSpecimenID2">Re-Scan/Type Collection ID from Label Sheet</label>
-                            <input autocomplete="off" type="text" class="form-control col-md-5" placeholder="Re-Scan/Type Collection ID from Label Sheet" id="scanSpecimenID2" data-isscanned="false" />
+                            <div class="col-md-5">
+                                <input autocomplete="off" type="text" class="form-control" placeholder="Re-Scan/Type Collection ID from Label Sheet" id="scanSpecimenID2" data-isscanned="false" />
+                            </div>
                         </div>
 
                         <div class="mb-3 row">
@@ -166,23 +171,29 @@ export const specimenTemplate = async (data, formData) => {
         template += `
             <div class="mb-3 row">
                 <label class="col-md-4 col-form-label" for="accessionID1">Scan Blood Accession ID:</label>
-                <input autocomplete="off" type="text" class="form-control col-md-5" placeholder="Scan/Type in Accession ID from Blood Tube" id="accessionID1" maxlength="11"/>
-                
-                <button class="barcode-input-clear" hidden="true" type="button" id="clearScanAccessionID" title="Clear scanned barcode" data-enable-input="accessionID2" data-barcode-input="accessionID1"><i class="fas fa-times"></i></button>
-                <div class="helper-text"><span class="form-helper-text offset-4">This entry can only contain numbers.</span></div>
+                <div class="col-md-5">
+                    <input autocomplete="off" type="text" class="form-control" placeholder="Scan/Type in Accession ID from Blood Tube" id="accessionID1" maxlength="11"/>
+                    <button class="barcode-input-clear" hidden="true" type="button" id="clearScanAccessionID" title="Clear scanned barcode" data-enable-input="accessionID2" data-barcode-input="accessionID1"><i class="fas fa-times"></i></button>
+                    <div class="helper-text"><span class="form-helper-text">This entry can only contain numbers.</span></div>
+                </div>
             </div>
             <div class="mb-3 row">
-                <input autocomplete="off" type="text" class="form-control col-md-5 offset-4" placeholder="Re-Enter (scan/type) in Accession ID from Blood Tube" id="accessionID2" maxlength="11"/>
+                <div class="col-md-5 offset-4">
+                    <input autocomplete="off" type="text" class="form-control" placeholder="Re-Enter (scan/type) in Accession ID from Blood Tube" id="accessionID2" maxlength="11"/>
+                </div>
             </div>
             </br>
             <div class="mb-3 row">
                 <label class="col-md-4 col-form-label" for="accessionID3">Scan Urine Accession ID:</label>
-                <input autocomplete="off" type="text" class="form-control col-md-5" placeholder="Scan/Type in Accession ID from Urine Tube" id="accessionID3" maxlength="11"/>
-                
-                <button class="barcode-input-clear" hidden="true" type="button" id="clearScanAccessionID" title="Clear scanned barcode" data-enable-input="accessionID4" data-barcode-input="accessionID3"><i class="fas fa-times"></i></button>
+                <div class="col-md-5">
+                    <input autocomplete="off" type="text" class="form-control" placeholder="Scan/Type in Accession ID from Urine Tube" id="accessionID3" maxlength="11"/>
+                    <button class="barcode-input-clear" hidden="true" type="button" id="clearScanAccessionID" title="Clear scanned barcode" data-enable-input="accessionID4" data-barcode-input="accessionID3"><i class="fas fa-times"></i></button>
+                </div>
             </div>
             <div class="mb-3 row">
-                <input autocomplete="off" type="text" class="form-control col-md-5 offset-4" placeholder="Re-Enter (scan/type) in Accession ID from Urine Tube" id="accessionID4" maxlength="11"/>
+                <div class="col-md-5 offset-4">
+                    <input autocomplete="off" type="text" class="form-control" placeholder="Re-Enter (scan/type) in Accession ID from Urine Tube" id="accessionID4" maxlength="11"/>
+                </div>
             </div>
             
         <div class="mb-3 row">

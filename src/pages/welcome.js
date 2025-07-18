@@ -29,18 +29,18 @@ const welcomeScreenTemplate = (name, data, auth, route) => {
 
     if (clinicalOnlySiteArray.includes(data.siteAcronym)) {
         dashboardSelectionStr = `                    
-            <select required disabled class="col form-control" id="dashboardSelection">
+            <select required disabled class="col form-select" id="dashboardSelection">
                 <option selected value="clinical">Clinical Dashboard</option>
             </select>`;
     } else if (researchOnlySiteArray.includes(data.siteAcronym)) {
         dashboardSelectionStr = `
-            <select required disabled class="col form-control" id="dashboardSelection">
+            <select required disabled class="col form-select" id="dashboardSelection">
                 <option selected value="research">Research Dashboard</option>
             </select>`;
     } else {
         const savedDashboardSelection = appState.getState().dashboardSelection ?? '';
         dashboardSelectionStr = `
-            <select required class="col form-control" id="dashboardSelection">
+            <select required class="col form-select" id="dashboardSelection">
                 <option value="">-- Select Dashboard --</option>`;
 
         if (savedDashboardSelection === 'research') {
