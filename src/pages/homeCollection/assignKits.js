@@ -38,39 +38,39 @@ const assignKitsTemplate = async (name) => {
       <div class="col">
         <div id="alert_placeholder"></div>
           <form>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="fullName" class="col-md-4 col-form-label">Full Name</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="address" class="col-md-4 col-form-label">Address</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="address" placeholder="Enter Address">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="Connect_ID" class="col-md-4 col-form-label">Connect_ID</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="Connect_ID" placeholder="Enter Connect ID">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="scanSupplyKit" class="col-md-4 col-form-label">Scan Supply Kit</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="scanSupplyKit" placeholder="Scan Supply Kit ID">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="scannedBarcode" class="col-md-4 col-form-label">Supply Kit Tracking Number</label>
                   <div class="col-md-8">
-                    <div class="form-group row">
+                    <div class="mb-3 row">
                       <input type="text" class="form-control" id="scannedBarcode" placeholder="Scan Barcode">
                       <span id="showMsg" style="font-size: 14px;"></span>
                     </div>
-                    <div class="form-group row">
-                      <label for="scannedBarcode2" class="sr-only">Confirm Supply Kit Tracking Number</label>
+                    <div class="mb-3 row">
+                      <label for="scannedBarcode2" class="visually-hidden">Confirm Supply Kit Tracking Number</label>
                       <input autocomplete="off" type="text" class="form-control" id="scannedBarcode2" placeholder="Re-Enter (scan/type) Barcode">
                     </div>
                 </div>
@@ -157,7 +157,7 @@ const populateSidePaneRows = () => {
           <button type="button" class="btn btn-link undeliverableRow" 
             data-connectId= '${participant.connect_id}'
             id="undeliverablePtAddr"
-            data-toggle="modal" data-target="#modalShowMoreData"
+            data-bs-toggle="modal" data-bs-target="#modalShowMoreData"
           >Undeliverable Address</button>
         </ul>`;
     })
@@ -186,8 +186,7 @@ const selectParticipants = () => {
         const modalHeaderEl = document.getElementById("modalHeader");
         const modalBodyEl = document.getElementById("modalBody");
         modalHeaderEl && (modalHeaderEl.innerHTML = `
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           </button>
         `);
         modalBodyEl && (modalBodyEl.innerHTML = `
@@ -203,8 +202,10 @@ const selectParticipants = () => {
               </div>
           </div>
           <div class="row" style="display:flex; justify-content:center;">
-              <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
-              <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
+            <div class="col-auto">
+              <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            </div>
           </div>
       `);
       clickConfirmButton();

@@ -84,8 +84,7 @@ const assignKitButton = () => {
         getAssignKitResponse ? (
         modalContent.innerHTML = `
             <div class="modal-header" style="border:0">
-                <button type="button" class="close" style="font-size:40px" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" style="font-size:40px" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
             <div class="modal-body" style="display:flex; flex-direction:column; justify-content:center;
@@ -95,13 +94,12 @@ const assignKitButton = () => {
                 <p style="font-weight:600;margin:0;">The participant has been saved and can be found on Assigned!</p>
               </div>
               <div class="modal-footer" style="border:0;display:flex;justify-content:center;padding: 0.75rem 2rem 1rem;">
-                <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-dismiss="modal">Close</button>
-                <button id="assigned-table" type="button" class="btn btn-primary confirm-assignment" data-dismiss="modal" data-dismiss="modal" style="margin-left:5%">Show Assigned Table</button>
+                <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-bs-dismiss="modal">Close</button>
+                <button id="assigned-table" type="button" class="btn btn-primary confirm-assignment" data-bs-dismiss="modal" data-bs-dismiss="modal" style="margin-left:5%">Show Assigned Table</button>
             </div>` ) : 
             (
               modalContent.innerHTML =  `<div class="modal-header" style="border:0">
-                <button type="button" class="close" style="font-size:40px" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" style="font-size:40px" data-bs-dismiss="modal" aria-label="Close">
                 </button>
                </div>
               <div class="modal-body" style="display:flex; flex-direction:column; justify-content:center;
@@ -111,7 +109,7 @@ const assignKitButton = () => {
                   <p style="font-weight:600;margin:0;">Supply Kit ID already in use. Please assign a new Supply Kit.</p>
                 </div>
                 <div class="modal-footer" style="border:0;display:flex;justify-content:center;padding: 0.75rem 2rem 1rem;">
-                  <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-bs-dismiss="modal">Close</button>
               </div>` 
             )
         let moveToAssigned = document.getElementById("assigned-table");
@@ -131,7 +129,7 @@ const createAddressPrintedRows = (participantRows) => {
                     <tr class="row-color-enrollment-dark participantRow">
                         <td style="display:flex; height:100%;align-items:center; justify-content:center; padding" >
                             <input type="button" class="assign-kit-button"
-                            data-toggle="modal" data-target="#exampleModal"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal"
                             data-firstName= '${i.first_name}' data-lastName= '${i.last_name}'
                             data-address1= '${i.address_1}'
                             data-city= '${i.city}'
@@ -162,15 +160,14 @@ const modalAssignedInfo = () => {
         <h2 style="top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);position:absolute; margin: .5rem 0 0 0">Assign Kit to Participant?</h2>
-          <button type="button" class="close" style="font-size:40px" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" style="font-size:40px" data-bs-dismiss="modal" aria-label="Close">
           </button>
         </div>
         <div class="modal-body">
           
         </div>
         <div class="modal-footer" style="border:0;display:flex;justify-content:center;padding: 0.75rem 2rem;">
-          <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" style="padding-right:1rem;" data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary confirm-assignment" style="margin-left:5%">Confirm Assignment</button>
         </div>
       </div>

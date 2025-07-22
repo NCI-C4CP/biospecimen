@@ -28,9 +28,9 @@ const csvFileReceiptTemplate = async (username) => {
                   <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
                     <div class="card-body" style="padding: 4rem 2.5rem;">
                       <form class="form">
-                      <div class="form-group d-flex flex-wrap align-items-center justify-content-center m-0">
+                      <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
                           <p></p>
-                          <button id="createTransitFile" data-toggle="modal" data-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
+                          <button id="createTransitFile" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
                       </div>
                       </form>
                     </div>
@@ -58,7 +58,7 @@ export const receiptedCSVFileTemplate = () => {
       <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
         <div class="card-body" style="padding: 4rem 2.5rem;">
           <form class="form">
-          <div class="form-group d-flex flex-wrap align-items-center justify-content-center m-0">
+          <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
             <label for="csvDateInput" style="display:inline-block;margin-bottom:0; margin-right:5%; font-size:1.3rem;">Enter a Date</label>
             <input type="date" name="csvDate" id="csvDateInput" describedby="enterEmail" style="margin-right:5%; padding:0.2rem;" value="${getCurrentDate()}" max="${getCurrentDate()}"/>
             <button id="csvCreateFileButton" class="btn btn-primary">Create File</button>
@@ -76,7 +76,7 @@ const getInTransitFileType = () => {
     const modalBodyEl = document.getElementById("modalBody");
     modalHeaderEl.innerHTML = `
                               <h4>Select a format to download In Transit file</h4>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeModal">
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
                               <span aria-hidden="true">&times;</span></button>`
 
     modalBodyEl.innerHTML =  `<div class="row">
