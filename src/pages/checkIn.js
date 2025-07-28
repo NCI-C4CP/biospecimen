@@ -58,7 +58,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
                         template += `<h5>Visit: ${visitType.filter(visit => visit.concept === getCheckedInVisit(data))[0].visitType}</h5>`
                     }
                     else {
-                        template += `<select class="custom-select" id="visit-select">
+                        template += `<select class="form-select" id="visit-select">
                                         <option value=""> -- Select Visit -- </option>`;
                                         
                         Array.from(visitType).forEach(option => {
@@ -70,7 +70,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
                     template += `
                 </div>
                 
-                <div class="ml-auto">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="ms-auto col-auto">Connect ID: <svg id="connectIdBarCode"></svg></div>
             </div>
             
             <hr/>
@@ -81,7 +81,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
 
     if (canCheckIn) {
         template += `
-            <div class="col">
+            <div class="col-10 d-grid">
                 <button class="btn btn-outline-primary btn-block text-nowrap" ${!isCheckedIn ? `disabled` : visitCollections.length > 0 ? `` : `disabled`} type="submit" id="checkInComplete">${isCheckedIn ? `Check-Out` : `Check-In`}</button>
             </div>
 
@@ -90,7 +90,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
     } else {
         // Disable only the check-in button if the user has withdrawn consent
         template += `
-            <div class="col">
+            <div class="col-10 d-grid">
                 <button class="btn btn-outline-primary btn-block text-nowrap" ${isCheckedIn ? `` : `disabled`} type="submit" id="checkInComplete">${isCheckedIn ? `Check-Out` : `Check-In`}</button>
             </div>
 
@@ -497,7 +497,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
 
         <div class="row" style="display: none;">
             Verify contact information &nbsp;
-            <button type="button" class="btn btn-outline-primary" id="contactInformationModal" data-target="#biospecimenModal" data-toggle="modal">Contact Information</button>
+            <button type="button" class="btn btn-outline-primary" id="contactInformationModal" data-bs-target="#biospecimenModal" data-bs-toggle="modal">Contact Information</button>
         </div>
     `;
     

@@ -96,7 +96,7 @@ const buildShippingReportScreen = (source) => {
         }
                 <div class="col-lg-10">
                     <div class="row">
-                        <div class="col-lg" style="margin-bottom:20px">
+                        <div class="col-lg" style="margin-bottom:5px">
                             <h4>Filters</h4>
                             <label for="trackingIdInput" style="margin-right:0.5rem;">Tracking ID: </label>
                             <input type="text" id="trackingIdInput" style="margin-right:30px; height:38px; padding:5px;" placeholder="Tracking ID">
@@ -104,9 +104,13 @@ const buildShippingReportScreen = (source) => {
                             <input type="date" id="startDate" style="height:38px; padding:5px;">
                             <span style="display:inline-block; margin:0 .75rem">to</span>
                             <input type="date" id="endDate" style="margin-right:30px; height:38px; padding:5px;">
+                        </div>
+                    <div class="row">
+                        <div class="col-lg"  style="margin-bottom:20px">
                             <button id="submitFilter" class="btn btn-primary">Apply filter</button>
                             <button id="clearFilter" class="btn btn-danger">Clear filter(s)</button>
                         </div>
+                    </div>
                     </div>
                     <div class="row">
                         <div class="col-lg">
@@ -180,12 +184,12 @@ const buildReportsManifestTemplate = (siteAcronym, shippingLocation, trackingNum
             </tr>
         </table>
     </div>
-    <div class="row" style="margin-top:100px">
+    <div class="row d-print-none" style="margin-top:100px">
         <div style="float: left;width: 33%;" id="boxManifestCol1">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnToReports">Return to Reports</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="returnToReports">Return to Reports</button>
         </div>
         <div style="float: left;width: 33%;">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="printBox">Print Box Manifest</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="printBox">Print Box Manifest</button>
         </div>
         <div style="float:left;width: 33%;" id="boxManifestCol3">
         </div>

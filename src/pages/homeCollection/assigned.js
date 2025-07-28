@@ -53,8 +53,7 @@ const assignedTemplate = async (name) => {
   <div class="modal-dialog">
     <div class="modal-content" style="padding:1rem">
     <div class="modal-header" style="border:0">
-    <button type="button" class="close" style="font-size:40px" data-dismiss="modal" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+    <button type="button" class="btn-close" style="font-size:40px" data-bs-dismiss="modal" aria-label="Close">
     </button>
     </div>
     <div class="modal-body" style="display:flex; flex-direction:column; justify-content:center;align-items:center">
@@ -142,7 +141,7 @@ const createAssignedParticipantRows = (assignedParticipantsRows) => {
                 data-zipCode= '${i.zip_code}'
                 data-id='${i.id}'
                 data-kitAssignmentInfo = '${i.first_name} ${i.last_name}\n${i.address_1},\n${i.city}, ${i.state} ${i.zip_code} ${i.id}'
-                value="Save" data-toggle="modal"><i class="fas fa-check" style="color:#fff; font-size: 1.1rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></button>
+                value="Save" data-bs-toggle="modal"><i class="fas fa-check" style="color:#fff; font-size: 1.1rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></i></button>
           </div>
         </td>
       </tr>`;
@@ -192,8 +191,7 @@ const saveAssignedRow = (i) => {
         template += `
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                   One or both input responses are empty!
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         </button>
                 </div>`;
         alertList.innerHTML = template;
@@ -219,8 +217,7 @@ const saveAssignedRow = (i) => {
       template += `
               <div class="alert alert-success alert-dismissible fade show" role="alert">
                 Response Saved!
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                       </button>
               </div>`;
       alertList.innerHTML = template;

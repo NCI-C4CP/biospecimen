@@ -32,10 +32,10 @@ const kitsReceiptTemplate = async (name) => {
                   <div id="alert_placeholder"></div>
                   <div class="mt-3" >
                   <br />
-                  <div class="row form-group">
+                  <div class="row mb-3">
                     <label class="col-form-label col-md-4" for="scannedBarcode">Scan Return Kit Tracking Number</label>
-                    <div style="display:inline-block;">
-                      <input autocomplete="off" required="" class="col-md-8" type="text" id="scannedBarcode" style="width: 600px;" placeholder="Scan Barcode">
+                    <div style="display:inline-block;" class="col-md-8">
+                      <input autocomplete="off" required="" type="text" id="scannedBarcode" style="width: 600px;" placeholder="Scan Barcode">
                       <span id="showMsg" style="padding-left: 10px;"></span>
                       <br />
                       <br />
@@ -43,10 +43,10 @@ const kitsReceiptTemplate = async (name) => {
                     </div>
                   </div>
                   
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                       <div style="display:inline-block; max-width:90%;"> 
-                          <select required class="col form-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
+                       <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                          <select required class="select-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
                               <option id="select-dashboard" value="">-- Select Package Condition --</option>
                               <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
                               <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
@@ -60,41 +60,55 @@ const kitsReceiptTemplate = async (name) => {
                           </select>
                      </div>
                   </div>
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
-                      <textarea class="col-md-8 form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
+                      <div class="col-md-8">
+                        <textarea class="form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
+                      </div>
                   </div>
-                  <div class="row form-group">
+                  <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
-                      <input autocomplete="off" required class="col-md-8 form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                      <div class="col-md-8">
+                        <input autocomplete="off" required class="form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
+                      </div>
                   </div>
                   <div id="collectionCard">
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4 for="collectionCheckBox">Check if Collection Card Missing</label>
-                          <input type="checkbox" name="collectionCheckBox" id="collectionCheckBox">
+                          <div class="col-md-8">
+                            <input type="checkbox" name="collectionCheckBox" id="collectionCheckBox">
+                          </div>
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionId">Collection ID</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="text" id="collectionId" placeholder="Scan or Enter a Collection ID">
-                          <span id="showCollectionErrorMsg" style="font-size: 14px;"></span>
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="text" id="collectionId" placeholder="Scan or Enter a Collection ID">
+                            <span id="showCollectionErrorMsg" style="font-size: 14px;"></span>
+                          </div>
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="date" id="dateCollectionCard">
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="date" id="dateCollectionCard">
+                          </div>
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="timeCollectionCard">Enter Collection Time from Collection Card</label>
-                          <input autocomplete="off" class="col-md-8 form-control" type="time" id="timeCollectionCard">
+                          <div class="col-md-8">
+                            <input autocomplete="off" class="form-control" type="time" id="timeCollectionCard">
+                          </div>
                       </div>
-                      <div class="row form-group">
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="collectionComments">Comments on Card Returned</label>
-                          <textarea class="col-md-8 form-control" id="collectionComments" cols="30" rows="3" placeholder="Comments on the card?"></textarea>
+                          <div class="col-md-8">
+                            <textarea class="form-control" id="collectionComments" cols="30" rows="3" placeholder="Comments on the card?"></textarea>
+                          </div>
                       </div>
                     </div>
                   
                   <div class="mt-4 mb-4" style="display:inline-block;">
                       <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
-                      <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modalShowMoreData" id="save">Save</button>
+                      <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" id="save">Save</button>
                   </div>
               </div>
           </div>`;
@@ -290,7 +304,11 @@ const storePackageReceipt = async (data) => {
     openModal();
     displayInvalidCollectionDateModal(modalHeaderEl, modalBodyEl, returnedPtInfo.status);
     appState.setState({ lastRequestedCollectionDateTimeStamp: data[conceptIds.collectionDateTimeStamp] });
+  } else if (returnedPtInfo.status) {
+    triggerErrorModal(`Error during kit receipt. ${returnedPtInfo.status}`);
   } else {
+    // Leave this console log in; it's useful for debugging
+    console.log('returnedPtInfo', returnedPtInfo);
     triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
   }
 };
@@ -299,8 +317,8 @@ const openModal = () => {
   const openModalButton = document.createElement('button');
 
   openModalButton.style.display = 'none';
-  openModalButton.setAttribute('data-target', '#modalShowMoreData');
-  openModalButton.setAttribute('data-toggle', 'modal');
+  openModalButton.setAttribute('data-bs-target', '#modalShowMoreData');
+  openModalButton.setAttribute('data-bs-toggle', 'modal');
   openModalButton.id = 'openShowMoreDataModalButton';
 
   document.body.appendChild(openModalButton);

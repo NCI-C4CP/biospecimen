@@ -51,7 +51,7 @@ body {
 }
 
 .nav-item {
-    color: rgba(0,0,0,.5) !important;
+    color: rgba(0, 0, 0, .5) !important;
 }
 
 .nav-link {
@@ -70,7 +70,8 @@ body {
     cursor: not-allowed !important;
 }
 
-.navbar-btn, .custom-btn {
+.navbar-btn,
+.custom-btn {
     border: 0px;
     background-color: transparent;
 }
@@ -80,33 +81,48 @@ body {
 }
 
 #loadingAnimation {
-    position:fixed;
-    width:100%;
-    left:0;right:0;top:0;bottom:0;
-    background-color: rgba(255,255,255,0.5);
-    z-index:9999;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 9999;
 }
 
 @-webkit-keyframes spin {
-	from {-webkit-transform:rotate(0deg);}
-	to {-webkit-transform:rotate(360deg);}
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-	from {transform:rotate(0deg);}
-	to {transform:rotate(360deg);}
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #loadingAnimation::after {
-    content:'';
-    position:absolute;
-    left:48%;top:40%;
-    width:40px;height:40px;
-    border-style:solid;
-    border-color:#585858;
-    border-top-color:transparent;
+    content: '';
+    position: absolute;
+    left: 48%;
+    top: 40%;
+    width: 40px;
+    height: 40px;
+    border-style: solid;
+    border-color: #585858;
+    border-top-color: transparent;
     border-width: 4px;
-    border-radius:50%;
+    border-radius: 50%;
     -webkit-animation: spin .8s linear infinite;
     animation: spin .8s linear infinite;
 }
@@ -116,8 +132,13 @@ body {
     color: #868484;
 }
 
-#search1, #search2, #search3, #search4 {
+#search1 {
     width: 100%;
+}
+
+#search1 input {
+    width: 100%;
+    max-width: 450px;
 }
 
 .form-row {
@@ -125,9 +146,9 @@ body {
 }
 
 .notification {
-    position: absolute; 
-    top: 2rem; 
-    right: -5rem; 
+    position: absolute;
+    top: 2rem;
+    right: -5rem;
     z-index: 9;
 }
 
@@ -194,12 +215,14 @@ body {
     font-size: small;
 }
 
-.error-text, .helper-text {
+.error-text,
+.helper-text {
     padding-left: 5px !important;
     width: 100%;
     line-height: 1;
-    
+
 }
+
 .form-helper-text {
     font-size: small;
 }
@@ -222,7 +245,8 @@ body {
     text-align: left;
 }
 
-#finalizeForm, #specimenLookupForm {
+#finalizeForm,
+#specimenLookupForm {
     width: 100%;
 }
 
@@ -248,21 +272,23 @@ body {
 }
 
 #interactive.viewport {
-    position: relative; 
-    width: 100%; 
-    height: auto; 
-    overflow: hidden; 
+    position: relative;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
     text-align: center;
 }
 
-#interactive.viewport > canvas, #interactive.viewport > video {
+#interactive.viewport>canvas,
+#interactive.viewport>video {
     max-width: 100%;
     width: 100%;
 }
 
-canvas.drawing, canvas.drawingBuffer {
-    position: absolute; 
-    left: 0; 
+canvas.drawing,
+canvas.drawingBuffer {
+    position: absolute;
+    left: 0;
     top: 0;
 }
 
@@ -292,7 +318,8 @@ canvas.drawing, canvas.drawingBuffer {
     padding-bottom: 4px;
 }
 
-.barcode-btn-outside, .barcode-input-clear {
+.barcode-btn-outside,
+.barcode-input-clear {
     background-color: transparent;
     border: 0px;
     float: right;
@@ -315,7 +342,7 @@ canvas.drawing, canvas.drawingBuffer {
 }
 
 .deviation-comments-width,
-.deviation-type-width, 
+.deviation-type-width,
 .deviation-type-cell,
 .comments-cell {
     word-wrap: break-word;
@@ -352,19 +379,18 @@ canvas.drawing, canvas.drawingBuffer {
     transition: all 0.2s ease-in-out;
     z-index: 1000;
 }
-  
+
 .modal-wrapper.visible {
-visibility: visible;
-transform: scale(1);
+    visibility: visible;
+    transform: scale(1);
 }
 
 .modal-content {
-border-radius: 5px;
-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 }
 
-#boxManifestTable tbody
-{
+#boxManifestTable tbody {
     vertical-align: top;
 }
 
@@ -374,8 +400,7 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 
 #tableBodyPackagesInTransit tr td,
 #specimenList tbody tr th,
-#saveTable tbody tr th
-{
+#saveTable tbody tr th {
     vertical-align: middle;
 }
 
@@ -410,6 +435,7 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
         display: none;
     }
 }
+
 .modal-wrapper.visible {
     visibility: visible;
     transform: scale(1);
@@ -458,7 +484,7 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 
 #reportTabs .nav-link.active {
     background-color: #a6bace;
-    border-color: #dee2e6 ;
+    border-color: #dee2e6;
 }
 
 #reportTabs .nav-link:hover {
@@ -482,4 +508,118 @@ box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
 
 .specimenLinkParticipantInfo {
     font-size: 1.15rem;
+}
+
+.specimenLinkParticipantInfo[data-section="name"],
+.specimenLinkParticipantInfo[data-section="dob"] {
+    font-size: 1.5rem;
+}
+
+.input-note {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 1.5rem;
+}
+
+.button-fixed-width {
+    width: 86.125px;
+}
+
+@media print {
+
+    *,
+    ::after,
+    ::before {
+        text-shadow: none !important;
+        box-shadow: none !important
+    }
+
+    a:not(.btn) {
+        text-decoration: underline
+    }
+
+    abbr[title]::after {
+        content: " (" attr(title) ")"
+    }
+
+    pre {
+        white-space: pre-wrap !important
+    }
+
+    blockquote,
+    pre {
+        border: 1px solid #adb5bd;
+        page-break-inside: avoid
+    }
+
+    thead {
+        display: table-header-group
+    }
+
+    img,
+    tr {
+        page-break-inside: avoid
+    }
+
+    h2,
+    h3,
+    p {
+        orphans: 3;
+        widows: 3
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid
+    }
+
+    @page {
+        size: a3
+    }
+
+    body {
+        min-width: 992px !important
+    }
+
+    .container {
+        min-width: 992px !important
+    }
+
+    .navbar {
+        display: none
+    }
+
+    .badge {
+        border: 1px solid #000
+    }
+
+    .table {
+        border-collapse: collapse !important
+    }
+
+    .table td,
+    .table th {
+        background-color: #fff !important
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border: 1px solid #dee2e6 !important
+    }
+
+    .table-dark {
+        color: inherit
+    }
+
+    .table-dark tbody+tbody,
+    .table-dark td,
+    .table-dark th,
+    .table-dark thead th {
+        border-color: #dee2e6
+    }
+
+    .table .thead-dark th {
+        color: inherit;
+        border-color: #dee2e6
+    }
 }

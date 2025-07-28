@@ -52,7 +52,7 @@ export const renderDailyReport = async () => {
 const renderCollectionLocationList = () => {
     return `       
         <div style="margin-top:10px; padding:15px;" class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Filter by Collection Location
             </button>
             <ul class="dropdown-menu scrollable-menu" id="dropdownMenuButtonSites" aria-labelledby="dropdownMenuButton">
