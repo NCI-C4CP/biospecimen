@@ -5,6 +5,9 @@ import { conceptIds } from '../fieldToConceptIdMapping.js';
 
 export const tubeCollectedTemplate = (participantData, biospecimenData) => {
     const isCheckedIn = checkedIn(participantData);
+    const inputNote = getWorkflow() === 'research' 
+        ? 'Enter Data AFTER specimens have been collected' 
+        : 'Enter data ONLY for tubes received from the clinical lab';
 
     let template = `
         </br>
@@ -15,17 +18,18 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
         <div class="row">
             <div class="col">
                 <div class="row"><h5>${participantData[conceptIds.lastName]}, ${participantData[conceptIds.firstName]}</h5></div>
-                <div class="row">Connect ID: <svg id="connectIdBarCode"></svg></div>
+                <div class="row"><div class="col-auto">Connect ID: </div><div class="col"><svg id="connectIdBarCode"></svg></div></div>
                 <div class="row">
-                    ${biospecimenData[conceptIds.collection.bloodAccessNumber] ? `Blood Accesion ID: ${biospecimenData[conceptIds.collection.bloodAccessNumber]}` : ''}
+                    ${biospecimenData[conceptIds.collection.bloodAccessionNumber] ? `<div class="col">Blood Accesion ID: ${biospecimenData[conceptIds.collection.bloodAccessionNumber]}</div>` : ''}
                 </div>
                 <div class="row">
-                    ${biospecimenData[conceptIds.collection.urineAccessNumber] ? `Urine Accession ID: ${biospecimenData[conceptIds.collection.urineAccessNumber]}` : ''}
+                    ${biospecimenData[conceptIds.collection.urineAccessionNumber] ? `<div class="col">Urine Accession ID: ${biospecimenData[conceptIds.collection.urineAccessionNumber]}</div>` : ''}
                 </div>
-                <div class="row">Collection ID: ${biospecimenData[conceptIds.collection.id]}</div>
-                <div class="row">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(biospecimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(biospecimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div>
+                <div class="row"><div class="col">Collection ID: ${biospecimenData[conceptIds.collection.id]}</div></div>
+                <div class="row"><div class="col">Collection ID Link Date/Time: ${getWorkflow() === 'research' ? new Date(biospecimenData[conceptIds.collection.collectionTime]).toLocaleString(): new Date(biospecimenData[conceptIds.collection.scannedTime]).toLocaleString()}</div></div>
                 <div class="row">
-                    <div>${getWorkflow() === 'research' ? `Collection Phlebotomist Initials:&nbsp` : `Initials of team member completing Collection Data Entry:&nbsp`}</div>
+                    <div class="col-auto">${getWorkflow() === 'research' ? `Collection Phlebotomist Initials:&nbsp` : `Initials of team member completing Collection Data Entry:&nbsp`}</div>
+                    <div class="col-auto">
                     <input 
                         type="text"
                         ${biospecimenData[conceptIds.collection.phlebotomistInitials] ? `value=${biospecimenData[conceptIds.collection.phlebotomistInitials]}` : ``}
@@ -34,16 +38,22 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                         onpaste="return false;"
                         required
                     /> 
+                    </div>
                 </div>
             </div>
             ${biospecimenData[conceptIds.collection.selectedVisit] ? `
-                <div class="ml-auto form-group">
+                <div class="ms-auto mb-3 col-auto">
                     Visit: ${visitType.filter(visit => visit.concept == biospecimenData[conceptIds.collection.selectedVisit])[0]?.visitType}
                 </div>
             ` : ``
             }
         </div>
         </br>
+        
+        <div class="row">
+            <p class="input-note collection-data-entry">${inputNote}</p>
+        </div>
+
         <form id="biospecimenCollectionForm" method="POST">
             <div class="row">
                 <table class="table collection-table">
@@ -62,145 +72,156 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                             <th><button class="btn btn-outline-primary" type="button" id="collectEditAllBtn">Edit All</button></th>
                         </tr>
                     </thead>
-                    <tbody>`
+                    <tbody>
+    `;
+
                     
-                    let siteTubesList = getSiteTubesLists(biospecimenData);
-                    checkTubeDataConsistency(siteTubesList, biospecimenData);
+    let siteTubesList = getSiteTubesLists(biospecimenData);
+    checkTubeDataConsistency(siteTubesList, biospecimenData);
 
-                    const collectionFinalized = (biospecimenData[conceptIds.collection.isFinalized] === conceptIds.yes);
-                    
-                    if(!siteTubesList || siteTubesList?.length === 0) siteTubesList = [];
+    const collectionFinalized = (biospecimenData[conceptIds.collection.isFinalized] === conceptIds.yes);
+    
+    if (!siteTubesList || siteTubesList?.length === 0) siteTubesList = [];
 
-                    siteTubesList?.forEach((obj, index) => {
-                        const notCollectedOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].tubeNotCollectedOptions;
-                        const deviationOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].deviationOptions;
-                        const tubeCollected = (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isCollected] === conceptIds.yes);
-                        const tubeDeviated = (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isDeviated] === conceptIds.yes);
+    siteTubesList?.forEach((obj, index) => {
+        const notCollectedOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].tubeNotCollectedOptions;
+        const deviationOptions = siteTubesList.filter(tube => tube.concept === obj.concept)[0].deviationOptions;
+        const tubeCollected = (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isCollected] === conceptIds.yes);
+        const tubeDeviated = (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isDeviated] === conceptIds.yes);
 
-                        let required = false;
-                        if (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isCollected] !== conceptIds.no) { 
-                            required = true;
-                        }
+        let required = false;
+        if (biospecimenData[obj.concept]?.[conceptIds.collection.tube.isCollected] !== conceptIds.no) { 
+            required = true;
+        }
 
+        template += `
+            <tr>
+                <td>
+                    ${obj.specimenType} ${obj.id ? '(' + obj.id + ')' : ''}</br>${obj.image ? `<img src="${obj.image}" alt="${obj.readableValue} image">` : ``}
+                </td>
+
+                <td class="align-left">${obj.collectionChkBox === true ? `
+                    <input type="checkbox" 
+                        class="tube-collected custom-checkbox-size" 
+                        data-tube-type="${obj.tubeType}" 
+                        ${tubeCollected ? 'checked disabled': ''} 
+                        id="${obj.concept}"
+                    >
+                ` : ``}
+            </td>
+        `;
+
+        if(getWorkflow() === 'research') {
+
+            template += 
+                `<td>`
+
+                    if (notCollectedOptions) {
                         template += `
-                            <tr>
-                                <td>
-                                    ${obj.specimenType} ${obj.id ? '(' + obj.id + ')' : ''}</br>${obj.image ? `<img src="${obj.image}" alt="${obj.readableValue} image">` : ``}
-                                </td>
+                            <select 
+                                data-connect-id="${participantData.Connect_ID}" 
+                                id="${obj.concept}Reason"
+                                class="reason-not-collected"
+                                style="width:200px"
+                                ${tubeCollected ? 'disabled' : ''}
+                            >
+                                <option value=""> -- Select Reason -- </option>`
 
-                                <td class="align-left">${obj.collectionChkBox === true ? `
-                                    <input type="checkbox" 
-                                        class="tube-collected custom-checkbox-size" 
-                                        data-tube-type="${obj.tubeType}" 
-                                        ${tubeCollected ? 'checked disabled': ''} 
-                                        id="${obj.concept}"
-                                    >`
-                                    :``}
-                                </td>`
+                                notCollectedOptions.forEach(option => {
+                                    template += `
+                                        <option 
+                                            ${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected] == option.concept ? 
+                                            'selected' : ''} 
+                                            value=${option.concept}>
+                                                ${option.label}
+                                            </option>
+                                    `;
+                                });
 
-                                if(getWorkflow() === 'research') {
+                        template += `</select>`    
+                    }
 
-                                    template += 
-                                
-                                        `<td>`
+                `</td>`
+        }
 
-                                            if(notCollectedOptions) {
-                                                template += `
-                                                    <select 
-                                                        data-connect-id="${participantData.Connect_ID}" 
-                                                        id="${obj.concept}Reason"
-                                                        class="reason-not-collected"
-                                                        style="width:200px"
-                                                        ${tubeCollected ? 'disabled' : ''}
-                                                    >
-                                                        <option value=""> -- Select Reason -- </option>`
+        template += `
+            <td>
+                <input 
+                    type="text" 
+                    autocomplete="off" 
+                    onpaste="return false;"
+                    id="${obj.concept}Id" 
+                    ${biospecimenData[`${obj.concept}`] && biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.scannedId] ? `value='${biospecimenData[`${obj.concept}`][conceptIds.collection.tube.scannedId]}'`: ``}
+                    class="form-control input-barcode-id" 
+                    ${required ? 'required' : ''} 
+                    disabled
+                    placeholder="Scan/Type in Full Specimen ID"
+                    style="font-size:1.3rem; width:200px"
+                >
+            </td>
 
-                                                        notCollectedOptions.forEach(option => {
-                                                            template += `<option ${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.selectReasonNotCollected] == option.concept ? 'selected' : ''} value=${option.concept}>${option.label}</option>`;
-                                                        })
+            <td>${obj.deviationChkBox === true ? `
+                <input 
+                    type="checkbox" 
+                    data-tube-label="${obj.specimenType}" 
+                    data-tube-color="${obj.tubeColor}"
+                    data-tube-type="${obj.tubeType}" 
+                    class="tube-deviated custom-checkbox-size" 
+                    ${tubeDeviated ? 'checked': ''} 
+                    disabled
+                    id="${obj.concept}Deviated"
+                >`: ``}
+            </td>
 
-                                                template += `</select>`    
-                                            }
+            <td>
+        `;
+                    
+        if (obj.deviationChkBox) {
+            template += `
+                <select 
+                    data-connect-id="${participantData.Connect_ID}" 
+                    id="${obj.concept}Deviation"
+                    style="width:300px"
+                    multiple
+                    disabled
+                >
+                    <option value=""> -- Select Deviation -- </option>`
 
-                                        `</td>`
-                                }
+                    deviationOptions.forEach(deviation => {
+                        template += `<option ${biospecimenData[obj.concept]?.[conceptIds.collection.tube.deviation][deviation.concept] === conceptIds.yes ? 'selected' : ''} value=${deviation.concept}>${deviation.label}</option>`;
+                    })
 
-                                template += `
-                                <td>
-                                    <input 
-                                        type="text" 
-                                        autocomplete="off" 
-                                        onpaste="return false;"
-                                        id="${obj.concept}Id" 
-                                        ${biospecimenData[`${obj.concept}`] && biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.scannedId] ? `value='${biospecimenData[`${obj.concept}`][conceptIds.collection.tube.scannedId]}'`: ``}
-                                        class="form-control input-barcode-id" 
-                                        ${required ? 'required' : ''} 
-                                        disabled
-                                        placeholder="Scan/Type in Full Specimen ID"
-                                        style="font-size:1.3rem; width:200px"
-                                    >
-                                </td>
+            template += `</select>`  
+        }
 
-                                <td>${obj.deviationChkBox === true ? `
-                                    <input 
-                                        type="checkbox" 
-                                        data-tube-label="${obj.specimenType}" 
-                                        data-tube-color="${obj.tubeColor}"
-                                        data-tube-type="${obj.tubeType}" 
-                                        class="tube-deviated custom-checkbox-size" 
-                                        ${tubeDeviated ? 'checked': ''} 
-                                        disabled
-                                        id="${obj.concept}Deviated"
-                                    >`: ``}
-                                </td>
+        template += `
+            </td>
 
-                                <td>`
-                                
-                                    if(obj.deviationChkBox) {
-                                        template += `
-                                            <select 
-                                                data-connect-id="${participantData.Connect_ID}" 
-                                                id="${obj.concept}Deviation"
-                                                style="width:300px"
-                                                multiple
-                                                disabled
-                                            >
-                                                <option value=""> -- Select Deviation -- </option>`
+            <td>${obj.deviationChkBox === true ? `
+                <input 
+                    type="text" 
+                    placeholder="Details (Optional)" 
+                    id="${obj.concept}DeviatedExplanation" 
+                    ${biospecimenData[obj.concept]?.[conceptIds.collection.tube.deviationComments] ? `value='${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.deviationComments]}'`: biospecimenData[obj.concept]?.[conceptIds.collection.tube.optionalNotCollectedDetails] ? `value='${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.optionalNotCollectedDetails]}'` : ``}
+                    ${tubeCollected ? 'disabled': ''}
+                >
+                `: ``}
+            </td>
 
-                                                deviationOptions.forEach(deviation => {
-                                                    template += `<option ${biospecimenData[obj.concept]?.[conceptIds.collection.tube.deviation][deviation.concept] === conceptIds.yes ? 'selected' : ''} value=${deviation.concept}>${deviation.label}</option>`;
-                                                })
-
-                                        template += `</select>`  
-                                    }
-
-                                template += `
-                                </td>
-
-                                <td>${obj.deviationChkBox === true ? `
-                                    <input 
-                                        type="text" 
-                                        placeholder="Details (Optional)" 
-                                        id="${obj.concept}DeviatedExplanation" 
-                                        ${biospecimenData[obj.concept]?.[conceptIds.collection.tube.deviationComments] ? `value='${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.deviationComments]}'`: biospecimenData[obj.concept]?.[conceptIds.collection.tube.optionalNotCollectedDetails] ? `value='${biospecimenData[`${obj.concept}`]?.[conceptIds.collection.tube.optionalNotCollectedDetails]}'` : ``}
-                                        ${tubeCollected ? 'disabled': ''}
-                                    >
-                                    `: ``}
-                                </td>
-
-                                <td>${tubeCollected && !collectionFinalized ? `
-                                    <button 
-                                        class="btn btn-outline-primary" 
-                                        type="button" 
-                                        id="${obj.concept}collectEditBtn">
-                                        Edit
-                                    </button>` 
-                                    : ``}
-                                </td>
-                            </tr>
-                        `   
-                    });
-                        template +=`
+            <td>${tubeCollected && !collectionFinalized ? `
+                <button 
+                    class="btn btn-outline-primary" 
+                    type="button" 
+                    id="${obj.concept}collectEditBtn">
+                    Edit
+                </button>` 
+                : ``}
+            </td>
+        </tr>
+        `;
+    });
+    
+    template +=`
                     </tbody>
                 </table>
             </div>
@@ -217,10 +238,10 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                     <button class="btn btn-outline-danger" type="button" id="backToSearch">Return to Search</button>
                 </div>
                 ${isCheckedIn ?
-                `<div class="ml-auto" style="display:none">
+                `<div class="ms-auto col-auto" style="display:none">
                     <button class="btn btn-outline-primary text-nowrap" data-connect-id=${participantData.Connect_ID} type="button" id="collectionCheckout">Go to Check-Out</button>
                 </div>` : ``}               
-                <div class="ml-auto">
+                <div class="ms-auto col-auto">
                     <button class="btn btn-info" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionSave">Save</button>
                 </div>
                 <div class="col-auto">
@@ -257,5 +278,5 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
         } catch (error) {
             console.error("Error occured while trying to check out.");
         }
-     });
+    });
 }

@@ -38,39 +38,39 @@ const assignKitsTemplate = async (name) => {
       <div class="col">
         <div id="alert_placeholder"></div>
           <form>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="fullName" class="col-md-4 col-form-label">Full Name</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="address" class="col-md-4 col-form-label">Address</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="address" placeholder="Enter Address">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="Connect_ID" class="col-md-4 col-form-label">Connect_ID</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="Connect_ID" placeholder="Enter Connect ID">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="scanSupplyKit" class="col-md-4 col-form-label">Scan Supply Kit</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="scanSupplyKit" placeholder="Scan Supply Kit ID">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label for="scannedBarcode" class="col-md-4 col-form-label">Supply Kit Tracking Number</label>
                   <div class="col-md-8">
-                    <div class="form-group row">
+                    <div class="mb-3 row">
                       <input type="text" class="form-control" id="scannedBarcode" placeholder="Scan Barcode">
                       <span id="showMsg" style="font-size: 14px;"></span>
                     </div>
-                    <div class="form-group row">
-                      <label for="scannedBarcode2" class="sr-only">Confirm Supply Kit Tracking Number</label>
+                    <div class="mb-3 row">
+                      <label for="scannedBarcode2" class="visually-hidden">Confirm Supply Kit Tracking Number</label>
                       <input autocomplete="off" type="text" class="form-control" id="scannedBarcode2" placeholder="Re-Enter (scan/type) Barcode">
                     </div>
                 </div>
@@ -157,7 +157,7 @@ const populateSidePaneRows = () => {
           <button type="button" class="btn btn-link undeliverableRow" 
             data-connectId= '${participant.connect_id}'
             id="undeliverablePtAddr"
-            data-toggle="modal" data-target="#modalShowMoreData"
+            data-bs-toggle="modal" data-bs-target="#modalShowMoreData"
           >Undeliverable Address</button>
         </ul>`;
     })
@@ -186,8 +186,7 @@ const selectParticipants = () => {
         const modalHeaderEl = document.getElementById("modalHeader");
         const modalBodyEl = document.getElementById("modalBody");
         modalHeaderEl && (modalHeaderEl.innerHTML = `
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           </button>
         `);
         modalBodyEl && (modalBodyEl.innerHTML = `
@@ -203,8 +202,10 @@ const selectParticipants = () => {
               </div>
           </div>
           <div class="row" style="display:flex; justify-content:center;">
-              <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
-              <button type="button" class="btn btn-danger" data-dismiss="modal" target="_blank">Cancel</button>
+            <div class="col-auto">
+              <button id="confirmButton" data-connect-id="${connectId}" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            </div>
           </div>
       `);
       clickConfirmButton();
@@ -230,22 +231,29 @@ const clickConfirmButton = () => {
             "Content-Type": "application/json",
           },
         });
-        const processedResponse = await response.json();
-        const data = processedResponse.data;
-        
-        if(data?.success === 'true') {
-            triggerSuccessModal("Participant address marked as undeliverable");
-            clearForm();
-            const filteredParticipants = appState.getState().participants.filter((participant) => {
-              return participant['connect_id'] !== connectId;
-            });
-            appState.setState({ participants: filteredParticipants });
-            populateSidePaneRows();
-        } else {
-          console.error('Response with error', response);
-          triggerErrorModal("Error updating participant.");
+        try {
+          const processedResponse = await response.json();
+          const data = processedResponse.data;
+          
+          if(data?.success === 'true') {
+              triggerSuccessModal("Participant address marked as undeliverable");
+              clearForm();
+              clearParticipantFromQueue(connectId);
+          } else {
+            if(data?.removeFromQueue === 'true') {
+              clearForm();
+              clearParticipantFromQueue(connectId);
+            }
+            triggerErrorModal(data?.error || 'Error updating participant.');
+            console.error('Response with error', response);
+          }
+          hideAnimation();
+        } catch(err) {
+          console.error('Error when processing response', err);
+            triggerErrorModal(`Error updating participant: ${err.message || err}`);
+
         }
-        hideAnimation();
+       
     });  
 };
 
@@ -283,29 +291,42 @@ const confirmAssignment = () => {
         participantObj[conceptIds.supplyKitTrackingNum] = scannedBarcode;
         participantObj[conceptIds.supplyKitId] = document.getElementById('scanSupplyKit').value.trim();
         participantObj['Connect_ID'] = document.getElementById('Connect_ID')?.value;
-        const assignmentStatus = await processConfirmedAssignment(participantObj);
+        const responseJson = await processConfirmedAssignment(participantObj);
+        const assignmentStatus = responseJson.success;
 
         if (assignmentStatus === true) {
+          triggerSuccessModal('The kit has been assigned to the participant.')
           clearForm();
-          const filteredParticipants = appState.getState().participants.filter((participant) => {
-            return participant['connect_id'] !== parseInt(participantObj['Connect_ID']);
-          });
-          appState.setState({ participants: filteredParticipants });
-          populateSidePaneRows()
+          clearParticipantFromQueue(participantObj['Connect_ID']);
           return;
         } 
         else {
-          triggerErrorModal(assignmentStatus, 'danger');
+          if(responseJson.message) {
+            console.error(responseJson.message);
+          }
+          if(responseJson.removeFromQueue) {
+            clearForm();
+            clearParticipantFromQueue(participantObj['Connect_ID']);
+          }
+          triggerErrorModal(responseJson.message || `Unable to assign a kit to the participant. Please check the supply kit and connect the ID.`, 'danger');
           return;
         }
       } catch (error) {
         console.error(error);
-        triggerErrorModal('An error occurred:' + error, 'danger');
+        triggerErrorModal('An error occurred:' + (error?.message || error), 'danger');
       } finally {
         confirmAssignmentInAction = false;
       }
     })
   }
+}
+
+const clearParticipantFromQueue = (connectId) => {
+  const filteredParticipants = appState.getState().participants.filter((participant) => {
+    return participant['connect_id'] !== +connectId;
+  });
+  appState.setState({ participants: filteredParticipants });
+  populateSidePaneRows();
 }
 
 const processConfirmedAssignment = async (assignment) => {
@@ -320,19 +341,7 @@ const processConfirmedAssignment = async (assignment) => {
         },
     });
     hideAnimation();
-    const responseJson = await response.json();
-    const responseStatus = responseJson.success;
-    if (responseStatus === true) {
-        triggerSuccessModal('The kit has been assigned to the participant.')
-        return true
-    }
-    else {
-      if(responseJson.logText) {
-        console.error(responseJson.logText);
-      }
-        triggerErrorModal(`Unable to assign a kit to the participant. Please check the supply kit and connect the ID.`)
-        return responseJson.message;
-    }
+    return await response.json();  
 }
 
 export const getEligibleParticipantsForKitAssignment = async () => {

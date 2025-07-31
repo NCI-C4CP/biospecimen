@@ -24,11 +24,11 @@ export const collectionIdSearchScreenTemplate = async (username) => {
                     <div class="col-lg">
                         <div class="row form-row">
                             <form id="specimenLookupForm" method="POST">
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <label class="search-label">Collection ID</label>
                                     <input class="form-control" autocomplete="off" required type="text" id="masterSpecimenId" placeholder="Enter/Scan Collection ID"/>
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <button type="submit" class="btn btn-outline-primary">Search</button>
                                 </div>
                             </form>

@@ -1,5 +1,5 @@
 import { userAuthorization, removeActiveClass, getWorkflow, checkedIn, participantCanCheckIn, verificationConversion, restrictNonBiospecimenUser, participationConversion } from "./../shared.js"
-import {  addGoToCheckInEvent, addGoToSpecimenLinkEvent, addEventSearchForm1, addEventBackToSearch, addEventSearchForm2, addEventSearchForm3, addEventSearchForm4, addEventSearchSpecimen, addEventNavBarSpecimenSearch, addEventClearAll } from "./../events.js";
+import {  addGoToCheckInEvent, addGoToSpecimenLinkEvent, addEventSearchForm1, addEventBackToSearch, addEventSearchSpecimen, addEventNavBarSpecimenSearch, addEventClearAll } from "./../events.js";
 import { homeNavBar, bodyNavBar } from '../navbar.js';
 
 export const userDashboard = (auth, route, goToSpecimenSearch) => {
@@ -22,7 +22,12 @@ export const userDashboard = (auth, route, goToSpecimenSearch) => {
 
 export const searchTemplate = (goToSpecimenSearch) => {
     if(document.getElementById('navBarParticipantCheckIn')) document.getElementById('navBarParticipantCheckIn').classList.add('disabled');
+
     const contentBody = document.getElementById('contentBody');
+    const inputNote = getWorkflow() === 'research' 
+        ? `<p class="input-note">Ask the participant for their name and date of birth and enter below:</p>` 
+        : `<p class="input-note">Enter participant's name and date of birth from the clinical specimen label:</p>`;
+
     let template = `
         <div class="row">
             <div class="col-lg">
@@ -31,69 +36,36 @@ export const searchTemplate = (goToSpecimenSearch) => {
         </div>
         <div class="row">
             <div class="col-lg">
-                <div class="row form-row">
-                    <form id="search1" method="POST">
-                        <div class="form-group">
-                            <label class="col-form-label search-label">First name</label>
-                            <input class="form-control" autocomplete="off" type="text" id="firstName" placeholder="Enter First Name"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-form-label search-label">Last name</label>
-                            <input class="form-control" autocomplete="off" type="text" id="lastName" placeholder="Enter Last Name"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-form-label search-label">Date of Birth</label>
-                            <input class="form-control" type="date" id="dob" required/>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-outline-primary">Search</button>
-                        </div>
-                        <div class="form-group">
-                            <br/>
-                        </div>
-                        <div class="form-group">
-                            <button type="button" id="btnClearAll" class="btn btn-outline-danger">Clear All</button>
-                        </div>
-                    </form>
-                </div>
+                ${inputNote}
             </div>
+        </div>
+        <div class="row">
             <div class="col-lg">
                 <div class="row form-row">
-                    <form id="search4" method="POST">
-                        <div class="form-group">
-                            <label class="col-form-label search-label">Connect ID</label>
-                            <input class="form-control" autocomplete="off" required type="text" maxlength="10" id="connectId" placeholder="Enter ConnectID"/>
+                    <form id="search1" method="POST">
+                        <div class="mb-3">
+                            <label class="col-form-label search-label" for="firstName">First name</label>
+                            <input class="form-control" autocomplete="off" type="text" id="firstName" placeholder="Enter First Name"/>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-outline-primary">Search</button>
+                        <div class="mb-3">
+                            <label class="col-form-label search-label" for="lastName">Last name</label>
+                            <input class="form-control" autocomplete="off" type="text" id="lastName" placeholder="Enter Last Name"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label search-label" for="dob">Date of Birth</label>
+                            <input class="form-control" type="date" id="dob" required/>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-outline-primary button-fixed-width">Search</button>
+                        </div>
+                        <div class="mb-3">
+                            <br/>
+                        </div>
+                        <div class="mb-3">
+                            <button type="button" id="btnClearAll" class="btn btn-outline-danger button-fixed-width">Clear All</button>
                         </div>
                     </form>
                 </div>
-                ${contentBody.dataset.workflow && contentBody.dataset.workflow === 'clinical' ? ``
-                :`
-                    <div class="row form-row">
-                        <form id="search2" method="POST">
-                            <div class="form-group">
-                                <label class="col-form-label search-label">Email</label>
-                                <input class="form-control" required autocomplete="off" type="email" id="email" placeholder="Enter email"/>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-outline-primary">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="row form-row">
-                        <form id="search3" method="POST">
-                            <div class="form-group">
-                                <label class="col-form-label search-label">Phone no.</label>
-                                <input class="form-control" autocomplete="off" required type="text" maxlength="12" id="phone" placeholder="XXX-XXX-XXXX" pattern="\\d{3}-\\d{3}-\\d{4}"/>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-outline-primary">Search</button>
-                            </div>
-                        </form>
-                    </div>
-                `}
             </div>
         </div>
     `;
@@ -101,12 +73,9 @@ export const searchTemplate = (goToSpecimenSearch) => {
     contentBody.innerHTML = template;
     bodyNavBar();
     addEventSearchForm1();
-    addEventSearchForm2();
-    addEventSearchForm3();
-    addEventSearchForm4();
     addEventClearAll();
     addEventNavBarSpecimenSearch();
-    if(goToSpecimenSearch) document.getElementById('navBarSpecimenSearch').click();
+    if (goToSpecimenSearch) document.getElementById('navBarSpecimenSearch').click();
 }
 
 export const searchBiospecimenTemplate = () => {
@@ -122,11 +91,11 @@ export const searchBiospecimenTemplate = () => {
                 Find by Collection ID
                 <div class="row form-row">
                     <form id="specimenLookupForm" method="POST">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="search-label">Collection ID</label>
                             <input class="form-control" autocomplete="off" required type="text" id="masterSpecimenId" placeholder="Enter/Scan Collection ID"/>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary">Search</button>
                         </div>
                     </form>

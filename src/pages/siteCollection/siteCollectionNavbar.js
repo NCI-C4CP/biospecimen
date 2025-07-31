@@ -1,7 +1,7 @@
 export const siteCollectionNavbar = () => {
     let template = ``;
     template += `
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-tabs d-print-none">
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="#bptl" id="bptl">Home</a>
             </li>

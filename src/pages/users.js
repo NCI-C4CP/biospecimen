@@ -18,8 +18,8 @@ export const manageUsers = (auth, route) => {
             const button = document.createElement('button');
             button.classList = ['btn btn-outline-primary'];
             button.id = 'modalBtn';
-            button.dataset.target = '#biospecimenModal';
-            button.dataset.toggle = 'modal';
+            button.dataset.bsTarget = '#biospecimenModal';
+            button.dataset.bsToggle = 'modal';
             button.innerHTML = 'Add user';
 
             div.appendChild(button);
