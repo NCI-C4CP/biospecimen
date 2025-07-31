@@ -2536,7 +2536,7 @@ export const locationConceptIDToLocationMap = {
     [conceptIds.nameToKeyObj.templeRoney]: {
         siteSpecificLocation: 'Temple Roney',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2544,7 +2544,7 @@ export const locationConceptIDToLocationMap = {
     [conceptIds.nameToKeyObj.templeWestfield]: {
         siteSpecificLocation: 'Temple Westfield',
         siteAcronym: 'BSWH',
-        siteCode: '749199085',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
