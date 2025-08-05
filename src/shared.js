@@ -2141,6 +2141,7 @@ export const siteSpecificLocation = {
   "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Temple CDM": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Temple Roney": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple Westfield": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
@@ -2535,7 +2536,15 @@ export const locationConceptIDToLocationMap = {
     [conceptIds.nameToKeyObj.templeRoney]: {
         siteSpecificLocation: 'Temple Roney',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
+    [conceptIds.nameToKeyObj.templeWestfield]: {
+        siteSpecificLocation: 'Temple Westfield',
+        siteAcronym: 'BSWH',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2609,7 +2618,8 @@ export const conceptIdToSiteSpecificLocation = {
   962830330: "Waco - MacArthur",
   [conceptIds.nameToKeyObj.irving]: "Irving",
   [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
-  [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney"
+  [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
+  [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
 }
 
 export const siteSpecificLocationToConceptId = {
@@ -2663,7 +2673,8 @@ export const siteSpecificLocationToConceptId = {
   "Waco - MacArthur": 962830330,
   "Irving": conceptIds.nameToKeyObj.irving,
   "Temple CDM": conceptIds.nameToKeyObj.templeCDM,
-  "Temple Roney": conceptIds.nameToKeyObj.templeRoney
+  "Temple Roney": conceptIds.nameToKeyObj.templeRoney,
+  "Temple Westfield": conceptIds.nameToKeyObj.templeWestfield,
 }
 
 export const conceptIdToHealthProviderAbbrObj = {
@@ -2758,6 +2769,7 @@ export const keyToLocationObj =
     [conceptIds.nameToKeyObj.irving]: "Irving",
     [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
     [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
+    [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
     111111111: "NIH",
     13: "NCI"
 
@@ -3039,6 +3051,7 @@ export const siteLocations = {
                 { location: 'Irving', concept: conceptIds.nameToKeyObj.irving },
                 { location: 'Temple CDM', concept: conceptIds.nameToKeyObj.templeCDM },
                 { location: 'Temple Roney', concept: conceptIds.nameToKeyObj.templeRoney },
+                { location: 'Temple Westfield', concept: conceptIds.nameToKeyObj.templeWestfield },
         ],
         NIH: [
                 { location: 'NIH-1', concept: conceptIds.nameToKeyObj.nci }, 
