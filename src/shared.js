@@ -3304,17 +3304,8 @@ export const getSiteTubesLists = (biospecimenData) => {
     const dashboardType = getWorkflow();
     const siteAcronym = getSiteAcronym();
     const subSiteLocation = siteLocations[dashboardType]?.[siteAcronym] ? siteLocations[dashboardType]?.[siteAcronym]?.filter(dt => dt.concept === biospecimenData[conceptIds.collectionLocation])[0]?.location : undefined;
-    let siteTubesList = siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] ? siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] : siteSpecificTubeRequirements[siteAcronym]?.[dashboardType];
-    //After March 1, 2024 the ACD tubes will expire and no longer be collected
-    if (siteTubesList && +new Date() >= +new Date('2024-02-20T00:00:00.000')) {
-        siteTubesList = siteTubesList.filter((tube) => tube.id !== '0005');
-    }
 
-    if (getWorkflow() === 'research') {
-        siteTubesList = siteTubesList.filter((tube) => !['0003'].includes(tube.id)); // removes heparin tube (0003) from collection data entry
-    }
-
-    return siteTubesList;
+    return siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] ? siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] : siteSpecificTubeRequirements[siteAcronym]?.[dashboardType];
 }
 
 export const collectionSettings = {
