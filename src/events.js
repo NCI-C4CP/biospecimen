@@ -2228,23 +2228,46 @@ export const populateCourierBox = async () => {
 
 }
 
-export const handleBoxReportsData = async (filter, source) => {
+export const handleBoxReportsData = async (filter, source, direction) => {
     const currReportPageNum = appState.getState().reportData.currReportPageNum;
     let reportPageBoxData = appState.getState().reportData.reportPageBoxData;
+
+    // console.log("🚀 ~ handleBoxReportsData ~ filter:", filter)
+    // console.log("🚀 ~ handleBoxReportsData ~ source:", source)
+    console.log("🚀 ~ handleBoxReportsData ~ currReportPageNum:", currReportPageNum)
+    console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
+    console.log("🚀 ~ handleBoxReportsData ~ direction:", direction)
+    let firstDocId = appState.getState().reportData.firstDocId;
+    let lastDocId = appState.getState().reportData.lastDocId;
+    console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
+
+
     if (!reportPageBoxData) {
         try {
             showAnimation();
-            reportPageBoxData = await getPage(currReportPageNum, 5, conceptIds.shippingShipDate.toString(), filter, source);
+            reportPageBoxData = await getPage(
+                currReportPageNum, 
+                5, 
+                conceptIds.shippingShipDate.toString(), 
+                filter, 
+                source, 
+                firstDocId, 
+                lastDocId, 
+                direction
+            ); // add another parameter for document cursor
             
             const stateUpdateObj = {
                 ...appState.getState(),
                 reportData: {
                     ...appState.getState().reportData,
-                    reportPageBoxData
+                    reportPageBoxData,
+                    firstDocId: reportPageBoxData.data.firstDocId,
+                    lastDocId: reportPageBoxData.data.lastDocId,
                 }
             };
 
             appState.setState(stateUpdateObj);
+            console.log("getState after getPage:", appState.getState());
             hideAnimation();
         } catch (error) {
             hideAnimation();
@@ -2253,11 +2276,15 @@ export const handleBoxReportsData = async (filter, source) => {
         }
     }
 
+
     populateBoxReportsTable(source);
 }
 
 const populateBoxReportsTable = (source) => {
     const reportPageBoxData = appState.getState().reportData.reportPageBoxData;
+    const reportPageBoxes = reportPageBoxData.data.boxes || [];
+    console.log("🚀 ~ populateBoxReportsTable ~ reportPageBoxData:", reportPageBoxData)
+
     const currTable = document.getElementById('boxTable')
     currTable.innerHTML = ''
     let rowCount = currTable.rows.length;
@@ -2273,10 +2300,10 @@ const populateBoxReportsTable = (source) => {
     currRow.insertCell(8).innerText = "Condition";
     currRow.insertCell(9).innerText = "Comments";
 
-    for (let i = 0; i < reportPageBoxData.data.length; i++) {
+    for (let i = 0; i < reportPageBoxes.length; i++) {
         rowCount = currTable.rows.length;
         currRow = currTable.insertRow(rowCount);
-        const currBox = convertToOldBox(reportPageBoxData.data[i]);
+        const currBox = convertToOldBox(reportPageBoxes[i]);
         const trackingNumber = currBox[conceptIds.shippingTrackingNumber] ?? '';
         const shippedDate = currBox[conceptIds.shippingShipDate] ? retrieveDateFromIsoString(currBox[conceptIds.shippingShipDate]) : '';
         const receivedDate = currBox[conceptIds.siteShipmentDateReceived] ? retrieveDateFromIsoString(currBox[conceptIds.siteShipmentDateReceived]) : '';
@@ -2400,13 +2427,15 @@ export const populateReportManifestTable = (currPage, searchSpecimenInstituteArr
  */
 export const addPaginationFunctionality = (filter, source) => {
     const numReportPages = appState.getState().reportData.numReportPages;
+    console.log("🚀 ~ addPaginationFunctionality ~ numReportPages:", numReportPages)
     let currPageNum = appState.getState().reportData.currReportPageNum || 1;
+    console.log("🚀 ~ addPaginationFunctionality ~ currPageNum:", currPageNum);
 
     const paginationButtons = document.getElementById('paginationButtons');
     paginationButtons.innerHTML = `<ul class="pagination">
                                         <li class="page-item" id="firstPage"><button class="page-link" >First</button></li>
                                         <li class="page-item" id="previousPage"><button class="page-link" >Previous</button></li>
-                                        <li class="page-item" id="thisPage"><a class="page-link"  id = "middlePage">${currPageNum}</a></li>
+                                        <li class="page-item" id="thisPage"><a class="page-link" id ="middlePage">${currPageNum}</a></li>
                                         <li class="page-item" id="nextPage"><button class="page-link">Next</button></li>
                                         <li class="page-item" id="lastPage"><button class="page-link">Last</button></li>
                                         <li class="page-item" style="margin-left: 40px;"><input type="text" class="page-link" id="goToPageInput" placeholder="Enter page number" /></li>
@@ -2419,9 +2448,13 @@ export const addPaginationFunctionality = (filter, source) => {
     const currPageEle = document.getElementById('middlePage');
 
     // Update the current page number and the UI, then load the new page
-    const setPage = (targetPageNum) => {
+    const setPage = (targetPageNum, direction) => {
         const newPageNum = parseInt(targetPageNum, 10);
         if (currPageNum === newPageNum) return;
+        console.log("🚀 ~ setPage ~ newPageNum:", newPageNum)
+        console.log("direction:", direction);
+        console.log("firstDocumentId:", appState.getState().reportData.firstDocId);
+        console.log("lastDocumentId:", appState.getState().reportData.lastDocId);
 
         currPageNum = newPageNum;
         currPageEle.innerHTML = currPageNum;
@@ -2435,26 +2468,27 @@ export const addPaginationFunctionality = (filter, source) => {
             }
         };
 
+        
         appState.setState(stateUpdateObj);
 
-        handleBoxReportsData(filter, source);
+        handleBoxReportsData(filter, source, direction);
 
     }
 
     firstEle.addEventListener('click', () => {
-        setPage(1)
+        setPage(1, 'first');
     });
 
     previousEle.addEventListener('click', () => {
-        if (currPageNum > 1) setPage(currPageNum - 1);
+        if (currPageNum > 1) setPage(currPageNum - 1, 'prev');
     });
 
     nextEle.addEventListener('click', () => {
-        if (currPageNum < numReportPages) setPage(currPageNum + 1);
+        if (currPageNum < numReportPages) setPage(currPageNum + 1, 'next');
     });
 
     lastEle.addEventListener('click', () => {
-        setPage(numReportPages)
+        setPage(numReportPages, 'last');
     });
 
     // Enable go to page feature.
