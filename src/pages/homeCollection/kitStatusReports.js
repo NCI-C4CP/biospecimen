@@ -79,10 +79,10 @@ const createTableContent = (reportsData) => {
 
 const createKitStatusTable = (reportsData) => {
     return `
-            <div class="sticky-header" style="overflow:auto;">
+            <div class="sticky-header" style="overflow:auto; max-height: 75vh">
                 <table class="table table-bordered" id="kitStatusReportsTable" style="margin-bottom:1rem; 
                     position:relative; border-collapse:collapse;">
-                    <thead> 
+                    <thead class="sticky-top top-0"> 
                         <tr style="top: 0; position: sticky;">
                             ${createColumnHeaders()}
                         </tr>
