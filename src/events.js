@@ -2438,8 +2438,6 @@ export const addPaginationFunctionality = (filter, source) => {
                                         <li class="page-item" id="thisPage"><a class="page-link" id ="middlePage">${currPageNum}</a></li>
                                         <li class="page-item" id="nextPage"><button class="page-link">Next</button></li>
                                         <li class="page-item" id="lastPage"><button class="page-link">Last</button></li>
-                                        <li class="page-item" style="margin-left: 40px;"><input type="text" class="page-link" id="goToPageInput" placeholder="Enter page number" /></li>
-                                        <li class="page-item"><button class="page-link" id="goToPageButton">Go to page</button></li>
                                     </ul>`
     const firstEle = document.getElementById('firstPage');
     const previousEle = document.getElementById('previousPage');
@@ -2489,32 +2487,6 @@ export const addPaginationFunctionality = (filter, source) => {
 
     lastEle.addEventListener('click', () => {
         setPage(numReportPages, 'last');
-    });
-
-    // Enable go to page feature.
-    document.getElementById('goToPageButton').addEventListener('click', () => {
-        const input = document.getElementById('goToPageInput');
-        const pageNumber = parseInt(input.value.trim(), 10);
-    
-        // Validate the input to ensure it's a valid page number within the range
-        if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= numReportPages) {
-            setPage(pageNumber);
-        } else if (!isNaN(pageNumber) && (pageNumber < 1)) {
-            setPage(1);
-        } else if (!isNaN(pageNumber) && (pageNumber > numReportPages)) {
-            setPage(numReportPages);
-        } else {
-            alert(`Please enter a valid page number (1 - ${numReportPages}).`);
-        }
-    
-        input.value = '';
-    });
-
-    // Enable page navigation using the 'Enter' key.
-    document.getElementById('goToPageInput').addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            document.getElementById('goToPageButton').click();
-        }
     });
 }
 
