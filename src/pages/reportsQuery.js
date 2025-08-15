@@ -46,7 +46,7 @@ export const startReport = async (source) => {
                 reportData: {
                     ...appState.getState().reportData,
                     currReportPageNum,
-                    numReportPages,
+                    numReportPages
                 }
             };
 
