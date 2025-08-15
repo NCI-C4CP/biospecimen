@@ -906,11 +906,11 @@ export const ship = async (boxIdToTrackingNumberMap, shippingData) => {
     }
 }
 
-export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, direction) => {
+export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, paginationDirection) => {
     try {
         pageNumber -= 1; // Firestore uses 0-based indexing, the Biospecimen 'reports' module uses page numbers (1-based indexing).
 
-        console.log("getPage parameters:", { pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, direction });
+        console.log("getPage parameters:", { pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, paginationDirection });
 
         const idToken = await getIdToken();
         let requestObj = {
@@ -919,7 +919,7 @@ export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, sou
                 Authorization: "Bearer " + idToken,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, direction })
+            body: JSON.stringify({ pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, paginationDirection })
         }
         const response = await fetch(`${api}api=getBoxesPagination`, requestObj);
         return response.json();

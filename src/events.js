@@ -2228,7 +2228,7 @@ export const populateCourierBox = async () => {
 
 }
 
-export const handleBoxReportsData = async (filter, source, direction) => {
+export const handleBoxReportsData = async (filter, source, paginationDirection) => {
     const currReportPageNum = appState.getState().reportData.currReportPageNum;
     let reportPageBoxData = appState.getState().reportData.reportPageBoxData;
 
@@ -2236,7 +2236,7 @@ export const handleBoxReportsData = async (filter, source, direction) => {
     // console.log("🚀 ~ handleBoxReportsData ~ source:", source)
     console.log("🚀 ~ handleBoxReportsData ~ currReportPageNum:", currReportPageNum)
     console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
-    console.log("🚀 ~ handleBoxReportsData ~ direction:", direction)
+    console.log("🚀 ~ handleBoxReportsData ~ paginationDirection:", paginationDirection)
     let firstDocId = appState.getState().reportData.firstDocId;
     let lastDocId = appState.getState().reportData.lastDocId;
     console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
@@ -2253,8 +2253,8 @@ export const handleBoxReportsData = async (filter, source, direction) => {
                 source, 
                 firstDocId, 
                 lastDocId, 
-                direction
-            ); // add another parameter for document cursor
+                paginationDirection
+            );
             
             const stateUpdateObj = {
                 ...appState.getState(),
@@ -2446,11 +2446,11 @@ export const addPaginationFunctionality = (filter, source) => {
     const currPageEle = document.getElementById('middlePage');
 
     // Update the current page number and the UI, then load the new page
-    const setPage = (targetPageNum, direction) => {
+    const setPage = (targetPageNum, paginationDirection) => {
         const newPageNum = parseInt(targetPageNum, 10);
         if (currPageNum === newPageNum) return;
         console.log("🚀 ~ setPage ~ newPageNum:", newPageNum)
-        console.log("direction:", direction);
+        console.log("paginationDirection:", paginationDirection);
         console.log("firstDocumentId:", appState.getState().reportData.firstDocId);
         console.log("lastDocumentId:", appState.getState().reportData.lastDocId);
 
@@ -2469,7 +2469,7 @@ export const addPaginationFunctionality = (filter, source) => {
         
         appState.setState(stateUpdateObj);
 
-        handleBoxReportsData(filter, source, direction);
+        handleBoxReportsData(filter, source, paginationDirection);
 
     }
 
