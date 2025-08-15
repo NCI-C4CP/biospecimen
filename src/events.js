@@ -2231,16 +2231,8 @@ export const populateCourierBox = async () => {
 export const handleBoxReportsData = async (filter, source, paginationDirection) => {
     const currReportPageNum = appState.getState().reportData.currReportPageNum;
     let reportPageBoxData = appState.getState().reportData.reportPageBoxData;
-
-    // console.log("🚀 ~ handleBoxReportsData ~ filter:", filter)
-    // console.log("🚀 ~ handleBoxReportsData ~ source:", source)
-    console.log("🚀 ~ handleBoxReportsData ~ currReportPageNum:", currReportPageNum)
-    console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
-    console.log("🚀 ~ handleBoxReportsData ~ paginationDirection:", paginationDirection)
-    let firstDocId = appState.getState().reportData.firstDocId;
-    let lastDocId = appState.getState().reportData.lastDocId;
-    console.log("🚀 ~ handleBoxReportsData ~ reportPageBoxData:", reportPageBoxData)
-
+    const firstDocId = appState.getState().reportData.firstDocId;
+    const lastDocId = appState.getState().reportData.lastDocId;
 
     if (!reportPageBoxData) {
         try {
@@ -2267,7 +2259,6 @@ export const handleBoxReportsData = async (filter, source, paginationDirection) 
             };
 
             appState.setState(stateUpdateObj);
-            console.log("getState after getPage:", appState.getState());
             hideAnimation();
         } catch (error) {
             hideAnimation();
@@ -2283,7 +2274,6 @@ export const handleBoxReportsData = async (filter, source, paginationDirection) 
 const populateBoxReportsTable = (source) => {
     const reportPageBoxData = appState.getState().reportData.reportPageBoxData;
     const reportPageBoxes = reportPageBoxData.data.boxes || [];
-    console.log("🚀 ~ populateBoxReportsTable ~ reportPageBoxData:", reportPageBoxData)
 
     const currTable = document.getElementById('boxTable')
     currTable.innerHTML = ''
@@ -2427,9 +2417,7 @@ export const populateReportManifestTable = (currPage, searchSpecimenInstituteArr
  */
 export const addPaginationFunctionality = (filter, source) => {
     const numReportPages = appState.getState().reportData.numReportPages;
-    console.log("🚀 ~ addPaginationFunctionality ~ numReportPages:", numReportPages)
     let currPageNum = appState.getState().reportData.currReportPageNum || 1;
-    console.log("🚀 ~ addPaginationFunctionality ~ currPageNum:", currPageNum);
 
     const paginationButtons = document.getElementById('paginationButtons');
     paginationButtons.innerHTML = `<ul class="pagination">
@@ -2449,11 +2437,6 @@ export const addPaginationFunctionality = (filter, source) => {
     const setPage = (targetPageNum, paginationDirection) => {
         const newPageNum = parseInt(targetPageNum, 10);
         if (currPageNum === newPageNum) return;
-        console.log("🚀 ~ setPage ~ newPageNum:", newPageNum)
-        console.log("paginationDirection:", paginationDirection);
-        console.log("firstDocumentId:", appState.getState().reportData.firstDocId);
-        console.log("lastDocumentId:", appState.getState().reportData.lastDocId);
-
         currPageNum = newPageNum;
         currPageEle.innerHTML = currPageNum;
 

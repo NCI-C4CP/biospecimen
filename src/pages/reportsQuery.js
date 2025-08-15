@@ -31,18 +31,14 @@ export const reportsQuery = (auth, route) => {
 };
 
 export const startReport = async (source) => {
-    console.log("🚀 ~ startReport ~ source:", source)
     showAnimation();
 
     let numReportPages = appState.getState().reportData.numReportPages;
-    console.log("🚀 ~ startReport ~ numReportPages:", numReportPages)
     let currReportPageNum = appState.getState().reportData.currReportPageNum;
-    console.log("🚀 ~ startReport ~ currReportPageNum:", currReportPageNum)
 
     try {
         if (!numReportPages) {
             numReportPages = await getNumPages(5, {}, source);
-            console.log("🚀 ~ startReport ~ numReportPages:", numReportPages)
             currReportPageNum = 1;
 
             const stateUpdateObj = {
