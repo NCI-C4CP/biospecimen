@@ -2231,8 +2231,10 @@ export const populateCourierBox = async () => {
 export const handleBoxReportsData = async (filter, source, paginationDirection) => {
     const currReportPageNum = appState.getState().reportData.currReportPageNum;
     let reportPageBoxData = appState.getState().reportData.reportPageBoxData;
-    const firstDocId = appState.getState().reportData.firstDocId;
-    const lastDocId = appState.getState().reportData.lastDocId;
+    let firstDocId = appState.getState().reportData.firstDocId;
+    let lastDocId = appState.getState().reportData.lastDocId;
+    if (typeof firstDocId === 'undefined') firstDocId = null;
+    if (typeof lastDocId === 'undefined') lastDocId = null;
 
     if (!reportPageBoxData) {
         try {
@@ -2253,8 +2255,8 @@ export const handleBoxReportsData = async (filter, source, paginationDirection) 
                 reportData: {
                     ...appState.getState().reportData,
                     reportPageBoxData,
-                    firstDocId: reportPageBoxData.data.firstDocId,
-                    lastDocId: reportPageBoxData.data.lastDocId,
+                    firstDocId: reportPageBoxData.data?.firstDocId,
+                    lastDocId: reportPageBoxData.data?.lastDocId,
                 }
             };
 
