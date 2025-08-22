@@ -2228,19 +2228,35 @@ export const populateCourierBox = async () => {
 
 }
 
-export const handleBoxReportsData = async (filter, source) => {
+export const handleBoxReportsData = async (filter, source, paginationDirection) => {
     const currReportPageNum = appState.getState().reportData.currReportPageNum;
     let reportPageBoxData = appState.getState().reportData.reportPageBoxData;
+    let firstDocId = appState.getState().reportData.firstDocId;
+    let lastDocId = appState.getState().reportData.lastDocId;
+    if (typeof firstDocId === 'undefined') firstDocId = null;
+    if (typeof lastDocId === 'undefined') lastDocId = null;
+
     if (!reportPageBoxData) {
         try {
             showAnimation();
-            reportPageBoxData = await getPage(currReportPageNum, 5, conceptIds.shippingShipDate.toString(), filter, source);
+            reportPageBoxData = await getPage(
+                currReportPageNum, 
+                5, 
+                conceptIds.shippingShipDate.toString(), 
+                filter, 
+                source, 
+                firstDocId, 
+                lastDocId, 
+                paginationDirection
+            );
             
             const stateUpdateObj = {
                 ...appState.getState(),
                 reportData: {
                     ...appState.getState().reportData,
-                    reportPageBoxData
+                    reportPageBoxData,
+                    firstDocId: reportPageBoxData.data?.firstDocId,
+                    lastDocId: reportPageBoxData.data?.lastDocId,
                 }
             };
 
@@ -2253,11 +2269,14 @@ export const handleBoxReportsData = async (filter, source) => {
         }
     }
 
+
     populateBoxReportsTable(source);
 }
 
 const populateBoxReportsTable = (source) => {
     const reportPageBoxData = appState.getState().reportData.reportPageBoxData;
+    const reportPageBoxes = reportPageBoxData.data.boxes || [];
+
     const currTable = document.getElementById('boxTable')
     currTable.innerHTML = ''
     let rowCount = currTable.rows.length;
@@ -2273,10 +2292,10 @@ const populateBoxReportsTable = (source) => {
     currRow.insertCell(8).innerText = "Condition";
     currRow.insertCell(9).innerText = "Comments";
 
-    for (let i = 0; i < reportPageBoxData.data.length; i++) {
+    for (let i = 0; i < reportPageBoxes.length; i++) {
         rowCount = currTable.rows.length;
         currRow = currTable.insertRow(rowCount);
-        const currBox = convertToOldBox(reportPageBoxData.data[i]);
+        const currBox = convertToOldBox(reportPageBoxes[i]);
         const trackingNumber = currBox[conceptIds.shippingTrackingNumber] ?? '';
         const shippedDate = currBox[conceptIds.shippingShipDate] ? retrieveDateFromIsoString(currBox[conceptIds.shippingShipDate]) : '';
         const receivedDate = currBox[conceptIds.siteShipmentDateReceived] ? retrieveDateFromIsoString(currBox[conceptIds.siteShipmentDateReceived]) : '';
@@ -2406,11 +2425,9 @@ export const addPaginationFunctionality = (filter, source) => {
     paginationButtons.innerHTML = `<ul class="pagination">
                                         <li class="page-item" id="firstPage"><button class="page-link" >First</button></li>
                                         <li class="page-item" id="previousPage"><button class="page-link" >Previous</button></li>
-                                        <li class="page-item" id="thisPage"><a class="page-link"  id = "middlePage">${currPageNum}</a></li>
+                                        <li class="page-item" id="thisPage"><a class="page-link" id ="middlePage">${currPageNum}</a></li>
                                         <li class="page-item" id="nextPage"><button class="page-link">Next</button></li>
                                         <li class="page-item" id="lastPage"><button class="page-link">Last</button></li>
-                                        <li class="page-item" style="margin-left: 40px;"><input type="text" class="page-link" id="goToPageInput" placeholder="Enter page number" /></li>
-                                        <li class="page-item"><button class="page-link" id="goToPageButton">Go to page</button></li>
                                     </ul>`
     const firstEle = document.getElementById('firstPage');
     const previousEle = document.getElementById('previousPage');
@@ -2419,10 +2436,9 @@ export const addPaginationFunctionality = (filter, source) => {
     const currPageEle = document.getElementById('middlePage');
 
     // Update the current page number and the UI, then load the new page
-    const setPage = (targetPageNum) => {
+    const setPage = (targetPageNum, paginationDirection) => {
         const newPageNum = parseInt(targetPageNum, 10);
         if (currPageNum === newPageNum) return;
-
         currPageNum = newPageNum;
         currPageEle.innerHTML = currPageNum;
 
@@ -2435,52 +2451,27 @@ export const addPaginationFunctionality = (filter, source) => {
             }
         };
 
+        
         appState.setState(stateUpdateObj);
 
-        handleBoxReportsData(filter, source);
+        handleBoxReportsData(filter, source, paginationDirection);
 
     }
 
     firstEle.addEventListener('click', () => {
-        setPage(1)
+        setPage(1, 'first');
     });
 
     previousEle.addEventListener('click', () => {
-        if (currPageNum > 1) setPage(currPageNum - 1);
+        if (currPageNum > 1) setPage(currPageNum - 1, 'prev');
     });
 
     nextEle.addEventListener('click', () => {
-        if (currPageNum < numReportPages) setPage(currPageNum + 1);
+        if (currPageNum < numReportPages) setPage(currPageNum + 1, 'next');
     });
 
     lastEle.addEventListener('click', () => {
-        setPage(numReportPages)
-    });
-
-    // Enable go to page feature.
-    document.getElementById('goToPageButton').addEventListener('click', () => {
-        const input = document.getElementById('goToPageInput');
-        const pageNumber = parseInt(input.value.trim(), 10);
-    
-        // Validate the input to ensure it's a valid page number within the range
-        if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= numReportPages) {
-            setPage(pageNumber);
-        } else if (!isNaN(pageNumber) && (pageNumber < 1)) {
-            setPage(1);
-        } else if (!isNaN(pageNumber) && (pageNumber > numReportPages)) {
-            setPage(numReportPages);
-        } else {
-            alert(`Please enter a valid page number (1 - ${numReportPages}).`);
-        }
-    
-        input.value = '';
-    });
-
-    // Enable page navigation using the 'Enter' key.
-    document.getElementById('goToPageInput').addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            document.getElementById('goToPageButton').click();
-        }
+        setPage(numReportPages, 'last');
     });
 }
 
