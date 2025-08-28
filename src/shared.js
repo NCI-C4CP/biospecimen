@@ -904,7 +904,7 @@ export const ship = async (boxIdToTrackingNumberMap, shippingData) => {
     }
 }
 
-export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, source) => {
+export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, paginationDirection) => {
     try {
         pageNumber -= 1; // Firestore uses 0-based indexing, the Biospecimen 'reports' module uses page numbers (1-based indexing).
 
@@ -915,7 +915,7 @@ export const getPage = async (pageNumber, elementsPerPage, orderBy, filters, sou
                 Authorization: "Bearer " + idToken,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ pageNumber, elementsPerPage, orderBy, filters, source })
+            body: JSON.stringify({ pageNumber, elementsPerPage, orderBy, filters, source, firstDocId, lastDocId, paginationDirection })
         }
         const response = await fetch(`${api}api=getBoxesPagination`, requestObj);
         return response.json();
@@ -2141,6 +2141,7 @@ export const siteSpecificLocation = {
   "Irving": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Temple CDM": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Temple Roney": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Temple Westfield": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
@@ -2535,7 +2536,15 @@ export const locationConceptIDToLocationMap = {
     [conceptIds.nameToKeyObj.templeRoney]: {
         siteSpecificLocation: 'Temple Roney',
         siteAcronym: 'BSWH',
-        siteCode: '472940358',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
+    [conceptIds.nameToKeyObj.templeWestfield]: {
+        siteSpecificLocation: 'Temple Westfield',
+        siteAcronym: 'BSWH',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
         siteTeam: 'BSWH Connect Study Team',
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
@@ -2609,7 +2618,8 @@ export const conceptIdToSiteSpecificLocation = {
   962830330: "Waco - MacArthur",
   [conceptIds.nameToKeyObj.irving]: "Irving",
   [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
-  [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney"
+  [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
+  [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
 }
 
 export const siteSpecificLocationToConceptId = {
@@ -2663,7 +2673,8 @@ export const siteSpecificLocationToConceptId = {
   "Waco - MacArthur": 962830330,
   "Irving": conceptIds.nameToKeyObj.irving,
   "Temple CDM": conceptIds.nameToKeyObj.templeCDM,
-  "Temple Roney": conceptIds.nameToKeyObj.templeRoney
+  "Temple Roney": conceptIds.nameToKeyObj.templeRoney,
+  "Temple Westfield": conceptIds.nameToKeyObj.templeWestfield,
 }
 
 export const conceptIdToHealthProviderAbbrObj = {
@@ -2758,6 +2769,7 @@ export const keyToLocationObj =
     [conceptIds.nameToKeyObj.irving]: "Irving",
     [conceptIds.nameToKeyObj.templeCDM]: "Temple CDM",
     [conceptIds.nameToKeyObj.templeRoney]: "Temple Roney",
+    [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
     111111111: "NIH",
     13: "NCI"
 
@@ -3039,6 +3051,7 @@ export const siteLocations = {
                 { location: 'Irving', concept: conceptIds.nameToKeyObj.irving },
                 { location: 'Temple CDM', concept: conceptIds.nameToKeyObj.templeCDM },
                 { location: 'Temple Roney', concept: conceptIds.nameToKeyObj.templeRoney },
+                { location: 'Temple Westfield', concept: conceptIds.nameToKeyObj.templeWestfield },
         ],
         NIH: [
                 { location: 'NIH-1', concept: conceptIds.nameToKeyObj.nci }, 
@@ -3291,17 +3304,8 @@ export const getSiteTubesLists = (biospecimenData) => {
     const dashboardType = getWorkflow();
     const siteAcronym = getSiteAcronym();
     const subSiteLocation = siteLocations[dashboardType]?.[siteAcronym] ? siteLocations[dashboardType]?.[siteAcronym]?.filter(dt => dt.concept === biospecimenData[conceptIds.collectionLocation])[0]?.location : undefined;
-    let siteTubesList = siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] ? siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] : siteSpecificTubeRequirements[siteAcronym]?.[dashboardType];
-    //After March 1, 2024 the ACD tubes will expire and no longer be collected
-    if (siteTubesList && +new Date() >= +new Date('2024-02-20T00:00:00.000')) {
-        siteTubesList = siteTubesList.filter((tube) => tube.id !== '0005');
-    }
 
-    if (getWorkflow() === 'research') {
-        siteTubesList = siteTubesList.filter((tube) => !['0003'].includes(tube.id)); // removes heparin tube (0003) from collection data entry
-    }
-
-    return siteTubesList;
+    return siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] ? siteSpecificTubeRequirements[siteAcronym]?.[dashboardType]?.[subSiteLocation] : siteSpecificTubeRequirements[siteAcronym]?.[dashboardType];
 }
 
 export const collectionSettings = {
