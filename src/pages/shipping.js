@@ -222,7 +222,7 @@ const populateAvailableCollectionsList = async (availableCollectionsObj, specime
 
             const currDeleteButton = rowEle.cells[1].getElementsByClassName("delButton")[0];
 
-            //This should remove the entire bag
+            //This should remove the entrire bag
             currDeleteButton.addEventListener("click", async e => {
                 showAnimation();
                 const index = e.target.parentNode.parentNode.rowIndex;
@@ -876,7 +876,7 @@ export const generateShippingManifest = async (boxIdArray, userName, isTempMonit
     navBarBtn.classList.add('active');
     document.getElementById('contentBody').innerHTML = renderShippingManifestTemplate(boxIdArray, isTempMonitorIncluded);
     
-    populateShippingManifestHeader(userName, siteAcronym, currShippingLocationNumber); // populate shipping header via site specific location selected from shipping page
+    populateShippingManifestHeader(userName, siteAcronym, currShippingLocationNumber); // populate shipping header via site specfiic location selected from shipping page
     populateShippingManifestTable(boxIdAndBagsObjToDisplay);
     addEventNavBarShipment("navBarShippingDash", userName);
     addEventShipPrintManifest('printBox');
