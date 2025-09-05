@@ -1429,6 +1429,8 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
             focus = false;
         }
 
+        if (hasError) return; // Do not set scanned ID if the tube has an error (further hardening for issues 1316/1388)
+
         if (tubeConceptId && input.required) biospecimenData[tubeConceptId][conceptIds.collection.tube.scannedId] = `${masterID} ${tubeID}`.trim();
     });
 
@@ -1443,6 +1445,14 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
         }
 
         biospecimenData[tube.id][conceptIds.collection.tube.isCollected] = tube.checked ? conceptIds.yes : conceptIds.no;
+        if (!tube.checked) {
+            // If the tube has been unchecked, ensure the value is cleared
+            // (This solves issues 1316/1388 where tubes which were mis-scanned, unchecked
+            // and then saved were saving their IDs and appearing in the shipping manifest)
+            if (biospecimenData[tube.id][conceptIds.collection.tube.scannedId]) {
+                delete biospecimenData[tube.id][conceptIds.collection.tube.scannedId];
+            }
+        }
 
         const reason = document.getElementById(tube.id + 'Reason');
         const deviated = document.getElementById(tube.id + 'Deviated');
