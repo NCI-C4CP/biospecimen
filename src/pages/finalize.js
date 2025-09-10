@@ -186,15 +186,6 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
     // Occasionally, a stray tube is found and an already-finalized collection gets updated. In this case, don't update the properties associated with finalizing.
     document.getElementById('finalizedConfirmButton') && document.getElementById('finalizedConfirmButton').addEventListener('click', async () => {
         try {
-            const isPreviouslyFinalized = specimenData[conceptIds.collection.isFinalized] === conceptIds.yes;
-
-            if (!isPreviouslyFinalized) {
-                specimenData[conceptIds.collection.isFinalized] = conceptIds.yes;
-                specimenData[conceptIds.collection.finalizedTime] = new Date().toISOString();
-                specimenData[conceptIds.boxedStatus] = conceptIds.notBoxed;
-                specimenData[conceptIds.strayTubesList] = [];
-                await updateSpecimen([specimenData]);
-            }
             await submitSpecimen(specimenData, participantData, siteTubesList);
         } catch (e) {
             console.error(e);
