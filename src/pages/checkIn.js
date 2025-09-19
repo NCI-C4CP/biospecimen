@@ -565,7 +565,7 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
         isCollected === conceptIds.no && collectionTime 
         || isCollected === conceptIds.no && bloodCollection && baselineType === "blood" 
         || isCollected === conceptIds.no && urineCollection && baselineType === "urine"
-    ) { // is collected no, blood time undefined, 
+    ) {
         return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
             text: "In Progress"
@@ -603,7 +603,7 @@ const getHomeMouthwashKitStatus = (data) => {
 
 /**
  * Uses the participant's data and associated biospecimen collection data to determine if the participant has a home mouthwash collection.
- * Checks if the partipant's baseline visit has a "received" home mouthwas kit status
+ * Checks if the participant's baseline visit has a "received" home mouthwash kit status
  * Checks if the unique kit ID exists in the baseline visit collection
  * Returns the collection ID if found.
  * @param {object} participantData - The participant data object from participants collection
