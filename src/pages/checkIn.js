@@ -16,6 +16,18 @@ export const checkInTemplate = async (data, checkOutFlag) => {
     const visit = getCheckedInVisit(data);
 
     const response = await getParticipantCollections(data.token);
+    // console.log("🚀 ~ checkInTemplate ~ response:", response)
+
+    const mouthwashCollectionId = getHomeMouthwashCollectionId(data, response.data);
+    // console.log("🚀 ~ mouthwashCollectionId:", mouthwashCollectionId)
+    /*
+    Function call to get uniqueKit Id from biospecimen collection document. This is to extract the collection ID.
+    First filter from the biospecimen data array of objects to a single object
+    Extract the collection ID from the non nested key
+
+    possible renaming of the variable to make more general to the 
+    */
+
     let collections = [];
     let visitCollections = [];
 
@@ -28,6 +40,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             });
         }
     }
+
 
     let template = `
         </br>
@@ -76,7 +89,7 @@ export const checkInTemplate = async (data, checkOutFlag) => {
             <hr/>
     `;
     
-    template += participantStatus(data, collections, isCheckedIn);
+    template += participantStatus(data, collections, isCheckedIn, mouthwashCollectionId);
 
 
     if (canCheckIn) {
@@ -114,7 +127,14 @@ const reloadCheckOutReports = (id) => {
     });
 }
 
-const participantStatus = (data, collections, isCheckedIn) => {
+const participantStatus = (data, collections, isCheckedIn, mouthwashCollectionId) => {
+    console.log("Participant data", data);
+    console.log("-----")
+    console.log("🚀 ~ participantStatus ~ collections:", collections)
+    const homeMouthwashKitStatusData = getHomeMouthwashKitStatus(data)
+    
+    console.log("🚀 ~ participantStatus ~ homeMouthwashKitStatusData:", homeMouthwashKitStatusData)
+    
     let bloodCollection;
     let urineCollection;
     let mouthwashCollection;
@@ -128,6 +148,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
     let mouthwashCollected = [];
 
     let siteTubesList = getSiteTubesLists({'951355211': conceptIds.research});
+    console.log("🚀 ~ participantStatus ~ siteTubesList:", siteTubesList)
 
     const bloodTubes = siteTubesList?.filter(tube => tube.tubeType === "Blood tube");
     const urineTubes = siteTubesList?.filter(tube => tube.tubeType === "Urine");
@@ -186,14 +207,19 @@ const participantStatus = (data, collections, isCheckedIn) => {
         mouthwashTime = mouthwashCollected[0][conceptIds.collection.collectionTime];
     }
 
+    console.log("homeMouthwashKitStatusData?.kitReceivedData", homeMouthwashKitStatusData?.kitReceivedData, "---", "mouthwashTime", mouthwashTime)
+    console.log("homeMouthwashKitStatusData?.collectedStatus", homeMouthwashKitStatusData?.collectedStatus)
+
     const baselineSampleStatusInfo = {
-        bloodTime,
         isBloodCollected: data[conceptIds.baseline.bloodCollected],
-        urineTime,
+        bloodTime,
         isUrineCollected: data[conceptIds.baseline.urineCollected],
-        mouthwashTime,
-        isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected]
+        urineTime,
+        isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected] || homeMouthwashKitStatusData?.collectedStatus,
+        mouthwashTime: mouthwashTime || homeMouthwashKitStatusData?.kitReceivedData,
+        mouthwashCollectionId: mouthwashCollection || mouthwashCollectionId,
     }
+    console.log("🚀 ~ participantStatus ~ baselineSampleStatusInfo:", baselineSampleStatusInfo)
 
     return `
         <div class="row">
@@ -202,6 +228,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
             </div>
         </div>
 
+        <!-- Participant Consent Section -->
         <div class="row">
             <div class="col-md-4">
                 <div class="col-md-12 info-box">
@@ -246,6 +273,7 @@ const participantStatus = (data, collections, isCheckedIn) => {
             
         <br/>
 
+        <!-- Baseline Sample Status Section -->
         <div class="row">
             <div class="col-md-12">
                 <h5>Baseline Sample Status</h5>
@@ -284,10 +312,10 @@ const participantStatus = (data, collections, isCheckedIn) => {
                         <span class="full-width">${getBaselineDisplayStatus("mouthwash", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${mouthwashCollection ? mouthwashCollection : '&nbsp;'}</span>
+                        <span class="full-width">${baselineSampleStatusInfo.mouthwashCollectionId ? baselineSampleStatusInfo.mouthwashCollectionId : '&nbsp;'}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${mouthwashTime ? mouthwashTime : '&nbsp;'}</span>
+                        <span class="full-width">${baselineSampleStatusInfo.mouthwashTime ? baselineSampleStatusInfo.mouthwashTime : '&nbsp;'}</span>
                     </div>
                 </div>
             </div>
@@ -554,3 +582,92 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
         }
     }
 };
+
+// This function will get the homemouthwash kit data if available
+/*
+Important things to note
+
+For Research 
+
+173836415.266600170.915179629 must = Research (534621077) -> This will display 678166505
+
+For clinical 
+
+collectionDetails.baseline.bioKitMouthwashBL1.kitType = kitTypeValues.homeMouthwash is 
+true (173836415.266600170.319972665.379252329=976461859) 
+
+AND 
+173836415.266600170.319972665.221592017 (Kit status) = 375535639 (received) 
+
+-> THEN the date should display 173836415.266600170.319972665.826941471 (BioKit_KitRecdTm_v1r0)
+
+
+
+SIDE QUEST
+Is it better to create a function to pull clinical information for baseline if there isn't any all at once?
+- Get clinical baseline status if the research values are not present
+
+Delay this for later....
+
+*/ 
+const getHomeMouthwashKitStatus = (data) => {
+    // return data;
+    /*
+        return a data object of the home mouthwash collection
+
+    */ 
+
+    console.log([conceptIds.collectionDetails],[conceptIds.baseline.visitId],[conceptIds.bioKitMouthwash],[conceptIds.kitType], [conceptIds.mouthwashKitType], [conceptIds.receivedDateTime] )
+    const isKitTypeHomeMouthwash = data[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.bioKitMouthwash]?.[conceptIds.kitType] === conceptIds.mouthwashKitType
+    // console.log("","---", "")
+    console.log("isKitTypeHomeMouthwash","---", isKitTypeHomeMouthwash)
+
+    const kitStatusReceivedDate = data[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.bioKitMouthwash]?.[conceptIds.receivedDateTime] || null
+    console.log("🚀 ~ getHomeMouthwashKitStatus ~ isKitStatusReceived:", kitStatusReceivedDate)
+    
+    if (isKitTypeHomeMouthwash && kitStatusReceivedDate) {
+        return {
+            collectedStatus: true,
+            kitReceivedData: kitStatusReceivedDate
+        }
+    }
+
+};
+
+/*
+Filters the 
+*/
+const getHomeMouthwashCollectionId = (participantData, biospecimenCollections) => {
+    console.log("🚀 ~ getHomeMouthwashCollectionId ~ data:", participantData)
+    // find if the unique kit id is present and if the kit is shipped
+    // Kit Status needs to be received and also have a 
+    // 173836415.266600170.319972665.221592017 = kit status --> received = 375535639
+    let collectionId;
+    const isKitStatusShipped = participantData[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.bioKitMouthwash]?.[conceptIds.kitStatus] === conceptIds.received;
+    const uniqueKitId = participantData[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.bioKitMouthwash]?.[conceptIds.uniqueKitID]
+
+    console.log("🚀 ~ getHomeMouthwashCollectionId ~ isKitStatusShipped:", isKitStatusShipped, typeof isKitStatusShipped)
+    console.log("🚀 ~ getHomeMouthwashCollectionId ~ hasUniqueKitId:", uniqueKitId, typeof uniqueKitId)
+    if (isKitStatusShipped && uniqueKitId) {
+        // filter out 
+        // for each item check biospecimenCollection
+        // there should be one match given that the mw kit was received 
+        const biospecimenCollectionMatch = biospecimenCollections.find( collection => collection?.[conceptIds.uniqueKitID] === uniqueKitId)
+        console.log("🚀 ~ getHomeMouthwashCollectionId ~ biospecimenCollectionMatch:", biospecimenCollectionMatch);
+        if (!biospecimenCollectionMatch) return collectionId;
+        
+        collectionId = biospecimenCollectionMatch[conceptIds.collection.id];
+        console.log("🚀 ~ getHomeMouthwashCollectionId ~ collectionId:", collectionId)
+    }
+    console.log("🚀 ~ getHomeMouthwashCollectionId ~ collectionID:", collectionId)
+    // debugger
+    return collectionId;
+}
+
+
+/*
+Make a comparison between the data collection 
+
+
+
+*/ 
