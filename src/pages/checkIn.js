@@ -31,7 +31,6 @@ export const checkInTemplate = async (data, checkOutFlag) => {
         }
     }
 
-
     let template = `
         </br>
 
@@ -584,33 +583,11 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
     }
 };
 
-// This function will get the homemouthwash kit data if available
-/*
-Important things to note
-
-For Research 
-
-173836415.266600170.915179629 must = Research (534621077) -> This will display 678166505
-
-For clinical 
-
-collectionDetails.baseline.bioKitMouthwashBL1.kitType = kitTypeValues.homeMouthwash is 
-true (173836415.266600170.319972665.379252329=976461859) 
-
-AND 
-173836415.266600170.319972665.221592017 (Kit status) = 375535639 (received) 
-
--> THEN the date should display 173836415.266600170.319972665.826941471 (BioKit_KitRecdTm_v1r0)
-
-
-
-SIDE QUEST
-Is it better to create a function to pull clinical information for baseline if there isn't any all at once?
-- Get clinical baseline status if the research values are not present
-
-Delay this for later....
-
-*/ 
+/** 
+ * Determines if participant has a baseline home mouthwash kit, a home mouthwas kit status of received, a home mouthwash kit received date/time
+ * @param {object} data - The participant data object from participants collection
+ * returns {object|undefined} An object with the home mouthwash kit status (true) and received date/time if found, otherwise undefined
+ */
 const getHomeMouthwashKitStatus = (data) => {
     // return data;
     /*
@@ -637,14 +614,15 @@ const getHomeMouthwashKitStatus = (data) => {
 
 };
 
-/*
-Filters the 
-*/
+/**
+ * Uses the participant's data and associated biospecimen collection data to determine if the participant has a home mouthwash collection
+ * and returns the collection ID if found.
+ * @param {object} participantData - The participant data object from participants collection
+ * @param {array} biospecimenCollections - Array of biospecimen collection objects for the participant from biospecimen collection
+ * @returns {string|undefined} The collection ID of the home mouthwash collection if found, otherwise undefined
+ */
 const getHomeMouthwashCollectionId = (participantData, biospecimenCollections) => {
     console.log("🚀 ~ getHomeMouthwashCollectionId ~ data:", participantData)
-    // find if the unique kit id is present and if the kit is shipped
-    // Kit Status needs to be received and also have a 
-    // 173836415.266600170.319972665.221592017 = kit status --> received = 375535639
     let collectionId;
     const isKitStatusShipped = participantData[conceptIds.collectionDetails]
         ?.[conceptIds.baseline.visitId]
@@ -659,16 +637,14 @@ const getHomeMouthwashCollectionId = (participantData, biospecimenCollections) =
     console.log("🚀 ~ getHomeMouthwashCollectionId ~ isKitStatusShipped:", isKitStatusShipped, typeof isKitStatusShipped)
     console.log("🚀 ~ getHomeMouthwashCollectionId ~ hasUniqueKitId:", uniqueKitId, typeof uniqueKitId)
     if (isKitStatusShipped && uniqueKitId) {
-        // filter out 
-        // for each item check biospecimenCollection
-        // there should be one match given that the mw kit was received 
-        const biospecimenCollectionMatch = biospecimenCollections.find( collection => collection?.[conceptIds.uniqueKitID] === uniqueKitId)
+        // find the biospecimen collection with the unique kit id
+        const biospecimenCollectionMatch = biospecimenCollections.find(collection => collection?.[conceptIds.uniqueKitID] === uniqueKitId)
         console.log("🚀 ~ getHomeMouthwashCollectionId ~ biospecimenCollectionMatch:", biospecimenCollectionMatch);
         if (!biospecimenCollectionMatch) return collectionId;
-        
+
         collectionId = biospecimenCollectionMatch[conceptIds.collection.id];
         console.log("🚀 ~ getHomeMouthwashCollectionId ~ collectionId:", collectionId)
     }
     console.log("🚀 ~ getHomeMouthwashCollectionId ~ collectionID:", collectionId)
     return collectionId;
-}
+};
