@@ -189,12 +189,18 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
         mouthwashTime = mouthwashCollected[0][conceptIds.collection.collectionTime];
     }
 
-    const baselineClinicalBloodCollectionTime = data[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.clinicalDashboard.bloodCollectedTime];
-    const baselineClinicalUrineCollectionTime = data[conceptIds.collectionDetails]?.[conceptIds.baseline.visitId]?.[conceptIds.clinicalDashboard.urineCollectedTime];
+    const baselineClinicalBloodCollectionTime = data[conceptIds.collectionDetails]
+        ?.[conceptIds.baseline.visitId]
+        ?.[conceptIds.clinicalDashboard.bloodCollectedTime];
 
+    const baselineClinicalUrineCollectionTime = data[conceptIds.collectionDetails]
+        ?.[conceptIds.baseline.visitId]
+        ?.[conceptIds.clinicalDashboard.urineCollectedTime];
+
+    // added optional baselineClinicalBloodCollectionTime and baselineClinicalUrineCollectionTime to handle Clinical timestamps not yet pushed by EPIC
     const baselineSampleStatusInfo = {
         isBloodCollected: data[conceptIds.baseline.bloodCollected],
-        bloodTime: bloodTime || baselineClinicalBloodCollectionTime,
+        bloodTime: bloodTime || baselineClinicalBloodCollectionTime, 
         bloodCollection: bloodCollection,
         isUrineCollected: data[conceptIds.baseline.urineCollected],
         urineTime: urineTime || baselineClinicalUrineCollectionTime,
