@@ -117,7 +117,8 @@ const reloadCheckOutReports = (id) => {
 }
 
 const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollectionId) => {
-    const homeMouthwashKitStatusData = getHomeMouthwashKitStatus(data)
+    const homeMouthwashKitData = getHomeMouthwashKitData(data, homeMouthwashCollectionId)
+    console.log("🚀 ~ participantStatus ~ homeMouthwashKitStatusData:", homeMouthwashKitData)
     
     let bloodCollection;
     let urineCollection;
@@ -189,25 +190,46 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
         mouthwashTime = mouthwashCollected[0][conceptIds.collection.collectionTime];
     }
 
-    const baselineClinicalBloodCollectionTime = data[conceptIds.collectionDetails]
-        ?.[conceptIds.baseline.visitId]
-        ?.[conceptIds.clinicalDashboard.bloodCollectedTime];
+    // Compare time for home mouthwash timestamp and collection time of mouthwash
 
-    const baselineClinicalUrineCollectionTime = data[conceptIds.collectionDetails]
-        ?.[conceptIds.baseline.visitId]
-        ?.[conceptIds.clinicalDashboard.urineCollectedTime];
+    /*
+    
+    const researchMouthwashData = {
+        mouthwashCollectionId: mouthwashCollection,
+        mouthwashTime: mouthwashTime // 678166505 - research collection time
+    }
+    
+    */
 
-    // added optional baselineClinicalBloodCollectionTime and baselineClinicalUrineCollectionTime to handle Clinical timestamps not yet pushed by EPIC
+    const researchMouthwashData = {
+        mouthwashCollectionId: mouthwashCollection,
+        mouthwashTime: mouthwashTime // 678166505 - research collection time
+    }
+   
+   const oldestMouthwashData = getOldestMouthwashData(researchMouthwashData, homeMouthwashKitData)
+    console.log("🚀 ~ participantStatus ~ oldestMouthwashData:", oldestMouthwashData)
+    
+
+    const baselineClinicalBloodCollectionEMRTime = data[conceptIds.collectionDetails]
+        ?.[conceptIds.baseline.visitId]
+        ?.[conceptIds.clinicalDashboard.bloodCollectedEMRTime];
+
+    const baselineClinicalUrineCollectionEMRTime = data[conceptIds.collectionDetails]
+        ?.[conceptIds.baseline.visitId]
+        ?.[conceptIds.clinicalDashboard.urineCollectedEMRTime];
+
     const baselineSampleStatusInfo = {
         isBloodCollected: data[conceptIds.baseline.bloodCollected],
-        bloodTime: bloodTime || baselineClinicalBloodCollectionTime, 
+        bloodTime: bloodTime || baselineClinicalBloodCollectionEMRTime, 
         bloodCollection: bloodCollection,
         isUrineCollected: data[conceptIds.baseline.urineCollected],
-        urineTime: urineTime || baselineClinicalUrineCollectionTime,
+        urineTime: urineTime || baselineClinicalUrineCollectionEMRTime,
         urineCollection: urineCollection,
         isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected],
-        mouthwashTime: mouthwashTime || homeMouthwashKitStatusData?.kitReceivedData,
-        mouthwashCollectionId: mouthwashCollection || homeMouthwashCollectionId,
+        // mouthwashTime: mouthwashTime || homeMouthwashKitStatusData?.kitReceivedDate,
+        mouthwashTime: oldestMouthwashData?.mouthwashTime,
+        // mouthwashCollectionId: mouthwashCollection || homeMouthwashCollectionId,
+        mouthwashCollectionId: oldestMouthwashData?.mouthwashCollectionId,
     }
 
     return `
@@ -581,9 +603,10 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
 /** 
  * Determines if participant has a baseline home mouthwash kit and a home mouthwash kit received date/time
  * @param {object} data - The participant data object from participants collection
- * returns {object|undefined} An object with the received date/time if found, otherwise undefined
+ * @param {string} homeMouthwashCollectionId - The collection ID of the home mouthwash collection if found
+ * returns {object|undefined} An object with the received date/time and home mouthwash collection if found, otherwise undefined
  */
-const getHomeMouthwashKitStatus = (data) => {
+const getHomeMouthwashKitData = (data, homeMouthwashCollectionId) => {
     const isKitTypeHomeMouthwash = data[conceptIds.collectionDetails]
         ?.[conceptIds.baseline.visitId]
         ?.[conceptIds.bioKitMouthwash]
@@ -596,8 +619,14 @@ const getHomeMouthwashKitStatus = (data) => {
     
     if (isKitTypeHomeMouthwash && kitStatusReceivedDate) {
         return {
-            kitReceivedData: kitStatusReceivedDate
+            kitReceivedDate: kitStatusReceivedDate,
+            homeMouthwashCollectionId: homeMouthwashCollectionId
         }
+    } else {
+        return  {
+            kitReceivedDate: undefined, 
+            homeMouthwashCollectionId: undefined 
+        };
     }
 };
 
@@ -610,6 +639,8 @@ const getHomeMouthwashKitStatus = (data) => {
  * @param {array} biospecimenCollections - Array of biospecimen collection objects for the participant from biospecimen collection
  * @returns {string|undefined} The collection ID of the home mouthwash collection if found, otherwise undefined
  */
+
+// This can be combined to the above function
 const getHomeMouthwashCollectionId = (participantData, biospecimenCollections) => {
     let collectionId;
 
@@ -633,3 +664,47 @@ const getHomeMouthwashCollectionId = (participantData, biospecimenCollections) =
     }
     return collectionId;
 };
+
+/**
+ * 
+ * @param {object} researchMouthwashData 
+ * @param {object} homeMouthwashKitData 
+ * @return An object with the oldest mouthwash collection id and oldest date/time stamp 
+ */
+const getOldestMouthwashData = (researchMouthwashData, homeMouthwashKitData) => {
+    console.log("🚀 ~ getOldestMouthwashData ~ researchMouthwashData:", researchMouthwashData)
+    console.log("🚀 ~ getOldestMouthwashData ~ homeMouthwashKitData:", homeMouthwashKitData)
+    
+    const researchMouthwashTime = new Date (researchMouthwashData.mouthwashTime)
+    console.log("🚀 ~ getOldestMouthwashData ~ researchTime:", researchMouthwashTime)
+    const homeMouthwashTime = new Date(homeMouthwashKitData.kitReceivedDate)
+    console.log("🚀 ~ getOldestMouthwashData ~ homeMouthwashTime:", homeMouthwashTime)
+
+    // normalize timestamps
+
+    // check if either exists
+
+    if (!researchMouthwashTime && !homeMouthwashTime) {
+        console.log("No mouthwash collection data found!")
+        return { mouthwashCollectionId: undefined, mouthwashTime: undefined }
+    } else if (!researchMouthwashTime && homeMouthwashTime) {
+        console.log("Only homeMouthwashKitData found")
+        return homeMouthwashKitData
+    } else if (researchMouthwashTime && !homeMouthwashTime) {
+        console.log("Only researchMouthwashData found")
+        return researchMouthwashData
+    } else {
+        // less than, research timestamp is oldest
+        if (researchMouthwashTime < homeMouthwashTime) {
+            console.log("researchMouthwashData", researchMouthwashData)
+            return researchMouthwashData
+        } else if (researchMouthwashTime > homeMouthwashTime) {
+            console.log("homeMouthwashKitData", homeMouthwashKitData)
+            return homeMouthwashKitData
+        } else {
+            console.log("Empty Object Data!")
+            return { mouthwashCollectionId: undefined, mouthwashTime: undefined }
+        }    
+    }
+    
+}
