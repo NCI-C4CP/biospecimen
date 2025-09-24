@@ -606,7 +606,7 @@ const getHomeMouthwashKitData = (data, homeMouthwashCollectionId) => {
             mouthwashTime: kitStatusReceivedDate
         }
     } else {
-        return  {
+        return {
             mouthwashCollectionId: undefined,
             mouthwashTime: undefined
         };
