@@ -190,10 +190,10 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
     const researchMouthwashData = {
         mouthwashCollectionId: mouthwashCollection,
         mouthwashTime: mouthwashTime
-    }
+    };
 
-    const homeMouthwashKitData = getHomeMouthwashKitData(data, homeMouthwashCollectionId)
-    const oldestMouthwashData = getOldestMouthwashData(researchMouthwashData, homeMouthwashKitData)
+    const homeMouthwashKitData = getHomeMouthwashKitData(data, homeMouthwashCollectionId);
+    const oldestMouthwashData = getOldestMouthwashData(researchMouthwashData, homeMouthwashKitData);
 
     const baselineClinicalBloodCollectionEMRTime = data[conceptIds.collectionDetails]
         ?.[conceptIds.baseline.visitId]
@@ -213,7 +213,7 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
         isMouthwashCollected: data[conceptIds.baseline.mouthwashCollected],
         mouthwashTime: oldestMouthwashData?.mouthwashTime,
         mouthwashCollectionId: oldestMouthwashData?.mouthwashCollectionId,
-    }
+    };
 
     return `
         <div class="row">
@@ -659,7 +659,10 @@ const getOldestMouthwashData = (researchMouthwashData, homeMouthwashKitData) => 
 
     // Determine if and which timestamps exist
     if (!researchTimeString && !homeTimeString) {
-        return { mouthwashCollectionId: undefined, mouthwashTime: undefined };
+        return { 
+            mouthwashCollectionId: undefined,
+            mouthwashTime: undefined
+        };
     }
 
     if (!researchTimeString && homeTimeString) {
