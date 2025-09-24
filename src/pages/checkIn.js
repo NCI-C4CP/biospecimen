@@ -605,12 +605,12 @@ const getHomeMouthwashKitData = (data, homeMouthwashCollectionId) => {
             mouthwashCollectionId: homeMouthwashCollectionId,
             mouthwashTime: kitStatusReceivedDate
         }
-    } else {
-        return {
+    }
+    
+    return {
             mouthwashCollectionId: undefined,
             mouthwashTime: undefined
         };
-    }
 };
 
 /**
