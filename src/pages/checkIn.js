@@ -539,10 +539,8 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
     const { 
         bloodTime, 
         isBloodCollected,
-        bloodCollection,
         urineTime, 
         isUrineCollected,
-        urineCollection, 
         mouthwashTime, 
         isMouthwashCollected 
     } = baselineSampleStatusInfo;
@@ -561,7 +559,7 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
         collectionTime = mouthwashTime;
     }
 
-    if (isCollected === conceptIds.yes && collectionTime) {
+    if (isCollected === conceptIds.yes) { // Note: Collection time is only needed for "In Progress" status
         return {
             "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
             "text": "Collected"
