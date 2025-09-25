@@ -566,21 +566,17 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
             "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
             "text": "Collected"
         }
-    } else if (
-        isCollected === conceptIds.no && collectionTime 
-        || isCollected === conceptIds.no && bloodCollection && baselineType === "blood" 
-        || isCollected === conceptIds.no && urineCollection && baselineType === "urine"
-    ) {
+    } else if (isCollected === conceptIds.no && collectionTime) {
         return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
-            text: "In Progress"
-        }
-    } else {
-        return {
-            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
-            text: "Not Collected"
+            text: "In Progress",
         }
     }
+
+    return {
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
+            text: "Not Collected",
+        }
 };
 
 /** 
