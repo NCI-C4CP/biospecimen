@@ -569,13 +569,13 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
     } else if (isCollected === conceptIds.no && collectionTime) {
         return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
-            text: "In Progress",
+            text: "In Progress"
         }
     }
 
     return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
-            text: "Not Collected",
+            text: "Not Collected"
         }
 };
 
