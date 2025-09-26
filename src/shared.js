@@ -1277,7 +1277,7 @@ export const findReplacementTubeLabels = (specimensList) => {
  */
 const arrangeFetchedTubes = (specimen, isPartiallyBoxed) => {
     const usableTubes = {};
-    
+
     const collectionId = specimen[conceptIds.collection.id];
     if (!collectionId) return;
     const bloodUrineCollection = `${collectionId} 0008`;
@@ -1402,6 +1402,13 @@ const removeUnusableTubes = (specimen) => {
         }
 
         if (tube[conceptIds.collection.tube.isMissing] === conceptIds.yes) {
+            delete specimen[tubeKey];
+            continue;
+        }
+
+        if (tube[conceptIds.collection.tube.isCollected] === conceptIds.no) {
+            // If the tube is not even marked as collected, it should also be removed as unusable
+            // (Issues 1388 and 1316)
             delete specimen[tubeKey];
             continue;
         }
