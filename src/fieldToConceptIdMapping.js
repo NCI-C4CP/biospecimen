@@ -277,9 +277,11 @@ export const conceptIds = {
 
     clinicalDashboard: {
         bloodCollected: 534041351,
-        bloodCollectedTime: 398645039,
+        bloodCollectedTime: 398645039, // date and timestamp saved upon specimen link
+        bloodCollectedEMRTime: 982213346, // date and timestamp sent from EMR to NCI via API
         urineCollected: 210921343,
-        urineCollectedTime: 541311218
+        urineCollectedTime: 541311218, // date and timestamp saved upon specimen link
+        urineCollectedEMRTime: 139245758 // date and timestamp sent from EMR to NCI via API
     },
 
     anySpecimenCollected: 316824786,
