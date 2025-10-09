@@ -248,7 +248,6 @@ const packageLostEventBinder = (confirmPackageLostModalBodyEl, auth, route) => {
 const markPackageLost = async (barcode, auth, route) => {
     // API markPackageLost
     try {
-        console.log(`Marking package ${barcode} lost`);
           showAnimation();
           const idToken = await getIdToken();
           const response = await fetch(`${baseAPI}api=markPackageLost`, {

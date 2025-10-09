@@ -132,7 +132,6 @@ const formSubmit = () => {
                     </div>
                 `;
                 const validationResult = await backendValidateSpecimenPackage(scannedBarcode);
-                console.log('validationResult', validationResult);
                 if(validationResult === true) {
                     return displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl);
                 } else {
