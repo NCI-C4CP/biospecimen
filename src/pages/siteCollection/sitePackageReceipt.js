@@ -112,8 +112,6 @@ const formSubmit = () => {
 
         const isPackageInfoValid = validatePackageInformation(false);
 
-
-
         if (isPackageInfoValid) {
             // Run backend validation on the package.
             // (Currently only displays a warning if the package has been marked as lost)
