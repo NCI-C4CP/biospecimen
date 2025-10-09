@@ -205,13 +205,7 @@ const packageLostEventBinder = (confirmPackageLostModalBodyEl, auth, route) => {
     Array.from(checkboxes).forEach((checkbox, index) => {
         const trackingNumber = checkbox.getAttribute('data-barcode');
         checkbox.addEventListener('change', async (e) => {
-            let modalBody = '';
-
-            confirmPackageLostModalBodyEl.innerHTML = modalBody;
-
-            showAnimation();
-
-            modalBody = 
+            const modalBody = 
             `<div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
@@ -240,7 +234,6 @@ const packageLostEventBinder = (confirmPackageLostModalBodyEl, auth, route) => {
                 checkbox.checked = false;
             });
 
-            hideAnimation();
         });
     })
 }

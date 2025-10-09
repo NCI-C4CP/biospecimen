@@ -136,8 +136,8 @@ const formSubmit = () => {
                     // If validationResult is a string, we need to put up a confirmation window.
                     return displayBackendValidationModal(modalHeaderEl, modalBodyEl, validationResult);
                 }
-            } catch(error) {
-                console.error(error)
+            } catch (error) {
+                console.error(error);
                 showNotifications({ title: 'Error', body: `Error validating package information: ${error}` });
             }
         }
@@ -189,9 +189,8 @@ const backendValidateSpecimenPackage = async (scannedBarcode) => {
         const response = await fetch(`${baseAPI}api=validatePackageReceipt&barcode=${scannedBarcode}`, {
             method: "get",
             headers: {
-                Authorization: "Bearer " + idToken,
-                "Content-Type": "application/json",
-            },
+                Authorization: "Bearer " + idToken
+            }
         });
         const responseData = await response.json();
         if(responseData.code === 200) {
