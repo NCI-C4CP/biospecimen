@@ -130,7 +130,7 @@ const formSubmit = () => {
                     </div>
                 `;
                 const validationResult = await backendValidateSpecimenPackage(scannedBarcode);
-                if(validationResult === true) {
+                if (validationResult === true) {
                     return displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl);
                 } else {
                     // If validationResult is a string, we need to put up a confirmation window.
