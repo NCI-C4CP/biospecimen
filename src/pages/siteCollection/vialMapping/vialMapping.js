@@ -7,12 +7,16 @@ const vialMappingHistory = [
 ]
 
 /**
- * Get the vial mapping determined by the input date. Sort the known effective dates in descending order. 
- * Compare the input date to each known effective date via "MMMM-DD-YYYY" string comparison. 
- * Return the first mapping where the input date is on or after the known effective date.
- * If the input date is before all known effective dates, return the default mapping.
+ * Get the vial mapping determined by the input date.
+ * 
+ * The function sorts all known effective dates in descending order (most recent first). It compares the user's input date to each known effective date using UTC epoch time
+ * (milliseconds since January 1st, 1970).
+ * 
+ * It returns the first mapping that has the input date on or before the user's input date. 
+ * If the input date precedes all known effective dates,the default mapping is returned.
+ * 
  * @param {string} inputDate - Date string in the format "YYYY-MM-DDTHH:MM:SS.SSSZ"
- * @returns {object} - The vial mapping object corresponding to the input date or default mapping if all known effective dates are after the input date
+ * @returns {object} - The vial mapping object corresponding to the input date or the default mapping if no effective date matches.
 */
 export const getVialMappingByDate = (inputDate) => {
     const isoDate = new Date(inputDate).toISOString().split('T')[0] || '1970-01-01'; // fallback to unix epoch start date if invalid date input
@@ -24,15 +28,15 @@ export const getVialMappingByDate = (inputDate) => {
         return dateB - dateA;
     });
     
-    let arrayOfDates = [];
-    for (let obj of sortedMappingHistory) {
-        arrayOfDates.push(obj.effectiveDate);
-    }
-
+    const inputTime = Date.parse(isoDate);
     let selectedMapping;
 
     for (let currentMap of sortedMappingHistory) {
-        if (isoDate >= currentMap.effectiveDate) {
+        const currentMapTime = currentMap.effectiveDate 
+            ? Date.parse(currentMap.effectiveDate) 
+            : 0;
+        
+        if (inputTime >= currentMapTime) {
             selectedMapping = currentMap;
             break;
         }
