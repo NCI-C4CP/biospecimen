@@ -1,5 +1,4 @@
-// This default mapping will be changed, if we decide to add mapping changes from prior dates 
-// Vial mappings in the code relative to specific dates were not implemented until 2025-10  
+// This default mapping will be changed, if we decide to add mapping changes from prior dates in the future.
 const defaultMapping = {
     effectiveDate: null,
     research: {
