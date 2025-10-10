@@ -80,13 +80,13 @@ const packagesInTransitTemplate = async (username, auth, route) => {
         </div>
     </div>
     <div class="modal fade" id="packageLostModal" tabindex="-1" aria-labelledby="packageLostModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="ms-auto">
-                    <button style="padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="alert">
+            <div class="modal-content sub-div-shadow">
+                <div class="modal-header" class="ms-auto" id="confirm-package-lost-modal-header">
+                        <button style="padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div id="confirm-package-lost-modal-body" class="modal-body"></div>
+                <div class="modal-body" id="confirm-package-lost-modal-body"></div>
             </div>
         </div>
     </div>`;
@@ -206,19 +206,24 @@ const packageLostEventBinder = (confirmPackageLostModalBodyEl, auth, route) => {
         const trackingNumber = checkbox.getAttribute('data-barcode');
         checkbox.addEventListener('change', async (e) => {
             const modalBody = 
-            `<div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-4">
-                        <p style="font-size:1.5rem;"><strong>Package Lost?</strong></p>
+            `
+            <div class="row">
+                <div class="col">
+                    <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                        <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                     </div>
+                    <div style="text-align:center; margin-bottom:1.2rem;">    
+                        <h3>Package Lost</h3>
+                    </div>
+                    <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                        Confirm the package has been declared "Lost" by the courier.
+                    </p>
                 </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <button style="padding:1rem;" type="button" data-bs-dismiss="modal" id="cancelPackageLost">Cancel</button>
-                    </div>
-                    <div class="col-md-4 ms-auto">
-                        <button style="padding:1rem;" type="button" data-bs-dismiss="modal" id="confirmPackageLost">Confirm</button>
-                    </div>
+            </div>
+            <div class="row" style="display:flex; justify-content:center;">
+                <div class="col-auto">
+                    <button id="confirmPackageLost" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+                    <button id="cancelPackageLost" type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
                 </div>
             </div>`;
             confirmPackageLostModalBodyEl.innerHTML = modalBody;
