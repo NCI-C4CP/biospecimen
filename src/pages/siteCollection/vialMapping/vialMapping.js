@@ -1,80 +1,46 @@
-// function to get the correct vial mapping based on effective date, collection type, and site
-
-/*
-This can be done by comparing the input date... with the all the effective dates in the array. 
-The only problem is making this better for future changes, making this easier to update and modular.
-
-
-Input date
-
-We have one or more effectiveDate keys....
-Keep null in mapping history
-
-
-Can we sort the array of objects first and then 
-sort array of objects by latests effective date first
-
-*/
-
-import mapping20251004 from './mapping20251004.js';
-import mapping20251029 from './mapping20251029.js';
-import mapping20250904 from './mapping20250904.js';
+import mapping20251009 from './mapping20251009.js';
 import defaultMapping from './defaultMapping.js';
 
 const vialMappingHistory = [
-    mapping20251029, // launch date
-    mapping20251004,
-    mapping20250904,
-    defaultMapping,
+    mapping20251009,
+    defaultMapping, // effectiveDate is null
 ]
 
+/**
+ * Get the vial mapping determined by the input date. Sort the known effective dates in descending order. 
+ * Compare the input date to each known effective date via "MMMM-DD-YYYY" string comparison. 
+ * Return the first mapping where the input date is on or after the known effective date.
+ * If the input date is before all known effective dates, return the default mapping.
+ * @param {string} inputDate - Date string in the format "YYYY-MM-DDTHH:MM:SS.SSSZ"
+ * @returns {object} - The vial mapping object corresponding to the input date or default mapping if all known effective dates are after the input date
+*/
 export const getVialMappingByDate = (inputDate) => {
-    // console.log("🚀 ~ getVialMapping ~ vialMappingHistory, inputDate:", vialMappingHistory, inputDate)
-    // sort array by most recent date first, descending order 
-    
+    const isoDate = new Date(inputDate).toISOString().split('T')[0] || '1970-01-01'; // fallback to unix epoch start date if invalid date input
+
     const sortedMappingHistory = [...vialMappingHistory].sort((a,b) => {
-        // handle objects with non date values
-        const dateA = a.effectiveDate ? new Date(a.effectiveDate) : new Date(0)
-        const dateB = b.effectiveDate ? new Date(b.effectiveDate) : new Date(0)
-        console.log("dateA and dateB",dateA, "---", dateB)
-        // sort from newest to oldest, descending order
+        const dateA = a.effectiveDate ? Date.parse(a.effectiveDate) : 0;
+        const dateB = b.effectiveDate ? Date.parse(b.effectiveDate) : 0;
+
         return dateB - dateA;
     });
     
-    // create a comparison function for the inputDate and the sorted Mapping history
-
-    let arrayOfDates = []
+    let arrayOfDates = [];
     for (let obj of sortedMappingHistory) {
-        arrayOfDates.push(obj.effectiveDate)
+        arrayOfDates.push(obj.effectiveDate);
     }
-    console.log("arrayOfDates", arrayOfDates)
 
-    console.log(new Date(inputDate))
+    let selectedMapping;
 
-    let returnMap;
-
-    for (let map of sortedMappingHistory) {
-        // dates are already sorted from newest to oldest
-        // current map will be compared to see if it's equal to or greater than the 
-        // intended input date
-        if (inputDate >= map.effectiveDate) {
-            console.log(map.effectiveDate, inputDate, "--", map.effectiveDate >= inputDate)
-            // assign to previousMap if effective date is 
-            // if previous Map 
-            // assign the current Map
-            returnMap = map;
+    for (let currentMap of sortedMappingHistory) {
+        if (isoDate >= currentMap.effectiveDate) {
+            selectedMapping = currentMap;
             break;
         }
     }
-    // console.log("return Map value", returnMap)
 
-    if (!returnMap) {
-    // If input date is before all known effective dates, use the oldest map
-        returnMap = sortedMappingHistory.at(-1); // this will be default
+    if (!selectedMapping) {
+        selectedMapping = sortedMappingHistory.at(-1);
     }
-    console.log("Final return Map value", returnMap)
-    return returnMap
-}
 
-getVialMappingByDate("2023-09-30") // should return default map
-getVialMappingByDate("2023-10-01") // should return 2023-10-01 map
+    return selectedMapping;
+};
