@@ -1,6 +1,5 @@
-// This will be added later for prod
-const mapping20251029 = {
-    effectiveDate: "2023-10-29",
+const mapping20251009 = {
+    effectiveDate: "2025-10-09", // Note: This mapping will be shown in Production on 2025-10-29.
     research: {
         default: {
             "0001": ["10 ml Serum separator tube", "SST", "Serum", "10"],
@@ -10,7 +9,7 @@ const mapping20251029 = {
             "0005": ["6 ml Vacutainer", "ACD", "WHOLE BL", "6"],
             "0006": ["10 ml Vacutainer", "No Additive", "Urine", "10"],
             "0007": ["15ml Nalgene jar", "Crest Alcohol Free", "Saliva", "15"],
-            "0060": ["Streck Tube", "Streck Tube", "WHOLE BL", "10"],
+            "0060": ["Streck Tube", "Streck Nucleic Acid", "WHOLE BL", "10"],
         },
     },
     clinical: {
@@ -21,7 +20,7 @@ const mapping20251029 = {
             "0004": ["10 ml Vacutainer", "EDTA = K2", "WHOLE BL", "10"],
             "0005": ["6 ml Vacutainer", "ACD", "WHOLE BL", "6"],
             "0006": ["10 ml Vacutainer", "No Additive", "Urine", "10"],
-            "0060": ["Streck Tube", "Streck Tube", "WHOLE BL", "10"],
+            "0060": ["Streck Tube", "Streck Nucleic Acid", "WHOLE BL", "10"],
         },
         healthPartners: {
             "0001": ["10 ml Serum separator tube", "SST", "Serum", "10"],
@@ -30,7 +29,7 @@ const mapping20251029 = {
             "0004": ["10 ml Vacutainer", "EDTA = K2", "WHOLE BL", "10"],
             "0005": ["6 ml Vacutainer", "ACD", "WHOLE BL", "6"],
             "0006": ["10 ml Vacutainer", "No Additive", "Urine", "10"],
-            "0060": ["Streck Tube", "Streck Tube", "WHOLE BL", "10"],
+            "0060": ["Streck Tube", "Streck Nucleic Acid", "WHOLE BL", "10"],
         },
         kpCO: {
             "0001": ["5 ml Serum separator tube", "SST", "Serum", "5"],
@@ -135,4 +134,4 @@ const mapping20251029 = {
     },
 };
 
-export default mapping20251029;
+export default mapping20251009;

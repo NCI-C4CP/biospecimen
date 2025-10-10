@@ -1,5 +1,7 @@
+// This default mapping will be changed, if we decide to add mapping changes from prior dates 
+// Vial mappings in the code relative to specific dates were not implemented until 2025-10  
 const defaultMapping = {
-    effectiveDate: null, // default mapping before any effective date
+    effectiveDate: null,
     research: {
         default: {
             '0001': ['10 ml Serum separator tube', 'SST', 'Serum', '10'],
