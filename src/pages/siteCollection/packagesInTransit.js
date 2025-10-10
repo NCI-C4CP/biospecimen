@@ -98,7 +98,7 @@ const packagesInTransitTemplate = async (username, auth, route) => {
     const manifestModalBodyEl = document.getElementById("manifest-modal-body");
     manifestButton([...allBoxesShippedBySiteAndNotReceived], bagIdArr, manifestModalBodyEl);
     const confirmPackageLostModalBodyEl = document.getElementById("confirm-package-lost-modal-body");
-    packageLostEventBinder(confirmPackageLostModalBodyEl, auth, route)
+    packageLostEventBinder(confirmPackageLostModalBodyEl, auth, route);
 };
 
 /**
