@@ -53,7 +53,7 @@ export const searchTemplate = (goToSpecimenSearch) => {
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label search-label" for="dob">Date of Birth</label>
-                            <input class="form-control" type="date" id="dob" required/>
+                            <input class="form-control" autocomplete="off" type="date" id="dob" required/>
                         </div>
                         <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary button-fixed-width">Search</button>
