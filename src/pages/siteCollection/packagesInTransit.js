@@ -171,6 +171,7 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     buttonEle.textContent = 'Manifest';
                     buttonEle.setAttribute('data-bs-toggle', 'modal');
                     buttonEle.setAttribute('data-bs-target', '#manifestModal');
+                    buttonEle.setAttribute('data-index', i);
                     cellEle.appendChild(buttonEle);
                     break;
 
@@ -279,8 +280,9 @@ const manifestButton = (allBoxesShippedBySiteAndNotReceived, bagIdArr, manifestM
     const buttons = document.getElementsByClassName("manifest-button");
     const packagesInTransitDataObject = appState.getState().packagesInTransitDataObject;
 
-    Array.from(buttons).forEach((button, index) => {
+    Array.from(buttons).forEach((button) => {
         button.addEventListener("click", async (e) => {
+            const index = button.getAttribute('data-index');
             let modalBody = '';
             savePackagesInTransitModalData(packagesInTransitDataObject, index, allBoxesShippedBySiteAndNotReceived);
             
