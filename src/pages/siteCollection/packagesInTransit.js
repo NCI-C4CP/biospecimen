@@ -54,6 +54,7 @@ const packagesInTransitTemplate = async (username, auth, route) => {
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Ship Date</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Tracking Number</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Shipped from Site</th>
+                                <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Site Shipping Location</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Expected Number of Samples</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Temperature Monitor</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Manifest</th>
@@ -150,8 +151,16 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     break;
 
                 case 'Shipped from Site':
-                    const siteShipped = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
-                    cellEle.innerText = siteShipped;
+                    const shippedFromSite = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
+                    cellEle.innerText = shippedFromSite;
+                    break;
+
+                case 'Site Shipping Location':
+                    const siteShipLocation = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
+                    // console.log("🚀 ~ createPackagesInTransitRows ~ siteShipLocation:", siteShipLocation)
+                    const siteLocationsRefObject = fieldToConceptIdMapping.collectionLocationMapping;
+                    // console.log("🚀 ~ createPackagesInTransitRows ~ siteLocationsRefObject:", siteLocationsRefObject)
+                    cellEle.innerText = siteLocationsRefObject[siteShipLocation] || '';
                     break;
 
                 case 'Expected Number of Samples':
