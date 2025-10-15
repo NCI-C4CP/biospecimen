@@ -22,36 +22,92 @@ export const csvFileReceiptScreen = async (auth) => {
 const csvFileReceiptTemplate = async (username) => {
   let template = "";
   template += siteCollectionNavbar();
-  template += `<div id="root root-margin" style="margin-top:3rem;">
-                <div id="alert_placeholder"></div>
-                <span> <h4 style="text-align: center; margin: 1rem 0;">In Transit</h4> </span>
-                <div class="container-fluid">
-                  <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
-                    <div class="card-body" style="padding: 4rem 2.5rem;">
-                      <form class="form">
-                      <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
-                          <p></p>
-                          <button id="createTransitFile" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
-                      </div>
-                      </form>
-                    </div>
-                  </div>
-              </div>`
+  template += `
+    <div id="root root-margin" style="margin-top:3rem;">
+    <div id="alert_placeholder"></div>
+  `;
 
-template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
-              <div class="modal-dialog modal-md modal-dialog-centered" role="document">
-                  <div class="modal-content sub-div-shadow">
-                      <div class="modal-header" id="modalHeader"></div>
-                      <div class="modal-body" id="modalBody"></div>
-                  </div>
-              </div>
-          </div>`
+  // create In Transit - Box Level here
+  template += inTransitCard("In Transit - Box Level");
+  template += inTransitCard("In Transit - Specimen Level");
+  // template += inTransitBoxLevel;
+  // template += inTransitSpecimenLevel;
+
+  template += `
+    <div class="modal fade" id="modalShowMoreData" data-keyboard="false" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+            <div class="modal-content sub-div-shadow">
+                <div class="modal-header" id="modalHeader"></div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        </div>
+    </div>
+`;
 
   template += receiptedCSVFileTemplate();
   
   document.getElementById("contentBody").innerHTML = template;
   document.getElementById("navbarNavAltMarkup").innerHTML = nonUserNavBar(username);
-}
+};
+
+/**
+ * @param {string} title - title of card section
+ * @returns {string} An in transit card section
+ */ 
+const inTransitCard = (title) => `
+  <div>
+    <h4 style="text-align: center; margin: 1rem 0;">
+      ${title}
+    </h4>
+    <div class="container-fluid">
+      <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
+        <div class="card-body" style="padding: 4rem 2.5rem;">
+          <form class="form">
+          <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
+              <button id="createTransitFile" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>  
+  </div>
+`;
+
+// const inTransitBoxLevel = `
+//   <div>
+//     <h4 style="text-align: center; margin: 1rem 0;">
+//       In Transit - Box Level
+//     </h4>
+//     <div class="container-fluid">
+//       <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
+//         <div class="card-body" style="padding: 4rem 2.5rem;">
+//           <form class="form">
+//           <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
+//               <button id="createTransitFile" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
+//           </div>
+//           </form>
+//         </div>
+//       </div>
+//     </div>  
+//   </div>
+// `;
+
+// const inTransitSpecimenLevel = `
+//   <h4 style="text-align: center; margin: 1rem 0;">
+//     In Transit - Specimen Level
+//   </h4>
+//   <div class="container-fluid">
+//     <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
+//       <div class="card-body" style="padding: 4rem 2.5rem;">
+//         <form class="form">
+//         <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
+//             <button id="createTransitFile" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" class="btn btn-primary" disabled>Create File</button>
+//         </div>
+//         </form>
+//       </div>
+//     </div>
+//   </div>
+// `;
 
 export const receiptedCSVFileTemplate = () => {
   return `<span> <h4 style="text-align: center; margin: 1rem 0;">Receipted CSV File</h4> </span>
@@ -78,7 +134,7 @@ const getInTransitFileType = () => {
     modalHeaderEl.innerHTML = `
                               <h4>Select a format to download In Transit file</h4>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
-                              <span aria-hidden="true">&times;</span></button>`
+                              </button>`;
 
     modalBodyEl.innerHTML =  `<div class="row">
                                 <div class="col">
