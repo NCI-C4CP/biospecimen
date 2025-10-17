@@ -1,6 +1,7 @@
 import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbrObj, keyToLocationObj, baseAPI, keyToNameCSVObj,
   formatISODateTimeDateOnly, convertISODateTime, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
-  miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal } from "../../shared.js";
+  miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal, 
+  appState} from "../../shared.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar } from "../../navbar.js";
@@ -24,14 +25,16 @@ export const csvFileReceiptScreen = async (auth) => {
 
 const inTransitMapping = {
   box: {
-    header: "In Transit - Box Level",
+    cardHeader: "In Transit - Box Level",
     buttonId: "createTransitBoxFile",
   },
   specimen: {
-    header: "In Transit - Specimen Level",
+    cardHeader: "In Transit - Specimen Level",
     buttonId: "createTransitSpecimenFile",
   },
 };
+
+appState.setState()
 
 const csvFileReceiptTemplate = async (username) => {
   let template = "";
@@ -42,8 +45,8 @@ const csvFileReceiptTemplate = async (username) => {
   `;
 
   const { box, specimen } = inTransitMapping;
-  template += inTransitCard(box.header, box.buttonId);
-  template += inTransitCard(specimen.header, specimen.buttonId);
+  template += inTransitCard(box.cardHeader, box.buttonId);
+  template += inTransitCard(specimen.cardHeader, specimen.buttonId);
 
   template += `
     <div class="modal fade" id="modalShowMoreData" data-keyboard="false" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
@@ -123,42 +126,6 @@ const getInTransitBoxFileType = () => {
 
     // change for box level only
     modalBodyEl.innerHTML = `
-    <div class="row">
-      <div class="col">
-            <form>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
-                <label class="form-check-label" for="xlsxCheck">
-                  .XLSX (for better readability)
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
-                <label class="form-check-label" for="csvCheck">
-                  .CSV (for BSI upload)
-                </label>
-              </div>
-            </form>
-      </div>
-    </div>
-    `;
-    confirmFileSelection("box");
-    });
-};
-
-// specimen level
-const getInTransitSpecimenFileType = () => {
-  document.getElementById("createTransitSpecimenFile").addEventListener("click", async (e) => {
-    e.preventDefault();
-    const modalHeaderEl = document.getElementById("modalHeader");
-    const modalBodyEl = document.getElementById("modalBody");
-    modalHeaderEl.innerHTML = `
-    <h4>Select a format to download In Transit - Specimen Level file</h4>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
-    </button>
-    `;
-
-    modalBodyEl.innerHTML = `
       <div class="row">
         <div class="col">
               <form>
@@ -176,11 +143,47 @@ const getInTransitSpecimenFileType = () => {
                 </div>
               </form>
         </div>
-    </div>
+      </div>
     `;
-    confirmFileSelection("specimen");
+    confirmFileSelection("box");
     });
 };
+
+// // specimen level
+// const getInTransitSpecimenFileType = () => {
+//   document.getElementById("createTransitSpecimenFile").addEventListener("click", async (e) => {
+//     e.preventDefault();
+//     const modalHeaderEl = document.getElementById("modalHeader");
+//     const modalBodyEl = document.getElementById("modalBody");
+//     modalHeaderEl.innerHTML = `
+//     <h4>Select a format to download In Transit - Specimen Level file</h4>
+//     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
+//     </button>
+//     `;
+
+//     modalBodyEl.innerHTML = `
+//       <div class="row">
+//         <div class="col">
+//               <form>
+//                 <div class="form-check">
+//                   <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
+//                   <label class="form-check-label" for="xlsxCheck">
+//                     .XLSX (for better readability)
+//                   </label>
+//                 </div>
+//                 <div class="form-check">
+//                   <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
+//                   <label class="form-check-label" for="csvCheck">
+//                     .CSV (for BSI upload)
+//                   </label>
+//                 </div>
+//               </form>
+//         </div>
+//       </div>
+//     `;
+//     confirmFileSelection("specimen");
+//     });
+// };
 
 const confirmFileSelection = (type) => {
   const radioButtons = document.querySelectorAll('input[name="fileFormat"]');
@@ -313,25 +316,21 @@ const modifyBSIQueryResults = (results) => {
   return csvDataArray;
 };
 
-// modify box results 
+/**
+ * Extracts data from each shipped box that is not received or lost
+ * and stores the information in an object which is then pushed to an array
+ * @param {array} shippedBoxes - Array of shipped box objects that are not received and/or lost
+ * 
+*/
 const updateInTransitBoxMapping = (shippedBoxes) => {
-  // loop over boxes and extract data
-  // console.log("shippedBoxes",shippedBoxes)
-  let holdProcessedResult = [];
-  // let boxData;
-  // loop over boxes
+  const holdProcessedResult = [];
   shippedBoxes.forEach((shippedBox) => {
-    console.log("🚀 ~ updateInTransitBoxMapping ~ shippedBox:", shippedBox);
-    console.log("---");
-    console.log("shippedBox", shippedBox.bags);
-    // get bags key(s) from each box
-    const bagKeys = Object.keys(shippedBox.bags); // store specimenBagId in an array
-    console.log("🚀 ~ updateInTransitBoxMapping ~ bagKeys:", bagKeys);
-    //
+     // store specimenBagIds in an array
+    const bagKeys = Object.keys(shippedBox.bags);
+    // extract all specimen bags' arrElements and flatten into a single array
     const specimenBags = bagKeys
       .map((bagKey) => shippedBox.bags[bagKey].arrElements)
       .flat();
-    console.log("🚀 ~ updateInTransitBoxMapping ~ specimenBags:", specimenBags);
 
     const boxData = {
       shipDate: shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
@@ -341,10 +340,8 @@ const updateInTransitBoxMapping = (shippedBoxes) => {
       numSamples: specimenBags.length || 0,
       hasTempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
     };
-
     holdProcessedResult.push(boxData);
   });
-
   return holdProcessedResult;
 };
 
