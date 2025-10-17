@@ -157,9 +157,7 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
 
                 case 'Site Shipping Location':
                     const siteShipLocation = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
-                    // console.log("🚀 ~ createPackagesInTransitRows ~ siteShipLocation:", siteShipLocation)
                     const siteLocationsRefObject = fieldToConceptIdMapping.collectionLocationMapping;
-                    // console.log("🚀 ~ createPackagesInTransitRows ~ siteLocationsRefObject:", siteLocationsRefObject)
                     cellEle.innerText = siteLocationsRefObject[siteShipLocation] || '';
                     break;
 

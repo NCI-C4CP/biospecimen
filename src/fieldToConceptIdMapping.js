@@ -291,7 +291,7 @@ export const conceptIds = {
         bloodCollected: 693370086
     },
 
-    collectionLocationMapping: { // TODO: Check locations and make sure none are missing
+    collectionLocationMapping: {
         777644826: 'UC-DCAM',
         692275326: 'Marshfield',
         433070901: 'Sioux Falls Edith Center',
