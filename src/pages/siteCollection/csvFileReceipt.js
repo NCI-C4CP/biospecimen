@@ -183,11 +183,13 @@ const handleFileSelection = async (radioValue, type) => {
   try {
     const response = await getAllBoxes("bptlPackagesInTransit");
 
-    // Remove boxes with a shipment lost flag with a value of 'yes'
+    // Filter out lost boxes to reflect the packages in transit
+    const notLostBoxes = response.data.filter(
+      (box) => box[conceptIds.shipmentLost] !== conceptIds.yes
+    );
+
     const shippedBoxesNotReceivedAndNotLost =
-      getRecentBoxesShippedBySiteNotReceived(response.data).filter(
-        (box) => box[conceptIds.shipmentLost] !== conceptIds.yes
-      );
+      getRecentBoxesShippedBySiteNotReceived(notLostBoxes);
 
     let modifiedTransitResults;
 
@@ -490,15 +492,11 @@ export const downloadCSVfile = (items, csv, title) => {
 /**
  * Process data to the format required by xlsx library. Map function converts each row of inTransitItems into an array of values using Object.values
  * @param {object} inTransitItems - array of objects
+ * @param {string} type - either 'box' or 'specimen'
  * @returns {array} Returns an array of arrays
  */
 const processInTransitXLSXData = (inTransitItems, type) => {
-  let header = [];
-  if (type === "box") {
-    header = inTransitHeaders.box;
-  } else if (type === "specimen") {
-    header = inTransitHeaders.specimen;
-  }
+  const header = inTransitHeaders[type] ?? [] ; 
 
   const inTransitData = [
     header,
@@ -551,7 +549,7 @@ const loadSheetJScdn = () => {
       specimenCardButtonId.disabled = false; // enable specimen create file button after the script is successfully loaded
     }
   }
-    document.head.appendChild(script);
+  document.head.appendChild(script);
 };
 
 /**
