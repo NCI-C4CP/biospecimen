@@ -540,9 +540,18 @@ const loadSheetJScdn = () => {
   const script = document.createElement("script");
   script.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.mini.min.js";
   script.onload = function () {
-    document.getElementById("createTransitFile").disabled = false; // enable create file button after the script is successfully loaded
-  };
-  document.head.appendChild(script);
+    const { box, specimen } = inTransitMapping;
+    const boxCardButtonId = document.getElementById(box.cardButtonId);
+    const specimenCardButtonId = document.getElementById(specimen.cardButtonId);
+
+    if (boxCardButtonId) { 
+      boxCardButtonId.disabled = false; // enable box create file button after the script is successfully loaded
+    }
+    if (specimenCardButtonId) {
+      specimenCardButtonId.disabled = false; // enable specimen create file button after the script is successfully loaded
+    }
+  }
+    document.head.appendChild(script);
 };
 
 /**
