@@ -111,20 +111,54 @@ export const receiptedCSVFileTemplate = () => `
 
 // box level
 const getInTransitBoxFileType = () => {
-  document
-    .getElementById("createTransitBoxFile")
-    .addEventListener("click", async (e) => {
-      e.preventDefault();
-      const modalHeaderEl = document.getElementById("modalHeader");
-      const modalBodyEl = document.getElementById("modalBody");
-      modalHeaderEl.innerHTML = `
+  document.getElementById("createTransitBoxFile").addEventListener("click", async (e) => {
+    e.preventDefault();
+    const modalHeaderEl = document.getElementById("modalHeader");
+    const modalBodyEl = document.getElementById("modalBody");
+    modalHeaderEl.innerHTML = `
       <h4>Select a format to download In Transit - Box Level file</h4>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
       </button>
     `;
 
-      // change for box level only
-      modalBodyEl.innerHTML = `
+    // change for box level only
+    modalBodyEl.innerHTML = `
+    <div class="row">
+      <div class="col">
+            <form>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
+                <label class="form-check-label" for="xlsxCheck">
+                  .XLSX (for better readability)
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
+                <label class="form-check-label" for="csvCheck">
+                  .CSV (for BSI upload)
+                </label>
+              </div>
+            </form>
+      </div>
+    </div>
+    `;
+    confirmFileSelection("box");
+    });
+};
+
+// specimen level
+const getInTransitSpecimenFileType = () => {
+  document.getElementById("createTransitSpecimenFile").addEventListener("click", async (e) => {
+    e.preventDefault();
+    const modalHeaderEl = document.getElementById("modalHeader");
+    const modalBodyEl = document.getElementById("modalBody");
+    modalHeaderEl.innerHTML = `
+    <h4>Select a format to download In Transit - Specimen Level file</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
+    </button>
+    `;
+
+    modalBodyEl.innerHTML = `
       <div class="row">
         <div class="col">
               <form>
@@ -142,45 +176,9 @@ const getInTransitBoxFileType = () => {
                 </div>
               </form>
         </div>
-      </div>
+    </div>
     `;
-      confirmFileSelection("box");
-    });
-};
-
-// specimen level
-const getInTransitSpecimenFileType = () => {
-  document
-    .getElementById("createTransitSpecimenFile")
-    .addEventListener("click", async (e) => {
-      e.preventDefault();
-      const modalHeaderEl = document.getElementById("modalHeader");
-      const modalBodyEl = document.getElementById("modalBody");
-      modalHeaderEl.innerHTML = `
-      <h4>Select a format to download In Transit - Specimen Level file</h4>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
-      </button>
-    `;
-
-      modalBodyEl.innerHTML = `<div class="row">
-                                <div class="col">
-                                      <form>
-                                        <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
-                                          <label class="form-check-label" for="xlsxCheck">
-                                            .XLSX (for better readability)
-                                          </label>
-                                        </div>
-                                        <div class="form-check">
-                                          <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
-                                          <label class="form-check-label" for="csvCheck">
-                                            .CSV (for BSI upload)
-                                          </label>
-                                        </div>
-                                      </form>
-                                </div>
-                            </div>`;
-      confirmFileSelection("specimen");
+    confirmFileSelection("specimen");
     });
 };
 
@@ -206,6 +204,7 @@ const handleFileSelection = async (radioValue, type) => {
   document.getElementById("modalShowMoreData").querySelector("#closeModal").click(); // closes modal
   try {
     const response = await getAllBoxes("bptlPackagesInTransit");
+
     // Remove boxes with a shipment lost flag with a value of 'yes'
     const shippedBoxesNotReceivedAndNotLost =
       getRecentBoxesShippedBySiteNotReceived(response.data).filter(
@@ -228,11 +227,6 @@ const handleFileSelection = async (radioValue, type) => {
         : generateInTransitCSVData(modifiedTransitResults, type);
     }
 
-    if (modifiedTransitResults.length > 0) {
-      (radioValue === 'xlsx')
-        ? processInTransitXLSXData(modifiedTransitResults, type)
-        : generateInTransitCSVData(modifiedTransitResults, type);
-    }
   } catch (error) {
     console.error(error);
     triggerErrorModal("Error generating file.  Please try again later");
@@ -254,9 +248,9 @@ const csvFileButtonSubmit = () => {
         generateBSIqueryCSVData(modifiedResults);
         hideAnimation();
     } catch (e) {
-      showNotifications({
-        title: "Error",
-        body: `Error fetching BSI Query Data -- ${e.message}`,
+        showNotifications({
+          title: "Error",
+          body: `Error fetching BSI Query Data -- ${e.message}`,
       });
     } finally {
       hideAnimation();
@@ -299,32 +293,19 @@ const getSpecimensByReceivedDate = async (dateFilter) => {
 const modifyBSIQueryResults = (results) => {
   const csvDataArray = [];
   results.forEach((result) => {
-    const collectionType =
-      result[conceptIds.collectionType] || conceptIds.research;
-    const healthcareProvider =
-      result[conceptIds.healthcareProvider] || "default";
+    const collectionType = result[conceptIds.collectionType] || conceptIds.research;
+    const healthcareProvider = result[conceptIds.healthcareProvider] || "default";
     const specimenKeysArray =
       result.specimens && Object.keys(result.specimens).length > 0
         ? Object.keys(result.specimens)
         : [];
     for (const specimenKey of specimenKeysArray) {
-      let [collectionId = "", tubeId = ""] =
-        result.specimens[specimenKey]?.[conceptIds.collectionId]?.split(" ") ??
-        [];
+      let [collectionId = "", tubeId = ""] = result.specimens[specimenKey]?.[conceptIds.collectionId]?.split(" ") ?? [];
       if (miscTubeIdSet.has(tubeId)) {
         tubeId = specimenCollection.cidToNum[specimenKey];
       }
-      const vialMappings = getVialTypesMappings(
-        tubeId,
-        collectionType,
-        healthcareProvider
-      );
-      const csvRowsFromSpecimen = updateResultMappings(
-        result,
-        vialMappings,
-        collectionId,
-        tubeId
-      );
+      const vialMappings = getVialTypesMappings(tubeId, collectionType, healthcareProvider);
+      const csvRowsFromSpecimen = updateResultMappings(result, vialMappings, collectionId, tubeId);
       csvDataArray.push(csvRowsFromSpecimen);
     }
   });
@@ -356,13 +337,9 @@ const updateInTransitBoxMapping = (shippedBoxes) => {
       shipDate: shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
       trackingNumber: shippedBox[conceptIds.shippingTrackingNumber] || "",
       shippedSite: shippedBox["siteAcronym"] || "",
-      shippedLocation:
-        conceptIdToSiteSpecificLocation[
-          shippedBox[conceptIds.shippingLocation]
-        ] || "",
+      shippedLocation: conceptIdToSiteSpecificLocation[shippedBox[conceptIds.shippingLocation]] || "",
       numSamples: specimenBags.length || 0,
-      hasTempMonitor:
-        shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
+      hasTempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
     };
 
     holdProcessedResult.push(boxData);
@@ -387,28 +364,17 @@ const updateInTransitMapping = (shippedBoxes, replacementTubeLabelObj) => {
       specimenBag.arrElements.forEach((fullSpecimenIds, j, specimenBagSize) => {
         // grab fullSpecimenIds & loop thru content
 
-        if (
-          Object.prototype.hasOwnProperty.call(
-            replacementTubeLabelObj,
-            fullSpecimenIds
-          )
-        ) {
+        if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj,fullSpecimenIds)) {
           fullSpecimenIds = replacementTubeLabelObj[fullSpecimenIds];
         }
         dataHolder = {
-          shipDate:
-            shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
+          shipDate: shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
           trackingNumber: shippedBox[conceptIds.shippingTrackingNumber] || "",
           shippedSite: shippedBox.siteAcronym || "",
-          shippedLocation:
-            conceptIdToSiteSpecificLocation[
-              shippedBox[conceptIds.shippingLocation]
-            ] || "",
-          shipDateTime:
-            convertISODateTime(shippedBox[conceptIds.shippingShipDate]) || "",
+          shippedLocation:conceptIdToSiteSpecificLocation[shippedBox[conceptIds.shippingLocation]] || "",
+          shipDateTime: convertISODateTime(shippedBox[conceptIds.shippingShipDate]) || "",
           numSamples: specimenBagSize.length,
-          tempMonitor:
-            shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
+          tempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
           BoxId: shippedBox[conceptIds.shippingBoxId] || "",
           specimenBagId: bagKeys[index],
           fullSpecimenIds: fullSpecimenIds,
@@ -473,12 +439,7 @@ const getVialTypesMappings = (tubeId, collectionType, healthcareProvider) => {
   }
 };
 
-const updateResultMappings = (
-  filteredResult,
-  vialMappings,
-  collectionId,
-  tubeId
-) => {
+const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId) => {
   const collectionTypeValue = filteredResult[conceptIds.collectionType];
   const clinicalDateTime = filteredResult[conceptIds.clinicalDateTimeDrawn];
   const withdrawalDateTime = filteredResult[conceptIds.dateWithdrawn];
@@ -493,8 +454,7 @@ const updateResultMappings = (
     : "";
 
   // Dummy date for clinical files requested in issue 936
-  const dateDrawn =
-    collectionTypeValue === conceptIds.clinical
+  const dateDrawn = collectionTypeValue === conceptIds.clinical
       ? "01/01/1999 12:00:00 PM"
       : withdrawalDateTime
       ? convertISODateTime(withdrawalDateTime)
@@ -528,8 +488,7 @@ const updateResultMappings = (
 };
 
 const generateBSIqueryCSVData = (items) => {
-  const csv =
-    "Study ID, Sample Collection Center, Sample ID, Sequence, BSI ID, Subject ID, Date Received, Date Drawn, Vial Type, Additive/Preservative, Material Type, Volume, Volume Estimate, Volume Unit, Vial Warnings, Hemolyzed, Label Status, Visit\r\n";
+  const csv = "Study ID, Sample Collection Center, Sample ID, Sequence, BSI ID, Subject ID, Date Received, Date Drawn, Vial Type, Additive/Preservative, Material Type, Volume, Volume Estimate, Volume Unit, Vial Warnings, Hemolyzed, Label Status, Visit\r\n";
   downloadCSVfile(items, csv, "BSI-data-export");
 };
 
