@@ -18,8 +18,6 @@ export const csvFileReceiptScreen = async (auth) => {
   csvFileReceiptTemplate(username);
   activeSiteCollectionNavbar();
   csvFileButtonSubmit();
-  // getInTransitBoxFileType();
-  // getInTransitSpecimenFileType();
   getInTransitFileType(inTransitMapping["box"]); // box level
   getInTransitFileType(inTransitMapping["specimen"]); // specimen level
   loadSheetJScdn();
@@ -39,8 +37,6 @@ const inTransitMapping = {
       typeKey: "specimen",
     },
 };
-
-appState.setState()
 
 const csvFileReceiptTemplate = async (username) => {
   let template = "";
@@ -119,8 +115,11 @@ export const receiptedCSVFileTemplate = () => `
   </div>
 `;
 
-// Take in either box type or specimen type
-// box obj with keys: cardHeader, modalHeader, cardButtonId, typeKey
+/**
+ * function to handle both box level and specimen level in transit file type selection
+ * @param {object} inTransitTypeMap - object containing modal header, button id, and type key from inTransitMapping's box or specimen key
+ * @returns {void}
+*/
 const getInTransitFileType = (inTransitTypeMap) => { 
   const { 
     modalHeader, 
@@ -138,7 +137,6 @@ const getInTransitFileType = (inTransitTypeMap) => {
       </button>
     `;
 
-    // change for box level only
     modalBodyEl.innerHTML = `
       <div class="row">
         <div class="col">
@@ -163,80 +161,6 @@ const getInTransitFileType = (inTransitTypeMap) => {
     });
 };
 
-
-// box level
-const getInTransitBoxFileType = () => {
-  document.getElementById("createTransitBoxFile").addEventListener("click", async (e) => {
-    e.preventDefault();
-    const modalHeaderEl = document.getElementById("modalHeader");
-    const modalBodyEl = document.getElementById("modalBody");
-    modalHeaderEl.innerHTML = `
-      <h4></h4>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
-      </button>
-    `;
-
-    // change for box level only
-    modalBodyEl.innerHTML = `
-      <div class="row">
-        <div class="col">
-              <form>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
-                  <label class="form-check-label" for="xlsxCheck">
-                    .XLSX (for better readability)
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
-                  <label class="form-check-label" for="csvCheck">
-                    .CSV (for BSI upload)
-                  </label>
-                </div>
-              </form>
-        </div>
-      </div>
-    `;
-    confirmFileSelection("box");
-    });
-};
-
-// // specimen level
-// const getInTransitSpecimenFileType = () => {
-//   document.getElementById("createTransitSpecimenFile").addEventListener("click", async (e) => {
-//     e.preventDefault();
-//     const modalHeaderEl = document.getElementById("modalHeader");
-//     const modalBodyEl = document.getElementById("modalBody");
-//     modalHeaderEl.innerHTML = `
-//     <h4>Select a format to download In Transit - Specimen Level file</h4>
-//     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
-//     </button>
-//     `;
-
-//     modalBodyEl.innerHTML = `
-//       <div class="row">
-//         <div class="col">
-//               <form>
-//                 <div class="form-check">
-//                   <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
-//                   <label class="form-check-label" for="xlsxCheck">
-//                     .XLSX (for better readability)
-//                   </label>
-//                 </div>
-//                 <div class="form-check">
-//                   <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
-//                   <label class="form-check-label" for="csvCheck">
-//                     .CSV (for BSI upload)
-//                   </label>
-//                 </div>
-//               </form>
-//         </div>
-//       </div>
-//     `;
-//     confirmFileSelection("specimen");
-//     });
-// };
-
 const confirmFileSelection = (type) => {
   const radioButtons = document.querySelectorAll('input[name="fileFormat"]');
   if (radioButtons.length === 0) return;
@@ -255,7 +179,6 @@ const confirmFileSelection = (type) => {
  */
 const handleFileSelection = async (radioValue, type) => {
   showAnimation();
-  // Add code for closing box (bootstrap 5 modal new close approach later?)
   document.getElementById("modalShowMoreData").querySelector("#closeModal").click(); // closes modal
   try {
     const response = await getAllBoxes("bptlPackagesInTransit");
