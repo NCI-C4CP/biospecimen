@@ -1,23 +1,6 @@
-import {
-  showAnimation,
-  hideAnimation,
-  getIdToken,
-  conceptIdToHealthProviderAbbrObj,
-  keyToLocationObj,
-  baseAPI,
-  keyToNameCSVObj,
-  formatISODateTimeDateOnly,
-  convertISODateTime,
-  getAllBoxes,
-  conceptIdToSiteSpecificLocation,
-  showNotifications,
-  getCurrentDate,
-  miscTubeIdSet,
-  triggerSuccessModal,
-  getSpecimensInBoxes,
-  findReplacementTubeLabels,
-  triggerErrorModal,
-} from "../../shared.js";
+import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbrObj, keyToLocationObj, baseAPI, keyToNameCSVObj,
+  formatISODateTimeDateOnly, convertISODateTime, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
+  miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal } from "../../shared.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar } from "../../navbar.js";
@@ -245,6 +228,11 @@ const handleFileSelection = async (radioValue, type) => {
         : generateInTransitCSVData(modifiedTransitResults, type);
     }
 
+    if (modifiedTransitResults.length > 0) {
+      (radioValue === 'xlsx')
+        ? processInTransitXLSXData(modifiedTransitResults, type)
+        : generateInTransitCSVData(modifiedTransitResults, type);
+    }
   } catch (error) {
     console.error(error);
     triggerErrorModal("Error generating file.  Please try again later");
@@ -254,28 +242,26 @@ const handleFileSelection = async (radioValue, type) => {
 };
 
 const csvFileButtonSubmit = () => {
-  document
-    .getElementById("csvCreateFileButton")
-    .addEventListener("click", async (e) => {
-      e.preventDefault();
-      const dateFilter =
-        document.getElementById("csvDateInput").value + "T00:00:00.000Z";
-      vialMapping = getVialMappingByDate(dateFilter);
-      showAnimation();
+  document.getElementById("csvCreateFileButton").addEventListener("click", async (e)=> {
+    e.preventDefault();
+    const dateFilter = document.getElementById("csvDateInput").value + 'T00:00:00.000Z'; 
+    vialMapping = getVialMappingByDate(dateFilter);
+    showAnimation();
 
-      try {
+    try {
         const results = await getSpecimensByReceivedDate(dateFilter);
         const modifiedResults = modifyBSIQueryResults(results.data);
         generateBSIqueryCSVData(modifiedResults);
         hideAnimation();
-      } catch (e) {
-        hideAnimation();
-        showNotifications({
-          title: "Error",
-          body: `Error fetching BSI Query Data -- ${e.message}`,
-        });
-      }
-    });
+    } catch (e) {
+      showNotifications({
+        title: "Error",
+        body: `Error fetching BSI Query Data -- ${e.message}`,
+      });
+    } finally {
+      hideAnimation();
+    }
+  });
 };
 
 const getSpecimensByReceivedDate = async (dateFilter) => {
@@ -346,7 +332,7 @@ const modifyBSIQueryResults = (results) => {
   return csvDataArray;
 };
 
-// modify box results
+// modify box results 
 const updateInTransitBoxMapping = (shippedBoxes) => {
   // loop over boxes and extract data
   // console.log("shippedBoxes",shippedBoxes)
