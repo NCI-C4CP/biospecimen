@@ -194,7 +194,7 @@ const handleFileSelection = async (radioValue, type) => {
     if (type === "specimen") {
       const specimens = await getSpecimensInBoxes(response.data, true);
       const replacementTubeLabelObj = findReplacementTubeLabels(specimens);
-      modifiedTransitResults = updateInTransitMapping(shippedBoxesNotReceivedAndNotLost, replacementTubeLabelObj);
+      modifiedTransitResults = updateInTransitSpecimenMapping(shippedBoxesNotReceivedAndNotLost, replacementTubeLabelObj);
     } else if (type === "box") {
       modifiedTransitResults = updateInTransitBoxMapping(shippedBoxesNotReceivedAndNotLost);
     }
@@ -326,7 +326,7 @@ const updateInTransitBoxMapping = (shippedBoxes) => {
  * @param {object} replacementTubeLabelObj - Object that maps replacement tube labels to original tube labels
  * @returns {array} Returns an array of objects with essential information for in transit csv
  */
-const updateInTransitMapping = (shippedBoxes, replacementTubeLabelObj) => {
+const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) => {
   let holdProcessedResult = [];
   shippedBoxes.forEach((shippedBox) => {
     const bagKeys = Object.keys(shippedBox.bags); // store specimenBagId in an array
