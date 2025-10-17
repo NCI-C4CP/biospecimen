@@ -18,20 +18,26 @@ export const csvFileReceiptScreen = async (auth) => {
   csvFileReceiptTemplate(username);
   activeSiteCollectionNavbar();
   csvFileButtonSubmit();
-  getInTransitBoxFileType();
-  getInTransitSpecimenFileType();
+  // getInTransitBoxFileType();
+  // getInTransitSpecimenFileType();
+  getInTransitFileType(inTransitMapping["box"]); // box level
+  getInTransitFileType(inTransitMapping["specimen"]); // specimen level
   loadSheetJScdn();
 };
 
 const inTransitMapping = {
-  box: {
-    cardHeader: "In Transit - Box Level",
-    buttonId: "createTransitBoxFile",
-  },
-  specimen: {
-    cardHeader: "In Transit - Specimen Level",
-    buttonId: "createTransitSpecimenFile",
-  },
+    box: {
+      cardHeader: "In Transit - Box Level",
+      modalHeader: "Select a format to download In Transit - Box Level file",
+      cardButtonId: "createTransitBoxFile",
+      typeKey: "box",
+    },
+    specimen: {
+      cardHeader: "In Transit - Specimen Level",
+      modalHeader: "Select a format to download In Transit - Specimen Level file",
+      cardButtonId: "createTransitSpecimenFile",
+      typeKey: "specimen",
+    },
 };
 
 appState.setState()
@@ -45,8 +51,8 @@ const csvFileReceiptTemplate = async (username) => {
   `;
 
   const { box, specimen } = inTransitMapping;
-  template += inTransitCard(box.cardHeader, box.buttonId);
-  template += inTransitCard(specimen.cardHeader, specimen.buttonId);
+  template += inTransitCard(box.cardHeader, box.cardButtonId);
+  template += inTransitCard(specimen.cardHeader, specimen.cardButtonId);
 
   template += `
     <div class="modal fade" id="modalShowMoreData" data-keyboard="false" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
@@ -68,6 +74,7 @@ const csvFileReceiptTemplate = async (username) => {
 
 /**
  * A card section for In Transit file creation. Either Box Level or Specimen Level.
+ * Clicking on the button will open a modal to select a xlsx file or csv file to be downloaded.
  * @param {string} title - title of card section
  * @param {string} buttonId - id of button to create file
  * @returns {string} An in transit card section
@@ -112,6 +119,51 @@ export const receiptedCSVFileTemplate = () => `
   </div>
 `;
 
+// Take in either box type or specimen type
+// box obj with keys: cardHeader, modalHeader, cardButtonId, typeKey
+const getInTransitFileType = (inTransitTypeMap) => { 
+  const { 
+    modalHeader, 
+    cardButtonId, 
+    typeKey 
+  } = inTransitTypeMap;
+
+  document.getElementById(cardButtonId).addEventListener("click", async (e) => {
+    e.preventDefault();
+    const modalHeaderEl = document.getElementById("modalHeader");
+    const modalBodyEl = document.getElementById("modalBody");
+    modalHeaderEl.innerHTML = `
+      <h4>${modalHeader}</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
+      </button>
+    `;
+
+    // change for box level only
+    modalBodyEl.innerHTML = `
+      <div class="row">
+        <div class="col">
+              <form>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="fileFormat" value="xlsx" id="xlsxCheck">
+                  <label class="form-check-label" for="xlsxCheck">
+                    .XLSX (for better readability)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
+                  <label class="form-check-label" for="csvCheck">
+                    .CSV (for BSI upload)
+                  </label>
+                </div>
+              </form>
+        </div>
+      </div>
+    `;
+    confirmFileSelection(typeKey);
+    });
+};
+
+
 // box level
 const getInTransitBoxFileType = () => {
   document.getElementById("createTransitBoxFile").addEventListener("click", async (e) => {
@@ -119,7 +171,7 @@ const getInTransitBoxFileType = () => {
     const modalHeaderEl = document.getElementById("modalHeader");
     const modalBodyEl = document.getElementById("modalBody");
     modalHeaderEl.innerHTML = `
-      <h4>Select a format to download In Transit - Box Level file</h4>
+      <h4></h4>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal">
       </button>
     `;
