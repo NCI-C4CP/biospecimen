@@ -325,7 +325,7 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
                         <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["urineCollection"] || '&nbsp;'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["urineCollection"] || '&nbsp;'}</span>
                     </div>
                     <div class="row">
                         <span class="full-width">${baselineSampleStatusInfo.urineTime || '&nbsp;'}</span>
