@@ -1,5 +1,5 @@
 import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbrObj, keyToLocationObj, baseAPI, keyToNameCSVObj, formatISODateTimeDateOnly, convertISODateTime, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate, miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal } from "../../shared.js";
-import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
+import { conceptIds, conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
@@ -200,10 +200,13 @@ const handleFileSelection = async (radioValue, type) => {
   showAnimation();
 // Add code for closing box (bootstrap 5 modal new close approach later?)
   document.getElementById('modalShowMoreData').querySelector('#closeModal').click(); // closes modal
-// Add conditional to determine if 
   try {
     const response = await getAllBoxes('bptlPackagesInTransit');
-    const allBoxesShippedBySiteAndNotReceived = getRecentBoxesShippedBySiteNotReceived(response.data);
+    // const allBoxesShippedBySiteAndNotReceived = getRecentBoxesShippedBySiteNotReceived(response.data);
+    const shippedBoxesNotReceivedAndNotLost =
+      getRecentBoxesShippedBySiteNotReceived(response.data).filter(
+        (box) => box[conceptIds.shipmentLost] !== conceptIds.yes
+      );
     let specimens = await getSpecimensInBoxes(response.data, true); // only needed for specimen level
     const replacementTubeLabelObj = findReplacementTubeLabels(specimens);
     console.log("🚀 ~ handleFileSelection ~ replacementTubeLabelObj:", replacementTubeLabelObj)
@@ -214,15 +217,15 @@ const handleFileSelection = async (radioValue, type) => {
       // replacementTubeLabelObj = findReplacementTubeLabels(specimens);
       // specimens = await getSpecimensInBoxes(response.data, true); 
       
-      let modifiedTransitResults = updateInTransitMapping(allBoxesShippedBySiteAndNotReceived, replacementTubeLabelObj);
+      // let modifiedTransitResults = updateInTransitMapping(allBoxesShippedBySiteAndNotReceived, replacementTubeLabelObj);
+      let modifiedTransitResults = updateInTransitMapping(shippedBoxesNotReceivedAndNotLost, replacementTubeLabelObj);
       (radioValue === 'xlsx')
         ? processInTransitXLSXData(modifiedTransitResults, type) 
         : generateInTransitCSVData(modifiedTransitResults, type);
     } else if (type === 'box') { // box level
-      let modifiedTransitResults = updateInTransitBoxMapping(allBoxesShippedBySiteAndNotReceived);
-      // console.log("🚀 ~ handleFileSelection ~ modifiedTransitResults:", modifiedTransitResults)
-      // return;
-      // let modifiedTransitResults = updateInTransitMapping(allBoxesShippedBySiteAndNotReceived, replacementTubeLabelObj, type);
+      // let modifiedTransitResults = updateInTransitBoxMapping(allBoxesShippedBySiteAndNotReceived);
+      let modifiedTransitResults = updateInTransitBoxMapping(shippedBoxesNotReceivedAndNotLost);
+
       (radioValue === 'xlsx')
         ? processInTransitXLSXData(modifiedTransitResults, type) 
         : generateInTransitCSVData(modifiedTransitResults, type);
@@ -236,6 +239,7 @@ const handleFileSelection = async (radioValue, type) => {
   }
 
 }
+
 
 // Create a new function for confirm file selection but for box level
 
@@ -351,7 +355,6 @@ const modifyBSIQueryResults = (results) => {
  * Loops through each shipped box & specimen bag. Then grabs essential information and stores the result in an object & pushes the object to an array
  * @param {object} shippedBoxes - Shipped box object contains all the related specimen bags & more
  * @param {object} replacementTubeLabelObj - Object that maps replacement tube labels to original tube labels
- * @param {string} type - 'specimen' or 'box' to determine which type of in transit file to create
  * @returns {array} Returns an array of objects with essential information for in transit csv
 */ 
 const updateInTransitMapping = (shippedBoxes, replacementTubeLabelObj) => {
@@ -605,3 +608,17 @@ const getHemolyzedStatus = (materialType) => {
 
   return statusMap[materialType] || '';
 };
+
+
+/*
+Note: Need to ask if the inclusion of lost packages is needed for file generation
+
+Filter and remove shipped boxes not yet received and packages that are not lost 
+
+
+boxes.filter(item => item["333524031"] == 353358909 || item["932866744"] !== 353358909)
+
+
+boxes.filter(item => item["333524031"] == 353358909 || item["932866744"] !== 353358909).map(box => box["959708259"])
+
+*/
