@@ -172,7 +172,7 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
 
                 case 'Manifest':
                     const buttonEle = document.createElement('button');
-                    buttonEle.className = 'manifest-button btn-primary';
+                    buttonEle.className = 'manifest-button btn btn-primary';
                     buttonEle.textContent = 'Manifest';
                     buttonEle.setAttribute('data-bs-toggle', 'modal');
                     buttonEle.setAttribute('data-bs-target', '#manifestModal');
