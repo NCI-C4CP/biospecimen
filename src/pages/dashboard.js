@@ -92,7 +92,7 @@ export const searchBiospecimenTemplate = () => {
                 <div class="row form-row">
                     <form id="specimenLookupForm" method="POST">
                         <div class="mb-3">
-                            <label class="search-label">Collection ID</label>
+                            <label class="search-label" for="masterSpecimenId">Collection ID</label>
                             <input class="form-control" autocomplete="off" required type="text" id="masterSpecimenId" placeholder="Enter/Scan Collection ID"/>
                         </div>
                         <div class="mb-3">
