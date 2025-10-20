@@ -1,9 +1,8 @@
-import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications } from "../../shared.js";
+import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime } from "../../shared.js";
 import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
-import { convertTime } from "../../shared.js";
 import { getSpecimenDeviationReports, getSpecimenCommentsReports } from "../../events.js";
 
 export const packagesInTransitScreen = async (auth, route) => {
@@ -157,8 +156,7 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
 
                 case 'Site Shipping Location':
                     const siteShipLocation = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
-                    const siteLocationsRefObject = fieldToConceptIdMapping.collectionLocationMapping;
-                    cellEle.innerText = siteLocationsRefObject[siteShipLocation] || '';
+                    cellEle.innerText = conceptIdToSiteSpecificLocation[siteShipLocation] || '';
                     break;
 
                 case 'Expected Number of Samples':
