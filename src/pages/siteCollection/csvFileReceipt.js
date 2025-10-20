@@ -150,7 +150,7 @@ const getInTransitFileType = (inTransitTypeMap) => {
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="fileFormat" value="csv" id="csvCheck">
                   <label class="form-check-label" for="csvCheck">
-                    .CSV (for BSI upload)
+                    .CSV ${typeKey === 'specimen' ? '(for BSI upload)' : ''}
                   </label>
                 </div>
               </form>
