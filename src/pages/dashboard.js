@@ -43,17 +43,18 @@ export const searchTemplate = (goToSpecimenSearch) => {
             <div class="col-lg">
                 <div class="row form-row">
                     <form id="search1" method="POST">
+                    <!-- NOTE: aria-autocomplete="none" used as a workaround to suppress Edge autofill behavior -->
                         <div class="mb-3">
                             <label class="col-form-label search-label" for="firstName">First name</label>
-                            <input class="form-control" autocomplete="off" aria-autocomplete="none" type="text" id="firstName" placeholder="Enter First Name"/>
+                            <input class="form-control" autocomplete="off" aria-autocomplete="none" name="searchFirstName" type="text" id="firstName" placeholder="Enter First Name"/>
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label search-label" for="lastName">Last name</label>
-                            <input class="form-control" autocomplete="off" aria-autocomplete="none" type="text" id="lastName" placeholder="Enter Last Name"/>
+                            <input class="form-control" autocomplete="off" aria-autocomplete="none" name="searchLasttName" type="text" id="lastName" placeholder="Enter Last Name"/>
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label search-label" for="dob">Date of Birth</label>
-                            <input class="form-control" autocomplete="off" aria-autocomplete="none" type="date" id="dob" required/>
+                            <input class="form-control" autocomplete="off" aria-autocomplete="none" name="searchDOB" type="date" id="dob" required/>
                         </div>
                         <div class="mb-3">
                             <button type="submit" class="btn btn-outline-primary button-fixed-width">Search</button>
