@@ -1,9 +1,8 @@
-import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications } from "../../shared.js";
+import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime } from "../../shared.js";
 import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
-import { convertTime } from "../../shared.js";
 import { getSpecimenDeviationReports, getSpecimenCommentsReports } from "../../events.js";
 
 export const packagesInTransitScreen = async (auth, route) => {
@@ -54,6 +53,7 @@ const packagesInTransitTemplate = async (username, auth, route) => {
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Ship Date</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Tracking Number</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Shipped from Site</th>
+                                <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Site Shipping Location</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Expected Number of Samples</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Temperature Monitor</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Manifest</th>
@@ -150,8 +150,13 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     break;
 
                 case 'Shipped from Site':
-                    const siteShipped = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
-                    cellEle.innerText = siteShipped;
+                    const shippedFromSite = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
+                    cellEle.innerText = shippedFromSite;
+                    break;
+
+                case 'Site Shipping Location':
+                    const siteShipLocation = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
+                    cellEle.innerText = conceptIdToSiteSpecificLocation[siteShipLocation] || '';
                     break;
 
                 case 'Expected Number of Samples':
@@ -167,7 +172,7 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
 
                 case 'Manifest':
                     const buttonEle = document.createElement('button');
-                    buttonEle.className = 'manifest-button btn-primary';
+                    buttonEle.className = 'manifest-button btn btn-primary';
                     buttonEle.textContent = 'Manifest';
                     buttonEle.setAttribute('data-bs-toggle', 'modal');
                     buttonEle.setAttribute('data-bs-target', '#manifestModal');

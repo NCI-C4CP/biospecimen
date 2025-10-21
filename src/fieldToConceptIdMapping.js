@@ -306,6 +306,7 @@ export const conceptIds = {
         706927479: 'HFH Livonia Research Clinic',
         322059622: "HFH Pop-Up",
         911683679: "HFH Detroit Northwest",
+        752948709: 'Henry Ford Main Campus',
         255636184: 'Stevens Point',
         813412950: 'Neillsville',
         755034888: 'HFH Jackson',
