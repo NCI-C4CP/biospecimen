@@ -510,52 +510,52 @@ const processInTransitXLSXData = (inTransitItems, type) => {
 };
 
 const inTransitHeaders = {
-  // xlsx: {
-  //   specimen: [
-  //     "Ship Date",
-  //     "Tracking Number",
-  //     "Shipped from Site",
-  //     "Shipped from Location",
-  //     "Shipped Date & Time",
-  //     "Expected Number of Samples",
-  //     "Temperature Monitor",
-  //     "Box Number",
-  //     "Specimen Bag ID Type",
-  //     "BSI ID",
-  //     "Material Type",
-  //   ],
-  //   box: [
-  //     "Ship Date",
-  //     "Tracking Number",
-  //     "Shipped from Site",
-  //     "Site Shipping Location",
-  //     "Expected Number of Samples",
-  //     "Temperature Monitor",
-  //   ],
-  // },
-  // csv: {
-  //   specimen: [
-  //     "Ship Date",
-  //     "Tracking Number",
-  //     "Shipped from Site",
-  //     "Shipped from Location",
-  //     "Shipped Date & Time",
-  //     "Expected Number of Samples",
-  //     "Temperature Monitor",
-  //     "Box Number",
-  //     "Specimen Bag ID Type",
-  //     "BSI ID",
-  //     "Material Type",
-  //   ],
-  //   box: [
-  //     "Ship Date",
-  //     "Tracking Number",
-  //     "Shipped from Site",
-  //     "Site Shipping Location",
-  //     "Expected Number of Samples",
-  //     "Temperature Monitor",
-  //   ],
-  // },
+  xlsx: {
+    specimen: [
+      "Ship Date",
+      "Tracking Number",
+      "Shipped from Site",
+      "Shipped from Location",
+      "Shipped Date & Time",
+      "Expected Number of Samples",
+      "Temperature Monitor",
+      "Box Number",
+      "Specimen Bag ID Type",
+      "BSI ID",
+      "Material Type",
+    ],
+    box: [
+      "Ship Date",
+      "Tracking Number",
+      "Shipped from Site",
+      "Site Shipping Location",
+      "Expected Number of Samples",
+      "Temperature Monitor",
+    ],
+  },
+  csv: {
+    specimen: [
+      "Ship Date",
+      "Tracking Number",
+      "Shipped from Site",
+      "Shipped from Location",
+      "Shipped Date & Time",
+      "Expected Number of Samples",
+      "Temperature Monitor",
+      "Box Number",
+      "Specimen Bag ID Type",
+      "BSI ID",
+      "Material Type",
+    ],
+    box: [
+      "Ship Date",
+      "Tracking Number",
+      "Shipped from Site",
+      "Site Shipping Location",
+      "Expected Number of Samples",
+      "Temperature Monitor",
+    ],
+  },
 };
 
 /**
