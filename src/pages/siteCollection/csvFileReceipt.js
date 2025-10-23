@@ -468,7 +468,10 @@ const generateBSIqueryCSVData = (items) => {
 
 const generateInTransitCSVData = (items, type) => {
   const headers = inTransitHeaders['csv'][type];
-  if (!headers || headers.length === 0) return;
+  if (!headers || headers.length === 0) {
+    console.warn(`generateInTransitCSVData: No headers found for type "${type}". Function will return without generating CSV.`);
+    return;
+  }
 
   // create a concatenated string of headers separated by commas and ending with a newline
   const csv = headers.join(",") + "\r\n";
@@ -500,7 +503,7 @@ export const downloadCSVfile = (items, csv, title) => {
  * @returns {array} Returns an array of arrays
  */
 const processInTransitXLSXData = (inTransitItems, type) => {
-  const header = inTransitHeaders["xlsx"][type] ?? [] ; 
+  const header = inTransitHeaders['xlsx'][type] ?? []; 
 
   const inTransitData = [
     header,
