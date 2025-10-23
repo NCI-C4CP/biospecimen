@@ -470,6 +470,7 @@ const generateInTransitCSVData = (items, type) => {
   const headers = inTransitHeaders['csv'][type];
   if (!headers || headers.length === 0) return;
 
+  // create a concatenated string of headers separated by commas and ending with a newline
   const csv = headers.join(",") + "\r\n";
   downloadCSVfile(items, csv, "In-Transit-CSV-data-export");
 };
