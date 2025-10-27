@@ -467,12 +467,14 @@ const generateBSIqueryCSVData = (items) => {
 };
 
 const generateInTransitCSVData = (items, type) => {
-  const headers = inTransitHeaders['csv'][type];
+  const headers = inTransitHeaders["csv"][type];
   if (!headers || headers.length === 0) return;
+  
+  const title = `${inTransitExportTitles[type]}-CSV-data-export`;
 
   // create a concatenated string of headers separated by commas and ending with a newline
   const csv = headers.join(",") + "\r\n";
-  downloadCSVfile(items, csv, "In-Transit-CSV-data-export");
+  downloadCSVfile(items, csv, title);
 };
 
 // If rowValue contains a comma, quote or newline, enclose in double quotes & replace with inner double quotes
@@ -501,12 +503,11 @@ export const downloadCSVfile = (items, csv, title) => {
  */
 const processInTransitXLSXData = (inTransitItems, type) => {
   const header = inTransitHeaders['xlsx'][type] ?? []; 
-
   const inTransitData = [
     header,
     ...inTransitItems.map((row) => Object.values(row)),
   ];
-  handleXLSXLibrary(inTransitData);
+  handleXLSXLibrary(inTransitData, type);
 };
 
 const inTransitHeaders = {
@@ -558,6 +559,11 @@ const inTransitHeaders = {
   },
 };
 
+const inTransitExportTitles = {
+  box: "In Transit_Box Level",
+  specimen: "In Transit_Specimen Level",
+};
+
 /**
  * Loads SheetJS CDN upon Create .csv file selection & then enables create file button upon script onload
  * @param {}
@@ -584,11 +590,14 @@ const loadSheetJScdn = () => {
 /**
  * Using SheetJS, data gets processed & gets added to XLSX workbook and worksheet. Then triggers xlsx file download
  * @param {array} data - array of arrays
- * @returns
+ * @param {string} type - either 'box' or 'specimen'
+ * @returns {void}
  */
-const handleXLSXLibrary = (data) => {
+const handleXLSXLibrary = (data, type) => {
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet(data); // Create a new workbook and worksheet
+
+  const title = `${inTransitExportTitles[type]}-XLSX-data-export`; 
 
   XLSX.utils.book_append_sheet(workbook, worksheet, `InTransitExport`); // Add the worksheet to the workbook
 
@@ -597,7 +606,7 @@ const handleXLSXLibrary = (data) => {
   const blob = new Blob([xlsxFile], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   }); // Create a Blob from the binary data
-  generateFileToDownload(blob, "In-Transit-XLSX-data-export", "xlsx");
+  generateFileToDownload(blob, title, "xlsx");
 };
 
 /**
