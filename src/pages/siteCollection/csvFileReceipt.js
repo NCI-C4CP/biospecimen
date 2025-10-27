@@ -470,9 +470,7 @@ const generateInTransitCSVData = (items, type) => {
   const headers = inTransitHeaders["csv"][type];
   if (!headers || headers.length === 0) return;
   
-  const title = type === "box" 
-    ? "In Transit_Box Level-CSV-data-export" 
-    : "In Transit_Specimen Level-CSV-data-export";
+  const title = `${inTransitExportTitles[type]}-CSV-data-export`;
 
   // create a concatenated string of headers separated by commas and ending with a newline
   const csv = headers.join(",") + "\r\n";
@@ -561,6 +559,11 @@ const inTransitHeaders = {
   },
 };
 
+const inTransitExportTitles = {
+  box: "In Transit_Box Level",
+  specimen: "In Transit_Specimen Level",
+};
+
 /**
  * Loads SheetJS CDN upon Create .csv file selection & then enables create file button upon script onload
  * @param {}
@@ -594,9 +597,7 @@ const handleXLSXLibrary = (data, type) => {
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.aoa_to_sheet(data); // Create a new workbook and worksheet
 
-  const title = type === "box" 
-    ? "In Transit_Box Level-XLSX-data-export"
-    : "In Transit_Specimen Level-XLSX-data-export"; 
+  const title = `${inTransitExportTitles[type]}-XLSX-data-export`; 
 
   XLSX.utils.book_append_sheet(workbook, worksheet, `InTransitExport`); // Add the worksheet to the workbook
 
