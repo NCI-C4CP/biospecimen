@@ -287,10 +287,10 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
                         <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${bloodCollection || '&nbsp;'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("blood", baselineSampleStatusInfo)["bloodCollection"] || '&nbsp;'}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${bloodTime || baselineSampleStatusInfo.bloodTime || '&nbsp;'}</span>
+                        <span class="full-width">${baselineSampleStatusInfo.bloodTime || '&nbsp;'}</span>
                     </div>
                 </div>
             </div>
@@ -325,10 +325,10 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
                         <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["text"]}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${urineCollection || '&nbsp;'}</span>
+                        <span class="full-width">${getBaselineDisplayStatus("urine", baselineSampleStatusInfo)["urineCollection"] || '&nbsp;'}</span>
                     </div>
                     <div class="row">
-                        <span class="full-width">${urineTime || baselineSampleStatusInfo.urineTime || '&nbsp;'}</span>
+                        <span class="full-width">${baselineSampleStatusInfo.urineTime || '&nbsp;'}</span>
                     </div>
                 </div>
             </div>
@@ -528,7 +528,7 @@ const participantStatus = (data, collections, isCheckedIn, homeMouthwashCollecti
 /**
  * @param {string} baselineType - "blood", "urine", or "mouthwash"
  * @param {object} baselineSampleStatusInfo - object containing the baseline sample values (blood time collected, blood collected boolean, ...)
- * @returns {object} An object with the template literal for the icon status of the baseline sample and the text. 
+ * @returns {object} An object with the template literal for the icon status of the baseline sample, text (Collected, In Progress, Not Collected), and a collection id for blood and urine. 
  * 
  * Ex. {
         "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
@@ -539,8 +539,10 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
     const { 
         bloodTime, 
         isBloodCollected,
+        bloodCollection,
         urineTime, 
         isUrineCollected,
+        urineCollection,
         mouthwashTime, 
         isMouthwashCollected 
     } = baselineSampleStatusInfo;
@@ -550,7 +552,7 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
 
     if (baselineType === "blood") {
         isCollected = isBloodCollected;
-        collectionTime = bloodTime; 
+        collectionTime = bloodTime;
     } else if (baselineType === "urine") {
         isCollected = isUrineCollected;
         collectionTime = urineTime;
@@ -561,19 +563,25 @@ const getBaselineDisplayStatus = (baselineType, baselineSampleStatusInfo) => {
 
     if (isCollected === conceptIds.yes) { // Note: Collection time is only needed for "In Progress" status
         return {
-            "htmlIcon": `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
-            "text": "Collected"
+            htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-check"></i></span>`,
+            text: "Collected",
+            bloodCollection: bloodCollection,
+            urineCollection: urineCollection
         }
     } else if (isCollected === conceptIds.no && collectionTime) {
         return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-hashtag" style="color: orange"></i></span>`,
-            text: "In Progress"
+            text: "In Progress",
+            bloodCollection: bloodCollection,
+            urineCollection: urineCollection
         }
     }
 
     return {
             htmlIcon: `<span class="full-width"><i class="fas fa-2x fa-times"></i></span>`,
-            text: "Not Collected"
+            text: "Not Collected",
+            bloodCollection: null,
+            urineCollection: null
         }
 };
 

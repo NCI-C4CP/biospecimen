@@ -2446,7 +2446,7 @@ export const addPaginationFunctionality = (filter, source) => {
     const currPageEle = document.getElementById('middlePage');
 
     // Update the current page number and the UI, then load the new page
-    const setPage = (targetPageNum, paginationDirection) => {
+    const setPage = async (targetPageNum, paginationDirection) => {
         const newPageNum = parseInt(targetPageNum, 10);
         if (currPageNum === newPageNum) return;
         currPageNum = newPageNum;
@@ -2464,24 +2464,23 @@ export const addPaginationFunctionality = (filter, source) => {
         
         appState.setState(stateUpdateObj);
 
-        handleBoxReportsData(filter, source, paginationDirection);
+        await handleBoxReportsData(filter, source, paginationDirection);
+    };
 
-    }
-
-    firstEle.addEventListener('click', () => {
-        setPage(1, 'first');
+    firstEle.addEventListener('click', async () => {
+        await setPage(1, 'first');
     });
 
-    previousEle.addEventListener('click', () => {
-        if (currPageNum > 1) setPage(currPageNum - 1, 'prev');
+    previousEle.addEventListener('click', async () => {
+        if (currPageNum > 1) await setPage(currPageNum - 1, 'prev');
     });
 
-    nextEle.addEventListener('click', () => {
-        if (currPageNum < numReportPages) setPage(currPageNum + 1, 'next');
+    nextEle.addEventListener('click', async () => {
+        if (currPageNum < numReportPages) await setPage(currPageNum + 1, 'next');
     });
 
-    lastEle.addEventListener('click', () => {
-        setPage(numReportPages, 'last');
+    lastEle.addEventListener('click', async () => {
+        await setPage(numReportPages, 'last');
     });
 }
 
@@ -2525,7 +2524,7 @@ export const addEventFilter = (source) => {
 
             appState.setState(stateUpdateObj);
 
-            handleBoxReportsData(filter, source);
+            await handleBoxReportsData(filter, source);
             addPaginationFunctionality(filter, source);
             hideAnimation();
         } catch (error) {

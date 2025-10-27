@@ -67,7 +67,7 @@ export const startReport = async (source) => {
         document.getElementById('contentBody').innerHTML = buildShippingReportScreen(source);
         removeActiveClass('navbar-btn', 'active');
         addEventFilter(source);
-        handleBoxReportsData({}, source);
+        await handleBoxReportsData({}, source);
         addPaginationFunctionality({}, source);
         hideAnimation();
         clearEventFilter(source);

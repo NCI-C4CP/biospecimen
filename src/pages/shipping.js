@@ -428,6 +428,7 @@ const createNewBox = async (boxList, pageLocationConversion, siteCode, largestBo
     const boxToAdd = {
         [conceptIds.shippingLocation]: pageLocationConversion,
         [conceptIds.siteCode]: siteCode,
+        [conceptIds.shipmentLost]: conceptIds.no,
         [conceptIds.submitShipmentFlag]: conceptIds.no,
         [conceptIds.siteShipmentReceived]: conceptIds.no,
         ['siteDetailsDocRef']: docId,
