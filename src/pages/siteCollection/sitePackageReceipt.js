@@ -105,14 +105,41 @@ const packageReceiptTemplate = async (name) => {
 
 const formSubmit = () => {
     const form = document.getElementById("save");
-    form.addEventListener("click", (e) => {
+    form.addEventListener("click", async (e) => {
         e.preventDefault();
         const modalHeaderEl = document.getElementById("modalHeader");
         const modalBodyEl = document.getElementById("modalBody");
+
         const isPackageInfoValid = validatePackageInformation(false);
 
         if (isPackageInfoValid) {
-            return displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl);
+            // Run backend validation on the package.
+            // (Currently only displays a warning if the package has been marked as lost)
+            try {
+                const scannedBarcode = document.getElementById('scannedBarcode').value.trim();
+                modalBodyEl.innerHTML = `
+                    <div class="row">
+                        <div class="col">
+                            <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                                <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                            </div>
+                            <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                                Validating package information, please wait...
+                            </p>
+                        </div>
+                    </div>
+                `;
+                const validationResult = await backendValidateSpecimenPackage(scannedBarcode);
+                if (validationResult === true) {
+                    return displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl);
+                } else {
+                    // If validationResult is a string, we need to put up a confirmation window.
+                    return displayBackendValidationModal(modalHeaderEl, modalBodyEl, validationResult);
+                }
+            } catch (error) {
+                console.error(error);
+                showNotifications({ title: 'Error', body: `Error validating package information: ${error}` });
+            }
         }
         displayInvalidPackageInformationModal(modalHeaderEl, modalBodyEl);
     });
@@ -144,7 +171,9 @@ const confirmPackageReceipt = () => {
                       receiptedPackageObj['receivePackageComments'] = document.getElementById('receivePackageComments').value.trim();
                       receiptedPackageObj['dateReceived'] = convertDateReceivedinISO(document.getElementById('dateReceived').value);
                   }
-                  await storeSpecimenPackageReceipt(receiptedPackageObj);
+
+                await storeSpecimenPackageReceipt(receiptedPackageObj);
+
               }
           } catch (error) {
               console.error(error)
@@ -153,6 +182,28 @@ const confirmPackageReceipt = () => {
       });
   }
 };
+
+const backendValidateSpecimenPackage = async (scannedBarcode) => {
+    try {
+        const idToken = await getIdToken();
+        const response = await fetch(`${baseAPI}api=validatePackageReceipt&barcode=${scannedBarcode}`, {
+            method: "get",
+            headers: {
+                Authorization: "Bearer " + idToken
+            }
+        });
+        const responseData = await response.json();
+        if(responseData.code === 200) {
+            return responseData.message;
+        } else {
+            throw new Error(responseData.message);
+        }
+
+    } catch(err) {
+        console.error('Error', err);
+        throw new Error('Error validating package information: ' + err.message);
+    }
+}
 
 const storeSpecimenPackageReceipt = async (receiptedPackageData) => {
   try {
@@ -596,6 +647,33 @@ export const displayInvalidPackageInformationModal = (modalHeaderEl, modalBodyEl
     `;
 };
 
+export const displayBackendValidationModal = (modalHeaderEl, modalBodyEl, message, isKitReceipt) => {
+    modalHeaderEl.innerHTML = `
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+    `;
+    modalBodyEl.innerHTML = `
+        <div class="row">
+            <div class="col">
+                <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                </div>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    ${message}
+                </p>
+            </div>
+        </div>
+        <div class="row" style="display:flex; justify-content:center;">
+            <div class="col-auto">
+                <button id="confirmBackendValidationButton" type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target= target="_blank" style="margin-right: 15px;">Confirm</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+            </div>
+        </div>
+    `;
+
+    clickConfirmPackageValidationButton(modalHeaderEl,modalBodyEl, isKitReceipt);
+};
+
 export const checkSelectPackageConditionsList = () => {
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
@@ -702,6 +780,11 @@ const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKi
         }
     });  
 };
+
+const clickConfirmPackageValidationButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
+    const confirmBackendValidationButton = document.getElementById("confirmBackendValidationButton");
+    confirmBackendValidationButton.addEventListener('click', () => displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl, isKitReceipt))
+}
 
 /**
  * Returns true if all required fields are filled out, false otherwise.

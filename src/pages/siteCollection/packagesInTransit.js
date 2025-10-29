@@ -1,9 +1,8 @@
-import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState } from "../../shared.js";
+import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime } from "../../shared.js";
 import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
-import { convertTime } from "../../shared.js";
 import { getSpecimenDeviationReports, getSpecimenCommentsReports } from "../../events.js";
 
 export const packagesInTransitScreen = async (auth, route) => {
@@ -54,9 +53,11 @@ const packagesInTransitTemplate = async (username, auth, route) => {
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Ship Date</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Tracking Number</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Shipped from Site</th>
+                                <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Site Shipping Location</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Expected Number of Samples</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Temperature Monitor</th>
                                 <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Manifest</th>
+                                <th class="sticky-row" style="background-color: #f7f7f7; text-align:center;" scope="col">Package Lost</th>
                             </tr>
                         </thead>   
                         <tbody id="tableBodyPackagesInTransit" style="text-align: center; vertical-align: middle;"></tbody>
@@ -73,7 +74,19 @@ const packagesInTransitTemplate = async (username, auth, route) => {
                     <button style="padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
-                <div id="manifest-modal-body" class="modal-body"></div>  
+                <div id="manifest-modal-body" class="modal-body"></div>
+                
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="packageLostModal" tabindex="-1" aria-labelledby="packageLostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md modal-dialog-centered" role="alert">
+            <div class="modal-content sub-div-shadow">
+                <div class="modal-header" class="ms-auto" id="confirm-package-lost-modal-header">
+                        <button style="padding:1rem;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body" id="confirm-package-lost-modal-body"></div>
             </div>
         </div>
     </div>`;
@@ -84,6 +97,8 @@ const packagesInTransitTemplate = async (username, auth, route) => {
 
     const manifestModalBodyEl = document.getElementById("manifest-modal-body");
     manifestButton([...allBoxesShippedBySiteAndNotReceived], bagIdArr, manifestModalBodyEl);
+    const confirmPackageLostModalBodyEl = document.getElementById("confirm-package-lost-modal-body");
+    packageLostEventBinder(confirmPackageLostModalBodyEl, auth, route);
 };
 
 /**
@@ -108,11 +123,15 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
     const tableHeaderColumnNameArray = Array.from(packagesInTransitTableHeaderRowEl.children);
     const siteShipmentReceived = fieldToConceptIdMapping.siteShipmentReceived;
     const yes = fieldToConceptIdMapping.yes;
+    const shipmentLost = fieldToConceptIdMapping.shipmentLost;
 
     for(let i = 0; i < boxesShippedNotReceived.length; i++) {
         const currBoxShippedNotReceived = boxesShippedNotReceived[i];
 
-        if (currBoxShippedNotReceived[siteShipmentReceived] === yes) continue; 
+        if (
+            currBoxShippedNotReceived[siteShipmentReceived] === yes || 
+            currBoxShippedNotReceived[shipmentLost] === yes
+        ) continue; 
         const rowEle = document.createElement('tr');
 
         for (let j = 0; j < tableHeaderColumnNameArray.length; j++) {
@@ -131,8 +150,13 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     break;
 
                 case 'Shipped from Site':
-                    const siteShipped = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
-                    cellEle.innerText = siteShipped;
+                    const shippedFromSite = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
+                    cellEle.innerText = shippedFromSite;
+                    break;
+
+                case 'Site Shipping Location':
+                    const siteShipLocation = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
+                    cellEle.innerText = conceptIdToSiteSpecificLocation[siteShipLocation] || '';
                     break;
 
                 case 'Expected Number of Samples':
@@ -148,11 +172,27 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
 
                 case 'Manifest':
                     const buttonEle = document.createElement('button');
-                    buttonEle.className = 'manifest-button btn-primary';
+                    buttonEle.className = 'manifest-button btn btn-primary';
                     buttonEle.textContent = 'Manifest';
                     buttonEle.setAttribute('data-bs-toggle', 'modal');
                     buttonEle.setAttribute('data-bs-target', '#manifestModal');
+                    buttonEle.setAttribute('data-index', i);
                     cellEle.appendChild(buttonEle);
+                    break;
+
+                case 'Package Lost':
+                    const shipmentIsLost = currBoxShippedNotReceived[shipmentLost] === yes;
+                    const checkboxEle = document.createElement('input');
+                    checkboxEle.type = 'checkbox';
+                    checkboxEle.className = 'package-lost-checkbox';
+                    // Lost shipment should disappear from this list once checked
+                    if(shipmentIsLost) {
+                        checkboxEle.checked = 'true';
+                    }
+                    checkboxEle.setAttribute('data-bs-toggle', 'modal');
+                    checkboxEle.setAttribute('data-bs-target', '#packageLostModal');
+                    checkboxEle.setAttribute('data-barcode', currBoxShippedNotReceived[fieldToConceptIdMapping.shippingTrackingNumber] || '');
+                    cellEle.appendChild(checkboxEle);
                     break;
 
                 default:
@@ -165,12 +205,89 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
     return template;
 }
 
+const packageLostEventBinder = (confirmPackageLostModalBodyEl, auth, route) => {
+    const checkboxes = document.getElementsByClassName('package-lost-checkbox');
+
+    Array.from(checkboxes).forEach((checkbox, index) => {
+        const trackingNumber = checkbox.getAttribute('data-barcode');
+        checkbox.addEventListener('change', async (e) => {
+            const modalBody = 
+            `
+            <div class="row">
+                <div class="col">
+                    <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                        <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                    </div>
+                    <div style="text-align:center; margin-bottom:1.2rem;">    
+                        <h3>Package Lost</h3>
+                    </div>
+                    <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                        Confirm the package has been declared "Lost" by the courier.
+                    </p>
+                </div>
+            </div>
+            <div class="row" style="display:flex; justify-content:center;">
+                <div class="col-auto">
+                    <button id="confirmPackageLost" type="button" class="btn btn-primary" data-bs-dismiss="modal" target="_blank" style="margin-right: 15px;">Confirm</button>
+                    <button id="cancelPackageLost" type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Cancel</button>
+                </div>
+            </div>`;
+            confirmPackageLostModalBodyEl.innerHTML = modalBody;
+
+            const confirmButton = document.getElementById('confirmPackageLost');
+            confirmButton.addEventListener('click', async () => {
+                markPackageLost(trackingNumber, auth, route);
+            });
+            
+            // On cancel, also clear checkbox
+            const cancelButton = document.getElementById('cancelPackageLost');
+            cancelButton.addEventListener('click', () => {
+                checkbox.checked = false;
+            });
+
+        });
+    })
+}
+
+const markPackageLost = async (barcode, auth, route) => {
+    // API markPackageLost
+    try {
+          showAnimation();
+          const idToken = await getIdToken();
+          const response = await fetch(`${baseAPI}api=markPackageLost`, {
+              method: "POST",
+              body: JSON.stringify({
+                barcode
+              }),
+              headers: {
+                  Authorization: "Bearer " + idToken,
+                  "Content-Type": "application/json",
+              },
+          });
+    
+          const responseData = await response.json();
+          hideAnimation();
+          
+          if (responseData.code === 200) {
+                packagesInTransitScreen(auth, route);
+
+          } else {
+              showNotifications({ title: `Error: ${responseData.code}` , body: `Error: ${responseData.message}` });
+          }
+      } catch (error) {
+          hideAnimation();
+          console.error('Error: please try again.', error);
+          showNotifications({ title: 'Error: Package Not Marked As Lost', body: `Error: please try again. ${error}` });
+      }
+}
+
 const manifestButton = (allBoxesShippedBySiteAndNotReceived, bagIdArr, manifestModalBodyEl) => {
     const buttons = document.getElementsByClassName("manifest-button");
     const packagesInTransitDataObject = appState.getState().packagesInTransitDataObject;
 
-    Array.from(buttons).forEach((button, index) => {
+    Array.from(buttons).forEach((button) => {
         button.addEventListener("click", async (e) => {
+            const index = button.getAttribute('data-index');
             let modalBody = '';
             savePackagesInTransitModalData(packagesInTransitDataObject, index, allBoxesShippedBySiteAndNotReceived);
             

@@ -623,3 +623,8 @@ canvas.drawingBuffer {
         border-color: #dee2e6
     }
 }
+
+#xlsxCheck,
+#csvCheck {
+    border: 1px solid #444;
+}
