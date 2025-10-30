@@ -340,6 +340,25 @@ const tube0060 = {
     'tubeNotCollectedOptions': tubeNotCollectedOptions1
 };
 
+const createTube0060 = (workflowType) => {
+    return {
+    'specimenType': 'Streck Tube',
+    'tubeType': 'Blood tube',
+    'readableValue': 'Streck Tube',
+    'image': `./static/images/tube-streck-${workflowType}.PNG`,
+    'name': 'tube60',
+    'concept': specimenCollection.numToCid['0060'],
+    'id': '0060',
+    'tubeColor': (workflowType === 'research') 
+        ? 'Black-Tan' 
+        : 'Charcoal',
+    'collectionChkBox': true,
+    'deviationChkBox': true,
+    'deviationOptions': deviationCollection2,
+    'tubeNotCollectedOptions': tubeNotCollectedOptions1
+    };
+};
+
 export const workflows = {
     research : [
         tube0001,
@@ -347,7 +366,7 @@ export const workflows = {
         // tube0003, // Heparin tubes removed July 2025
         tube0004,
         // tube0005, // ACD tubes removed March 1, 2024
-        tube0060,
+        createTube0060('research'),
         tube0006,
         tube0007,
         tube0008,
@@ -365,7 +384,7 @@ export const workflows = {
         tube0014,
         tube0024,
         // tube0005, // ACD tubes removed March 1, 2024
-        tube0060,
+        createTube0060('clinical'),
         tube0006,
         tube0008
     ]
@@ -475,5 +494,6 @@ const getUniqueDeviationReasonsList = () => {
             return true;
         }
     })
-}
+};
+
 export const deviationReasons = getUniqueDeviationReasonsList();
