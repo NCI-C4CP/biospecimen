@@ -325,21 +325,6 @@ const tube0009 = {
     'deviationChkBox': false
 };
 
-const tube0060 = {
-    'specimenType': 'Streck Tube',
-    'tubeType': 'Blood tube',
-    'readableValue': 'Streck Tube',
-    'image': './static/images/tube5.PNG',
-    'name': 'tube60',
-    'concept': specimenCollection.numToCid['0060'],
-    'id': '0060',
-    'tubeColor': 'Black-Tan',
-    'collectionChkBox': true,
-    'deviationChkBox': true,
-    'deviationOptions': deviationCollection2,
-    'tubeNotCollectedOptions': tubeNotCollectedOptions1
-};
-
 const createTube0060 = (workflowType) => {
     return {
         'specimenType': 'Streck Tube',
