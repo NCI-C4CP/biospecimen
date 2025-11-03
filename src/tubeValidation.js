@@ -325,17 +325,37 @@ const tube0009 = {
     'deviationChkBox': false
 };
 
+const tube0060 = {
+    'specimenType': 'Streck Tube',
+    'tubeType': 'Blood tube',
+    'readableValue': 'Streck Tube',
+    'image': './static/images/tube5.PNG',
+    'name': 'tube60',
+    'concept': specimenCollection.numToCid['0060'],
+    'id': '0060',
+    'tubeColor': 'Black-Tan',
+    'collectionChkBox': true,
+    'deviationChkBox': true,
+    'deviationOptions': deviationCollection2,
+    'tubeNotCollectedOptions': tubeNotCollectedOptions1
+};
+
+/**
+ * Create Streck Tube object determined by workflow type
+ * @param {string} workflowType - 'research' or 'clinical'
+ * @returns {object} tube object
+ */
 const createTube0060 = (workflowType) => {
     return {
         'specimenType': 'Streck Tube',
         'tubeType': 'Blood tube',
         'readableValue': 'Streck Tube',
-        'image': `./static/images/tube-streck-${workflowType}.PNG`,
+        'image': `./static/images/tube-streck-${workflowType}.png`,
         'name': 'tube60',
         'concept': specimenCollection.numToCid['0060'],
         'id': '0060',
         'tubeColor': (workflowType === 'research') 
-            ? 'Black-Tan' 
+            ? 'Dark-Tan' 
             : 'Charcoal',
         'collectionChkBox': true,
         'deviationChkBox': true,
@@ -436,37 +456,9 @@ export const additionalTubeIDRequirement = {
     length: 4
 }
 
-export const tubes = [
-  tube0001,
-  tube0002,
-  tube0003,
-  tube0004,
-  tube0005,
-  tube0006,
-  tube0007,
-  tube0008,
-  tube0009,
-  tube0011,
-  tube0012,
-  tube0013,
-  tube0014,
-  tube0021,
-  tube0024,
-  tube0060,
-];
-
-
 export const getTubesToConceptsMap = () => ({ ...specimenCollection.numToCid });
 
 export const getConceptsToTubesMap = () => ({ ...specimenCollection.cidToNum });
-
-export const getTubeList = () => {
-  return tubes.map((tube) => tube.id);
-};
-
-export const getConceptList = () => {
-  return tubes.map((tube) => tube.concept);
-};
 
 const getUniqueDeviationReasonsList = () => {
     const sumDeviationCollections = [...deviationCollection1, ...deviationCollection2, ...deviationCollection3, ...deviationCollection4];
