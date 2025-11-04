@@ -327,10 +327,18 @@ const tube0009 = {
 
 /**
  * Create Streck Tube object determined by workflow type
- * @param {string} workflowType - 'research' or 'clinical'
+ * @param {'research' | 'clinical'} workflowType - Must be 'research' or 'clinical'.
  * @returns {object} tube object
  */
 const createTube0060 = (workflowType) => {
+    const validTypes = ['research', 'clinical'];
+
+    if (!validTypes.includes(workflowType)) {
+        console.warn(
+            `[createTube0060] Invalid workflowType: '${workflowType}'. Expected 'research' or 'clinical'.`
+        );
+    }
+    
     return {
         'specimenType': 'Streck Tube',
         'tubeType': 'Blood tube',
@@ -356,7 +364,7 @@ export const workflows = {
         // tube0003, // Heparin tubes removed July 2025
         tube0004,
         // tube0005, // ACD tubes removed March 1, 2024
-        createTube0060('research'),
+        createTube0060('researchs'),
         tube0006,
         tube0007,
         tube0008,
