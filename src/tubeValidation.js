@@ -364,7 +364,7 @@ export const workflows = {
         // tube0003, // Heparin tubes removed July 2025
         tube0004,
         // tube0005, // ACD tubes removed March 1, 2024
-        createTube0060('researchs'),
+        createTube0060('research'),
         tube0006,
         tube0007,
         tube0008,
