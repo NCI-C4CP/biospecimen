@@ -628,3 +628,8 @@ canvas.drawingBuffer {
 #csvCheck {
     border: 1px solid #444;
 }
+
+.tube-image {
+    height: 43px;
+    width: 186px;
+}
