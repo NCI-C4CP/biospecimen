@@ -45,20 +45,21 @@ const kitsReceiptTemplate = async (name) => {
                   
                   <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                       <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
-                          <select required class="select-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
-                              <option id="select-dashboard" value="">-- Select Package Condition --</option>
-                              <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
-                              <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
-                              <option id="select-pkgImproperPackaging" value=${conceptIds.pkgImproperPackaging}>Improper Packaging</option>
-                              <option id="select-pkgCollectionCupDamaged" value=${conceptIds.pkgCollectionCupDamaged}>Collection Cup Damaged</option>
-                              <option id="select-pkgCollectionCupLeaked" value=${conceptIds.pkgCollectionCupLeaked}>Collection Cup Leaked</option>
-                              <option id="select-pkgEmptyCupReturned" value=${conceptIds.pkgEmptyCupReturned}>Empty Cup Returned</option>
-                              <option id="select-pkgIncorrectMaterialType" value=${conceptIds.pkgIncorrectMaterialType}>Incorrect Material Type</option>
-                              <option id="select-pkgCollectionCupNotReturned" value=${conceptIds.pkgCollectionCupNotReturned}>Collection Cup Not Returned</option>
-                              <option id="select-pkgOther" value=${conceptIds.pkgOther}>Other</option>
-                          </select>
-                     </div>
+                      <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                        <select required class="select-control" id="packageCondition" style="width:100%" multiple="multiple" data-selected="[${defaultPackageCondition}]" data-initial-value="[${defaultPackageCondition}]">
+                            <option id="select-dashboard" value="">-- Select Package Condition --</option>
+                            <option selected id="select-packageGoodCondition" value=${conceptIds.pkgGoodCondition}>Package in good condition</option>
+                            <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
+                            <option id="select-pkgImproperPackaging" value=${conceptIds.pkgImproperPackaging}>Improper Packaging</option>
+                            <option id="select-pkgCollectionCupDamaged" value=${conceptIds.pkgCollectionCupDamaged}>Collection Cup Damaged</option>
+                            <option id="pkgCollectionCupLeakedPartialLoss" value=${conceptIds.pkgCollectionCupLeakedPartialLoss}>Collection Cup Leaked (Partial Loss)</option>
+                            <option id="pkgCollectionCupLeakedTotalLoss" value=${conceptIds.pkgCollectionCupLeakedTotalLoss}>Collection Cup Leaked (Total Loss)</option>
+                            <option id="select-pkgEmptyCupReturned" value=${conceptIds.pkgEmptyCupReturned}>Empty Cup Returned</option>
+                            <option id="select-pkgIncorrectMaterialType" value=${conceptIds.pkgIncorrectMaterialType}>Incorrect Material Type</option>
+                            <option id="select-pkgCollectionCupNotReturned" value=${conceptIds.pkgCollectionCupNotReturned}>Collection Cup Not Returned</option>
+                            <option id="select-pkgOther" value=${conceptIds.pkgOther}>Other</option>
+                        </select>
+                      </div>
                   </div>
                   <div class="row mb-3">
                       <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
