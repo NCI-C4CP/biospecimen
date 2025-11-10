@@ -46,28 +46,22 @@ const kitAssemblyTemplate = (name) => {
                           </div>
                         </div>
                         <div class="mb-3 row">
-                          <label for="supplyKitId" class="col-md-4 col-form-label">Supply Kit ID</label>
-                          <div class="col-md-8">
-                            <input type="text" class="form-control" id="supplyKitId" placeholder="Enter Supply Kit ID" required />
-                          </div>
-                        </div>
-                        <div class="mb-3 row">
                           <label for="returnKitId" class="col-md-4 col-form-label">Return Kit ID</label>
                           <div class="col-md-8">
                             <input type="text" class="form-control" id="returnKitId" placeholder="Enter Return Kit ID" required />
                             <span id="showReturnKitErrorMsg" style="font-size: 14px; color: red;"></span>
                             </div>
                         </div>
-                        <div class="mb-3 row">
+                        <div class="mb-3 row" id="cupRow" aria-hidden="true" style="display: none;" >
                           <label for="cupId" class="col-md-4 col-form-label">Cup ID</label>
                           <div class="col-md-8">
-                            <input type="text" class="form-control" id="cupId" placeholder="Enter Cup ID" required />
+                            <input type="text" class="form-control" id="cupId" placeholder="Enter Cup ID" disabled />
                           </div>
                         </div>
-                        <div class="mb-3 row">
+                        <div class="mb-3 row" id="cardRow" aria-hidden="true" style="display: none;" >
                           <label for="cardId" class="col-md-4 col-form-label">Card ID</label>
                           <div class="col-md-8">
-                            <input type="text" class="form-control" id="cardId" placeholder="Enter Card ID" required />
+                            <input type="text" class="form-control" id="cardId" placeholder="Enter Card ID" disabled />
                             <span id="showCardIdErrorMsg" style="font-size: 14px; color: red;"></span>
                           </div>
                       </div>
@@ -75,9 +69,9 @@ const kitAssemblyTemplate = (name) => {
                         <label for="kitType" class="col-md-4 col-form-label">Kit Type</label>
                           <div class="col-md-8">
                             <div class="dropdown">
+                            <!-- Defaulted to Mouthwash currently, as only Mouthwash is available. Button default text will be changed back later.-->
                               <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Select Kit Type
-                              </button>
+                              Mouthwash</button>
                                 <ul class="dropdown-menu scrollable-menu" id="dropdownMenuButtonSites" aria-labelledby="dropdownMenuButton">
                                         <li><a class="dropdown-item" data-kitType="mouthwash" id="mouthwash">Mouthwash</a></li>
                                 </ul>
@@ -99,12 +93,12 @@ const kitAssemblyTemplate = (name) => {
   contentBody.innerHTML = template;
 
   // Set up automatic tabbing between inputs upon scanning (assuming the scanner automatically inputs the enter key at the end)
-  autoTabAcrossArray(['scannedBarcode', 'scannedBarcode2', 'supplyKitId', 'returnKitId', 'cupId', 'cardId']);
+  autoTabAcrossArray(['scannedBarcode', 'scannedBarcode2', 'returnKitId']);
 
   const scannedBarcode2 = document.getElementById('scannedBarcode2');
   scannedBarcode2.onpaste = e => e.preventDefault();
   numericInputValidator(['scannedBarcode', 'scannedBarcode2']);
-  capsEnforcer(['supplyKitId', 'returnKitId', 'cupId', 'cardId']);
+  capsEnforcer(['returnKitId']);
   activeHomeCollectionNavbar();
   processAssembledKit();
   enableEnterKeystroke();
@@ -118,9 +112,34 @@ const kitAssemblyTemplate = (name) => {
       e.target.value = input.slice(-12);
     }
   });
+  document.getElementById('returnKitId').addEventListener("input", e => {
+    // Automatically show and populate read-only cup and card ID inputs
+    const input = e.target.value.trim();
+    const cupRow = document.getElementById('cupRow');
+    const cardRow = document.getElementById('cardRow');
+    if(input) {
+      if(cupRow.style.display === 'none') {
+        cupRow.style = '';
+        cupRow.ariaHidden = 'false';
+      }
+      if(cardRow.style.display === 'none') {
+        cardRow.style = '';
+        cardRow.ariaHidden = 'false';
+      }
+    } else {
+        if(cupRow.style.display !== 'none') {
+          cupRow.style.display = 'none';
+          cupRow.ariaHidden = 'true';
+        }
+        if(cardRow.style.display !== 'none') {
+          cardRow.style.display = 'none';
+          cardRow.ariaHidden = 'true';
+        }
+    }
+    document.getElementById('cupId').value = input;
+    document.getElementById('cardId').value = input;
+  })
   performQCcheck('scannedBarcode2', 'scannedBarcode', 'showErrorMsg', `Return Kit Tracking Number doesn't match`);
-  performQCcheck('returnKitId', 'supplyKitId', 'showReturnKitErrorMsg', `Supply Kit & Return Kit need to be same`);
-  performQCcheck('cardId', 'cupId', 'showCardIdErrorMsg', `Cup ID & Card ID need to be same`);
 };
 
 const enableEnterKeystroke = () => {
@@ -142,35 +161,21 @@ const processAssembledKit = () => {
 
         const confirmScannedBarcodeValue = escapeHTML(document.getElementById('scannedBarcode2')?.value)?.trim();
 
-        const querySupplyKitIdValue = escapeHTML(document.getElementById('supplyKitId').value)?.trim();
-        const supplyKitIdValue = (querySupplyKitIdValue !== undefined) ? querySupplyKitIdValue.toUpperCase(): "";
-
         const queryReturnKitIdValue = escapeHTML(document.getElementById('returnKitId')?.value)?.trim();
         const returnKitIdValue = (queryReturnKitIdValue !== undefined) ? queryReturnKitIdValue.toUpperCase() : "";
 
-        const queryCollectionCupIdValue = escapeHTML(document.getElementById('cupId')?.value)?.trim();
-        const collectionCupIdValue = (queryCollectionCupIdValue !== undefined) ? queryCollectionCupIdValue.toUpperCase() : "";
-
-        const queryCollectionCardIdValue = escapeHTML(document.getElementById('cardId')?.value)?.trim();
-        const collectionCardIdValue = (queryCollectionCardIdValue !== undefined) ? queryCollectionCardIdValue.toUpperCase() : "";
-
         if (queryScannedBarcodeValue !== confirmScannedBarcodeValue) {
             triggerErrorModal('Return Kit tracking number doesn\'t match.');
-        } else if (scannedBarcodeValue.length === 0 || supplyKitIdValue.length === 0 ||  returnKitIdValue.length === 0 ||
-            collectionCupIdValue.length === 0 || collectionCardIdValue.length === 0 || document.getElementById('dropdownSites').innerHTML !== 'Mouthwash') {
+        } else if (scannedBarcodeValue.length === 0 || returnKitIdValue.length === 0 || document.getElementById('dropdownSites').innerHTML !== 'Mouthwash') {
             triggerErrorModal('One or more fields are missing.');
-        } else if (supplyKitIdValue !== returnKitIdValue) {
-          triggerErrorModal('Supply Kit ID number doesn\'t match Return Kit.');
-        } else if (collectionCupIdValue !== collectionCardIdValue) {
-          triggerErrorModal('Collection Cup ID doesn\'t match Collection Card.');
-        } else if (!/^[A-Z0-9]{9}\s\d{4}$/i.test(collectionCupIdValue)) {
+        } else if (!/^[A-Z0-9]{9}\s\d{4}$/i.test(returnKitIdValue)) {
           triggerErrorModal('Collection Cup and Card IDs must be of the format of nine characters, a space, and four digits.');
         } else {
             kitObj[conceptIds.returnKitTrackingNum] = scannedBarcodeValue;
-            kitObj[conceptIds.supplyKitId] = supplyKitIdValue;
+            kitObj[conceptIds.supplyKitId] = returnKitIdValue;
             kitObj[conceptIds.returnKitId] = returnKitIdValue;
-            kitObj[conceptIds.collectionCupId] = collectionCupIdValue
-            kitObj[conceptIds.collectionCardId] = collectionCardIdValue;
+            kitObj[conceptIds.collectionCupId] = returnKitIdValue
+            kitObj[conceptIds.collectionCardId] = returnKitIdValue;
             kitObj[conceptIds.kitType] = conceptIds.mouthwashKitType;
             try {
                 showAnimation();

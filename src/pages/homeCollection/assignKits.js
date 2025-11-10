@@ -57,9 +57,9 @@ const assignKitsTemplate = async (name) => {
                   </div>
                 </div>
                 <div class="mb-3 row">
-                  <label for="scanSupplyKit" class="col-md-4 col-form-label">Scan Supply Kit</label>
+                  <label for="scanSupplyKit" class="col-md-4 col-form-label">Scan Return Kit</label>
                   <div class="col-md-8">
-                    <input type="text" class="form-control" id="scanSupplyKit" placeholder="Scan Supply Kit ID">
+                    <input type="text" class="form-control" id="scanSupplyKit" placeholder="Scan Return Kit ID">
                   </div>
                 </div>
                 <div class="mb-3 row">
@@ -281,7 +281,7 @@ const confirmAssignment = () => {
         const scannedBarcode = document.getElementById('scannedBarcode').value.trim();
         const scannedBarcode2 = document.getElementById('scannedBarcode2').value.trim();
         if(scannedBarcode && scannedBarcode2 && scannedBarcode !== scannedBarcode2) {
-          const msg = 'Supply Kit Tracking Number doesn\'t match';
+          const msg = 'Return Kit Tracking Number doesn\'t match';
           errorMessage('scannedBarcode2', msg, true, false);
           throw new Error(msg);
         }
