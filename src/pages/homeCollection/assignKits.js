@@ -57,7 +57,7 @@ const assignKitsTemplate = async (name) => {
                   </div>
                 </div>
                 <div class="mb-3 row">
-                  <label for="scanSupplyKit" class="col-md-4 col-form-label">Scan Return Kit</label>
+                  <label for="scanSupplyKit" class="col-md-4 col-form-label">Return Kit ID</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" id="scanSupplyKit" placeholder="Scan Return Kit ID">
                   </div>

@@ -70,8 +70,13 @@ const kitAssemblyTemplate = (name) => {
                           <div class="col-md-8">
                             <div class="dropdown">
                             <!-- Defaulted to Mouthwash currently, as only Mouthwash is available. Button default text will be changed back later.-->
-                              <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Mouthwash</button>
+                              <button 
+                                class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" 
+                                id="dropdownSites" type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-haspopup="true" 
+                                aria-expanded="false"
+                              >Mouthwash</button>
                                 <ul class="dropdown-menu scrollable-menu" id="dropdownMenuButtonSites" aria-labelledby="dropdownMenuButton">
                                         <li><a class="dropdown-item" data-kitType="mouthwash" id="mouthwash">Mouthwash</a></li>
                                 </ul>
@@ -183,7 +188,6 @@ const processAssembledKit = () => {
                 if (responseStoredStatus) {
                     document.getElementById('scannedBarcode').value = ``;
                     document.getElementById('scannedBarcode2').value = ``;
-                    document.getElementById('supplyKitId').value = ``;
                     document.getElementById('returnKitId').value = ``;
                     document.getElementById('cupId').value = ``;
                     document.getElementById('cardId').value = ``;
@@ -212,13 +216,11 @@ const renderSidePane = () => {
     const sanitizedCupId = escapeHTML(kitObject[conceptIds.collectionCupId].replace(/\s/g, "\n"));
     const sanitizedCardId = escapeHTML(kitObject[conceptIds.collectionCardId].replace(/\s/g, "\n"));
     const sanitizedBarcode = escapeHTML(kitObject[conceptIds.returnKitTrackingNum]);
-    const sanitizedSupplyKitId = escapeHTML(kitObject[conceptIds.supplyKitId]);
     const sanitizedReturnKitId = escapeHTML(kitObject[conceptIds.returnKitId]);
     html +=
       `<ul style="overflow-y: scroll;">
         <br />
         Scanned Barcode = ${sanitizedBarcode} |
-        Supply Kit ID = ${sanitizedSupplyKitId} |
         Return Kit ID = ${sanitizedReturnKitId} |
         Cup Id = ${sanitizedCupId} |
         Card Id = ${sanitizedCardId}
@@ -239,7 +241,6 @@ const editAssembledKits = () => {
         let data = decodeURIComponent(editKitBtn.getAttribute('data-kitObject'));
         const editKitObj = JSON.parse(data);
         document.getElementById('scannedBarcode').value = editKitObj[conceptIds.returnKitTrackingNum];
-        document.getElementById('supplyKitId').value = editKitObj[conceptIds.supplyKitId];
         document.getElementById('returnKitId').value = editKitObj[conceptIds.returnKitId];
         document.getElementById('cupId').value = editKitObj[conceptIds.collectionCupId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCupId].slice(-4);
         document.getElementById('cardId').value = editKitObj[conceptIds.collectionCardId].slice(0, -4) + " " + editKitObj[conceptIds.collectionCardId].slice(-4);
