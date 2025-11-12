@@ -70,8 +70,13 @@ const kitAssemblyTemplate = (name) => {
                           <div class="col-md-8">
                             <div class="dropdown">
                             <!-- Defaulted to Mouthwash currently, as only Mouthwash is available. Button default text will be changed back later.-->
-                              <button class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" id="dropdownSites" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              Mouthwash</button>
+                              <button 
+                                class="btn btn-secondary dropdown-toggle dropdown-toggle-sites" 
+                                id="dropdownSites" type="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-haspopup="true" 
+                                aria-expanded="false"
+                              >Mouthwash</button>
                                 <ul class="dropdown-menu scrollable-menu" id="dropdownMenuButtonSites" aria-labelledby="dropdownMenuButton">
                                         <li><a class="dropdown-item" data-kitType="mouthwash" id="mouthwash">Mouthwash</a></li>
                                 </ul>
