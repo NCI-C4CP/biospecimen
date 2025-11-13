@@ -3581,6 +3581,8 @@ export const checkNonAlphanumericStr = (boxes) => {
   }
 }
 
+// Move to tubeValidation.js later
+// rename later
 export const translateNumToType = {
   "0001": "SST/Gold or Red",
   "0002": "SST/Gold or Red",
@@ -3606,6 +3608,18 @@ export const translateNumToType = {
   "0053": "NA",
   "0054": "NA"
 };
+
+// tubeId ending of tube type
+// isResearch true or false or undefined
+export const getTubeTypeById = (tubeId, isResearch ) => {
+    if (tubeId === "0060") {
+        return isResearch === true 
+            ? "Streck/Dark Gray" 
+            : "Streck/Tan or Dark Gray";    
+    }
+
+    return translateNumToType[tubeId] || "NA";
+} 
 
 /**
  * ISO 8601 DateTime to human readable date time (UTC).
