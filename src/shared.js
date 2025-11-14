@@ -3581,15 +3581,13 @@ export const checkNonAlphanumericStr = (boxes) => {
   }
 }
 
-// Move to tubeValidation.js later
-// rename later
 export const translateNumToType = {
   "0001": "SST/Gold or Red",
   "0002": "SST/Gold or Red",
   "0003": "Heparin/Green",
   "0004": "EDTA/Lavender",
   "0005": "ACD/Yellow",
-  "0060": "Streck/Black-Tan",
+  "0060": "Streck/Tan or Dark Gray",
   "0006": "Urine/Yellow",
   "0007": "Mouthwash Container",
   "0011": "SST/Gold or Red",
