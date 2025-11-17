@@ -168,7 +168,6 @@ const populateAvailableCollectionsList = async (availableCollectionsObj, specime
     for (const bagId of bagIdList) {
         if (bagId !== "unlabelled") {
             const specimen = specimenLookup[bagId];
-            // console.log("🚀 ~ populateAvailableCollectionsList ~ specimen:", specimen)
             const rowEle = tableEle.insertRow();
             rowEle.insertCell(0).innerHTML = bagId;
             rowEle.insertCell(1).innerHTML = availableCollectionsObj[bagId].length;
@@ -243,7 +242,6 @@ const populateAvailableCollectionsList = async (availableCollectionsObj, specime
 
 const populateBoxesToShipTable = () => {
     const detailedBoxes = appState.getState().detailedProviderBoxes;
-    console.log("🚀 ~ populateBoxesToShipTable ~ detailedBoxes:", detailedBoxes)
     const table = document.getElementById("saveTable");
     table.innerHTML = renderBoxesToShipTableHeader();
     
@@ -264,7 +262,6 @@ const populateBoxesToShipTable = () => {
                 currRow.innerHTML += renderBoxesToShipRow(boxStartedTimestamp, boxLastModifiedTimestamp, box, boxLocation, numTubesInBox);
                 const currBoxButton = currRow.cells[6].querySelector(".boxManifestButton");
                 currBoxButton.addEventListener("click", async () => {
-                    console.log("🚀 ~ currBoxButton.addEventListener ~ currBox:", currBox)
                     generateBoxManifest(currBox);
                 });
 
@@ -497,11 +494,7 @@ const getLargestLocationBoxId = (boxesList, siteLocationId) => {
 export const generateBoxManifest = (currBox) => {
     const currInstitute = currBox.boxData.siteAcronym || getSiteAcronym();
     const currShippingLocationNumberObj = locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]
-    console.log("🚀 ~ generateBoxManifest ~ currShippingLocationNumberObj:", currShippingLocationNumberObj)
-    const currLocationConceptId = currBox.boxData[conceptIds.shippingLocation];
-    console.log("🚀 ~ generateBoxManifest ~ currLocationConceptId:", currLocationConceptId)
     const currLocation = locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]["siteSpecificLocation"];
-    console.log("🚀 ~ generateBoxManifest ~ currLocation:", currLocation)
 
     removeActiveClass('navbar-btn', 'active');
     const navBarBoxManifestBtn = document.getElementById('navBarBoxManifest');
@@ -832,13 +825,6 @@ const populateBoxManifestTable = (currBox) => {
     bagList.forEach((bagKey, bagIndex) => {
         const bagIndexStart = bagIndex + 1;
         const tubesList = currBox[bagKey].arrElements;
-
-        // get tube details
-        const bagLocationConcept = currBox[bagKey]?.specimenDetails?.collectionData[conceptIds.collectionLocation];
-        console.log("🚀 ~ populateBoxManifestTable ~ currBagLocation:",bagKey, "----", bagLocationConcept)
-
-        const isCurrBagResearchCollection = Object.prototype.hasOwnProperty.call(keyToLocationObj, bagLocationConcept)
-        console.log("🚀 ~ populateBoxManifestTable ~ isCurrBagResearchCollection:", isCurrBagResearchCollection)
         
         for (let i = 0; i < tubesList.length; i++) {
             const tubeDetail = currBox[bagKey].specimenDetails[tubesList[i]];
