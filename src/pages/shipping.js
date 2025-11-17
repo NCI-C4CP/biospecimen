@@ -1,6 +1,6 @@
 import { addBoxAndUpdateSiteDetails, appState, conceptIdToSiteSpecificLocation, combineAvailableCollectionsObjects, displayManifestContactInfo, filterDuplicateSpecimensInList, getAllBoxes, getBoxes, getSpecimensInBoxes, getUnshippedBoxes, getLocationsInstitute, getSiteMostRecentBoxId, getSpecimensByBoxedStatus, hideAnimation, locationConceptIDToLocationMap,
         miscTubeIdSet, removeActiveClass, removeBag, removeMissingSpecimen, showAnimation, showNotifications, siteSpecificLocation, siteSpecificLocationToConceptId, sortBiospecimensList,
-        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict, keyToLocationObj, getTubeTypeById } from "../shared.js"
+        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict, keyToLocationObj } from "../shared.js"
 import { addDeviationTypeCommentsContent, addEventAddSpecimenToBox, addEventBackToSearch, addEventBoxSelectListChanged, addEventCheckValidTrackInputs,
         addEventCompleteShippingButton, addEventModalAddBox, addEventNavBarBoxManifest, addEventNavBarShipment, addEventNavBarShippingManifest, addEventNavBarAssignTracking, addEventLocationSelect,
         addEventPreventTrackingConfirmPaste, addEventReturnToPackaging, addEventReturnToReviewShipmentContents, addEventSaveButton, addEventSaveAndContinueButton, addEventShipPrintManifest,
@@ -826,12 +826,9 @@ const populateSelectLocationList = async (availableLocations, loadFromState) => 
 }
 
 const populateBoxManifestTable = (currBox) => {
-    console.log("🚀 ~ populateBoxManifestTable ~ currBox:", currBox)
     const boxManifestTable = document.getElementById('boxManifestTable');
     const bagList = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined').sort(sortSpecimenKeys);
-    console.log("🚀 ~ populateBoxManifestTable ~ bagList:", bagList)
     const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
-    console.log("🚀 ~ populateBoxManifestTable ~ replacementTubeLabelObj:", replacementTubeLabelObj)
     bagList.forEach((bagKey, bagIndex) => {
         const bagIndexStart = bagIndex + 1;
         const tubesList = currBox[bagKey].arrElements;
@@ -840,7 +837,6 @@ const populateBoxManifestTable = (currBox) => {
         const bagLocationConcept = currBox[bagKey]?.specimenDetails?.collectionData[conceptIds.collectionLocation];
         console.log("🚀 ~ populateBoxManifestTable ~ currBagLocation:",bagKey, "----", bagLocationConcept)
 
-        // use keyToLocationObj to check if it exists in research collection locations, extra check if it's a string type
         const isCurrBagResearchCollection = Object.prototype.hasOwnProperty.call(keyToLocationObj, bagLocationConcept)
         console.log("🚀 ~ populateBoxManifestTable ~ isCurrBagResearchCollection:", isCurrBagResearchCollection)
         
@@ -850,25 +846,15 @@ const populateBoxManifestTable = (currBox) => {
             const fullTubeId = tubesList[i];
             const tubeId = fullTubeId.split(' ');
 
-            // refactor 
-            // let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) 
-            //     ? translateNumToType[tubeId[1]] 
-            //     : 'N/A';
-            let tubeTypeAndColor = getTubeTypeById(tubeId[1], isCurrBagResearchCollection);
-            console.log("🚀 ~ populateBoxManifestTable ~ tubeTypeAndColor:", tubeTypeAndColor)
-           
-            // refactor
-            // if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj, fullTubeId)) {
-            //     let [,originalTubeId] = replacementTubeLabelObj[fullTubeId].split(' '); 
-            //     tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) 
-            //         ? translateNumToType[originalTubeId] 
-            //         : tubeTypeAndColor;
-            // }
+            let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) 
+                ? translateNumToType[tubeId[1]] 
+                : 'N/A';
+
             if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj, fullTubeId)) {
-                
-                console.log("THIS WAS TRIGGERED!")
                 let [,originalTubeId] = replacementTubeLabelObj[fullTubeId].split(' '); 
-                tubeTypeAndColor = getTubeTypeById(originalTubeId, isCurrBagResearchCollection);
+                tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) 
+                    ? translateNumToType[originalTubeId] 
+                    : tubeTypeAndColor;
             }
 
             currRow.insertCell(0).innerHTML = i === 0 ? bagKey : '';
