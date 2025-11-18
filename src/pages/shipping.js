@@ -825,16 +825,24 @@ const populateBoxManifestTable = (currBox) => {
     bagList.forEach((bagKey, bagIndex) => {
         const bagIndexStart = bagIndex + 1;
         const tubesList = currBox[bagKey].arrElements;
+        
         for (let i = 0; i < tubesList.length; i++) {
             const tubeDetail = currBox[bagKey].specimenDetails[tubesList[i]];
             const currRow = boxManifestTable.insertRow(i + 1);
             const fullTubeId = tubesList[i];
             const tubeId = fullTubeId.split(' ');
-            let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) ? translateNumToType[tubeId[1]] : 'N/A';
+
+            let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) 
+                ? translateNumToType[tubeId[1]] 
+                : 'N/A';
+
             if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj, fullTubeId)) {
                 let [,originalTubeId] = replacementTubeLabelObj[fullTubeId].split(' '); 
-                tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) ? translateNumToType[originalTubeId] : tubeTypeAndColor;
+                tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) 
+                    ? translateNumToType[originalTubeId] 
+                    : tubeTypeAndColor;
             }
+
             currRow.insertCell(0).innerHTML = i === 0 ? bagKey : '';
             currRow.insertCell(1).innerHTML = tubesList[i];
             currRow.insertCell(2).innerHTML = tubeTypeAndColor;
