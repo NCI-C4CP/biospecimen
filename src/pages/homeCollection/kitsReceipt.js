@@ -52,8 +52,8 @@ const kitsReceiptTemplate = async (name) => {
                             <option id="select-pkgCrushed" value=${conceptIds.pkgCrushed}>Package Crushed</option>
                             <option id="select-pkgImproperPackaging" value=${conceptIds.pkgImproperPackaging}>Improper Packaging</option>
                             <option id="select-pkgCollectionCupDamaged" value=${conceptIds.pkgCollectionCupDamaged}>Collection Cup Damaged</option>
-                            <option id="pkgCollectionCupLeakedPartialLoss" value=${conceptIds.pkgCollectionCupLeakedPartialLoss}>Collection Cup Leaked (Partial Loss)</option>
-                            <option id="pkgCollectionCupLeakedTotalLoss" value=${conceptIds.pkgCollectionCupLeakedTotalLoss}>Collection Cup Leaked (Total Loss)</option>
+                            <option id="pkgCollectionCupLeakedPartialLoss" value=${conceptIds.pkgCollectionCupLeakedPartialLoss}>Collection Cup Leaked - Partial Loss</option>
+                            <option id="pkgCollectionCupLeakedTotalLoss" value=${conceptIds.pkgCollectionCupLeakedTotalLoss}>Collection Cup Leaked - Total Sample Loss</option>
                             <option id="select-pkgEmptyCupReturned" value=${conceptIds.pkgEmptyCupReturned}>Empty Cup Returned</option>
                             <option id="select-pkgIncorrectMaterialType" value=${conceptIds.pkgIncorrectMaterialType}>Incorrect Material Type</option>
                             <option id="select-pkgCollectionCupNotReturned" value=${conceptIds.pkgCollectionCupNotReturned}>Collection Cup Not Returned</option>

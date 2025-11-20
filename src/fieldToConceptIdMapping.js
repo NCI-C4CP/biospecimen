@@ -429,9 +429,8 @@ export const conceptIds = {
     pkgCrushed: 545319575,
     pkgImproperPackaging: 938338155,
     pkgCollectionCupDamaged: 205954477,
-    // pkgCollectionCupLeaked: 289239334,
-    pkgCollectionCupLeakedPartialLoss: 888888888, // Temp placeholder
-    pkgCollectionCupLeakedTotalLoss: 999999999, // Temp placeholder
+    pkgCollectionCupLeakedPartialLoss: 289239334,
+    pkgCollectionCupLeakedTotalLoss: 309189173,
     pkgEmptyCupReturned: 992420392,
     pkgIncorrectMaterialType: 541085383,
     pkgCollectionCupNotReturned: 427719697,
@@ -465,13 +464,12 @@ export const packageConditionConversion = {
     922995819: "Manifest/Vial/Paperwork info do not match",
     958000780: "Shipment Delay",
     853876696: "No Manifest provided",
-    950521660: "Package in Good Condition",
+    950521660: "Package in Good Condition", // Home collection
     545319575: "Package Crushed",
     938338155: "Improper Packaging",
     205954477: "Collection Cup Damaged",
-    // 289239334: "Collection Cup Leaked",
-    888888888: "Collection Cup Leaked- Partial Loss", // Temp placeholder
-    999999999: "Collection Cup Leaked - Total Sample Loss", // Temp placeholder
+    289239334: "Collection Cup Leaked - Partial Loss",
+    309189173: "Collection Cup Leaked - Total Sample Loss",
     992420392: "Empty Cup Returned",
     541085383: "Incorrect Material Type Returned",
     427719697: "Collection Cup Not Returned",
