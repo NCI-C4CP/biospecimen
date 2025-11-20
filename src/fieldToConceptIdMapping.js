@@ -468,7 +468,7 @@ export const packageConditionConversion = {
     545319575: "Package Crushed",
     938338155: "Improper Packaging",
     205954477: "Collection Cup Damaged",
-    289239334: "Collection Cup Leaked - Partial Loss",
+    289239334: "Collection Cup Leaked - Partial Sample Loss",
     309189173: "Collection Cup Leaked - Total Sample Loss",
     992420392: "Empty Cup Returned",
     541085383: "Incorrect Material Type Returned",
