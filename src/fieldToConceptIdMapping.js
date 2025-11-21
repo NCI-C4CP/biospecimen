@@ -341,7 +341,9 @@ export const conceptIds = {
         397883980: 'Irving',
         117840593: 'Temple CDM',
         574104518: 'Temple Roney',
-        749199085: 'Temple Westfield'
+        749199085: 'Temple Westfield',
+        603989030: 'Killeen Main',
+        471260082: 'Waco Fishpond'
     },
 
     nameToKeyObj: {
@@ -391,6 +393,8 @@ export const conceptIds = {
         templeCDM: 117840593,
         templeRoney: 574104518,
         templeWestfield: 749199085,
+        killeenMain: 603989030,
+        wacoFishpond: 471260082,
         kpHawaii: 531313956,
         nci: 111111111,
         nciFrederick: 222222222,
