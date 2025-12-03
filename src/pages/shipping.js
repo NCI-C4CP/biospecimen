@@ -240,16 +240,13 @@ const populateAvailableCollectionsList = async (availableCollectionsObj, specime
     }
 }
 
-// Let's start here to debug
 const populateBoxesToShipTable = () => {
     const detailedBoxes = appState.getState().detailedProviderBoxes;
-    // console.log("🚀 ~ populateBoxesToShipTable ~ detailedBoxes:", detailedBoxes)
     const table = document.getElementById("saveTable");
     table.innerHTML = renderBoxesToShipTableHeader();
     
     if (Object.keys(detailedBoxes).length > 0) {
-        const sortedBoxKeys = Object.keys(detailedBoxes).sort(); // sort box keys numerically
-        // console.log("🚀 ~ populateBoxesToShipTable ~ sortedBoxKeys:", sortedBoxKeys)
+        const sortedBoxKeys = Object.keys(detailedBoxes).sort();
         let rowCount = 0;
         sortedBoxKeys.forEach(box => {
             const currBox = detailedBoxes[box];
@@ -258,12 +255,10 @@ const populateBoxesToShipTable = () => {
             const boxLastModifiedTimestamp = currBox.boxData[conceptIds.shippingShipDateModify] ? formatTimestamp(Date.parse(currBox.boxData[conceptIds.shippingShipDateModify])) : '';
             const boxLocation = currBox.boxData[conceptIds.shippingLocation] ? locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]["siteSpecificLocation"] : '';
             const numTubesInBox = bagKeys.reduce((total, bagKey) => total + currBox[bagKey]['arrElements'].length, 0);
-            // console.log("🚀 ~ populateBoxesToShipTable ~ numTubesInBox:", numTubesInBox)
 
-            if (numTubesInBox > 0) {   // Determines if box has tubes and can be rendered in the table
-                // console.log("numTubesInBox", numTubesInBox);
+            if (numTubesInBox > 0) {
                 const currRow = table.insertRow(rowCount + 1);
-                currRow.style['background-color'] = rowCount % 2 === 1 ? 'lightgrey' : ''; // this has no impact on the row color? ~ 
+                currRow.style['background-color'] = rowCount % 2 === 1 ? 'lightgrey' : '';
                 currRow.innerHTML += renderBoxesToShipRow(boxStartedTimestamp, boxLastModifiedTimestamp, box, boxLocation, numTubesInBox);
                 const currBoxButton = currRow.cells[6].querySelector(".boxManifestButton");
                 currBoxButton.addEventListener("click", async () => {
@@ -274,7 +269,7 @@ const populateBoxesToShipTable = () => {
             }
         });
     }
-}
+};
 
 const populateShippingBoxContentsRows = (bagNum, cellNum, row, currBagId, fullTubeId, tubeType) => {
     bagNum % 2 === 1 ? row.style['background-color'] = 'lightgrey' : row.style['background-color'] = 'white'; {
@@ -495,7 +490,6 @@ const getLargestLocationBoxId = (boxesList, siteLocationId) => {
     const boxIdsForLocation = boxesList.filter(box => box[conceptIds.shippingLocation] === siteLocationId).map(box => parseInt(box[conceptIds.shippingBoxId].substring(3)));
     return boxIdsForLocation.length > 0 ? Math.max(...boxIdsForLocation) : -1;
 }
-// where is the light grey coming from?
 export const generateBoxManifest = (currBox) => {
     const currInstitute = currBox.boxData.siteAcronym || getSiteAcronym();
     const currShippingLocationNumberObj = locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]
@@ -505,16 +499,15 @@ export const generateBoxManifest = (currBox) => {
     const navBarBoxManifestBtn = document.getElementById('navBarBoxManifest');
     navBarBoxManifestBtn.classList.add('active');
     document.getElementById('contentBody').innerHTML = renderBoxManifestTemplate(currInstitute, currLocation);
-    console.log("currBox", currBox)
     populateBoxManifestHeader(currBox, currShippingLocationNumberObj);
-    populateBoxManifestTable(currBox); // here
+    populateBoxManifestTable(currBox);
     document.getElementById('printBox').addEventListener('click', e => {
         window.scrollTo(0, 0);
         window.print();
     });
 
     addEventReturnToPackaging();
-}
+};
 
 export const populateBoxManifestHeader = (currBox, currShippingLocationNumberObj) => {
     if(!currBox) return;
@@ -824,23 +817,14 @@ const populateSelectLocationList = async (availableLocations, loadFromState) => 
 }
 
 const populateBoxManifestTable = (currBox) => {
-    console.log("🚀 ~ populateBoxManifestTable ~ currBox:", currBox)
     const boxManifestTable = document.getElementById('boxManifestTable');
-    // console.log("🚀 ~ populateBoxManifestTable ~ boxManifestTable:", boxManifestTable)
-    const bagList = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined').sort(sortSpecimenKeys); // removes boxData
-    console.log("Object.keys(currBox):", Object.keys(currBox))
-    console.log("-----------------------")
-    console.log("🚀 ~ populateBoxManifestTable ~ bagList:", bagList)
+    const bagList = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined').sort(sortSpecimenKeys);
     const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
     bagList.forEach((bagKey, bagIndex) => {
-        console.log("bagIndex", bagIndex, "bagKey", bagKey)
         const bagIndexStart = bagIndex + 1;
-        // console.log("🚀 ~ populateBoxManifestTable ~ bagIndexStart:", bagIndexStart, "bagKey", bagKey)
         const tubesList = currBox[bagKey].arrElements;
-        console.log("🚀 ~ populateBoxManifestTable ~ tubesList:", tubesList) // Box 
         
         for (let i = 0; i < tubesList.length; i++) {
-            console.log("🚀 ~ populateBoxManifestTable ~ tubesList:", tubesList)
             const tubeDetail = currBox[bagKey].specimenDetails[tubesList[i]];
             const currRow = boxManifestTable.insertRow(i + 1);
             const fullTubeId = tubesList[i];
@@ -864,7 +848,7 @@ const populateBoxManifestTable = (currBox) => {
             addDeviationTypeCommentsContent(tubeDetail, currRow, bagIndexStart);
         };
     });
-}
+};
 
 const sortSpecimenKeys = (a, b) => {
     const numA = parseInt(a.split(' ')[0].substring(3));
@@ -900,7 +884,7 @@ export const generateShippingManifest = async (boxIdArray, userName, isTempMonit
     document.getElementById('contentBody').innerHTML = renderShippingManifestTemplate(boxIdArray, isTempMonitorIncluded);
     
     populateShippingManifestHeader(userName, siteAcronym, currShippingLocationNumber); // populate shipping header via site specific location selected from shipping page
-    populateShippingManifestTable(boxIdAndBagsObjToDisplay); // here
+    populateShippingManifestTable(boxIdAndBagsObjToDisplay);
     addEventNavBarShipment("navBarShippingDash", userName);
     addEventShipPrintManifest('printBox');
     addEventNavBarShipment('returnToPackaging', userName);
