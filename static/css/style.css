@@ -577,6 +577,11 @@ canvas.drawingBuffer {
         size: a3
     }
 
+    html, body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     body {
         min-width: 992px !important
     }
