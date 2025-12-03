@@ -2619,14 +2619,31 @@ const findScannedIdInUnshippedBoxes = (allBoxesList, masterSpecimenId) => {
  * @param {number} bagsArrayIndex - current index of the bags array
 */
 export const addDeviationTypeCommentsContent = (tubeDetail, currRow, bagsArrayIndex) => {
-    if (!tubeDetail) return;
+    console.log("🚀 ~ addDeviationTypeCommentsContent ~ tubeDetail:", tubeDetail)
+    console.log("🚀 ~ addDeviationTypeCommentsContent ~ bagsArrayIndex:", currRow,"----", bagsArrayIndex)
     
-    const acceptedDeviationArray = getSpecimenDeviation(tubeDetail);
-    const currTubeComments = getSpecimenComments(tubeDetail);
+    // missing tube details is causing issues with the row
+    if (bagsArrayIndex % 2 === 0) {
+        console.log("over here!")
+        currRow.style['background-color'] = 'lightgrey';
+    }
+    
     const deviationTypeCell = currRow.insertCell(3);
     const commentCell = currRow.insertCell(4);
     deviationTypeCell.classList.add('deviation-type-cell');
     commentCell.classList.add('comments-cell');
+
+    if (!tubeDetail) {
+        deviationTypeCell.innerHTML = `<br>`;
+        commentCell.innerHTML = `<br>`;
+        return;
+    }
+    const acceptedDeviationArray = getSpecimenDeviation(tubeDetail) || "";
+    const currTubeComments = getSpecimenComments(tubeDetail) || "";
+    // const deviationTypeCell = currRow.insertCell(3);
+    // const commentCell = currRow.insertCell(4);
+    // deviationTypeCell.classList.add('deviation-type-cell');
+    // commentCell.classList.add('comments-cell');
     
     if (acceptedDeviationArray.length >= 1) {
         let deviationString = '';
@@ -2638,11 +2655,15 @@ export const addDeviationTypeCommentsContent = (tubeDetail, currRow, bagsArrayIn
         deviationTypeCell.innerHTML = `<br>`;
     }
     commentCell.innerHTML = currTubeComments;
-    
-    if (bagsArrayIndex % 2 === 0) {
-        currRow.style['background-color'] = 'lightgrey';
-    }
+    console.log("Is this true for currRow", currRow, "---", bagsArrayIndex, bagsArrayIndex % 2 === 0)
+    // if (bagsArrayIndex % 2 === 0) {
+    //     console.log("over here!")
+    //     currRow.style['background-color'] = 'lightgrey';
+    // }
+    // debugger;
+    // return;
 }
+
 
 /** 
  *  Returns an array of deviation type name(s) for a single specimen tube id or an empty array if no deviation type found.
