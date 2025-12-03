@@ -2648,7 +2648,6 @@ export const addDeviationTypeCommentsContent = (tubeDetail, currRow, bagsArrayIn
     commentCell.innerHTML = currTubeComments;
 };
 
-
 /** 
  *  Returns an array of deviation type name(s) for a single specimen tube id or an empty array if no deviation type found.
  *  @param {object} tubeDetail - tube with deviation data.
