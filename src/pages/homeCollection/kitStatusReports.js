@@ -333,10 +333,6 @@ export const kitStatusSelectionOptions = {
             key: conceptIds.returnKitTrackingNum
             },
             {
-            header: 'Supply Kit ID',
-            key: conceptIds.supplyKitId
-            },
-            {
             header: 'Return Kit ID',
             key: conceptIds.returnKitId
             },
@@ -376,10 +372,6 @@ export const kitStatusSelectionOptions = {
                 const studySite = dataRow[conceptIds.healthcareProvider];
                 return keyToNameObj[studySite] || '';
                 }
-            },
-            {
-            header: 'Supply Kit ID',
-            key: conceptIds.supplyKitId
             },
             {
             header: 'Collection ID',
@@ -425,10 +417,6 @@ export const kitStatusSelectionOptions = {
                 if (!isoDate) return '';
                 return convertISODateTime(isoDate).split(/\s+/)[0];
                 }
-            },
-            {
-            header: 'Supply Kit ID',
-            key: conceptIds.supplyKitId
             },
             {
             header: 'Collection ID',

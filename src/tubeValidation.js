@@ -114,7 +114,7 @@ const tube0001 = {
     'specimenType': 'Serum Separator Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'Serum Separator Tube',
-    'image': './static/images/tube1.PNG',
+    'image': './static/images/tube-serum-shared.png',
     'name': 'tube1',
     'concept': specimenCollection.numToCid['0001'],
     'id': '0001',
@@ -129,7 +129,7 @@ const tube0002 = {
     'specimenType': 'Serum Separator Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'Serum Separator Tube',
-    'image': './static/images/tube1.PNG',
+    'image': './static/images/tube-serum-shared.png',
     'name': 'tube2',
     'concept': specimenCollection.numToCid['0002'],
     'id': '0002',
@@ -144,7 +144,7 @@ const tube0011 = {
     'specimenType': 'Serum Separator Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'Serum Separator Tube',
-    'image': './static/images/tube1.PNG',
+    'image': './static/images/tube-serum-shared.png',
     'name': 'tube11',
     'concept': specimenCollection.numToCid['0011'],
     'id': '0011',
@@ -159,7 +159,7 @@ const tube0012 = {
     'specimenType': 'Serum Separator Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'Serum Separator Tube',
-    'image': './static/images/tube1.PNG',
+    'image': './static/images/tube-serum-shared.png',
     'name': 'tube12',
     'concept': specimenCollection.numToCid['0012'],
     'id': '0012',
@@ -174,7 +174,7 @@ const tube0021 = {
     'specimenType': 'Serum Separator Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'Serum Separator Tube',
-    'image': './static/images/tube1.PNG',
+    'image': './static/images/tube-serum-shared.png',
     'name': 'tube21',
     'concept': specimenCollection.numToCid['0021'],
     'id': '0021',
@@ -219,7 +219,7 @@ const tube0004 = {
     'specimenType': 'EDTA Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'EDTA Tube',
-    'image': './static/images/tube3.PNG',
+    'image': './static/images/tube-edta-shared.png',
     'name': 'tube4',
     'concept': specimenCollection.numToCid['0004'],
     'id': '0004',
@@ -234,7 +234,7 @@ const tube0014 = {
     'specimenType': 'EDTA Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'EDTA Tube',
-    'image': './static/images/tube3.PNG',
+    'image': './static/images/tube-edta-shared.png',
     'name': 'tube14',
     'concept': specimenCollection.numToCid['0014'],
     'id': '0014',
@@ -249,7 +249,7 @@ const tube0024 = {
     'specimenType': 'EDTA Tube',
     'tubeType': 'Blood tube',
     'readableValue': 'EDTA Tube',
-    'image': './static/images/tube3.PNG',
+    'image': './static/images/tube-edta-shared.png',
     'name': 'tube24',
     'concept': specimenCollection.numToCid['0024'],
     'id': '0024',
@@ -325,19 +325,36 @@ const tube0009 = {
     'deviationChkBox': false
 };
 
-const tube0060 = {
-    'specimenType': 'Streck Tube',
-    'tubeType': 'Blood tube',
-    'readableValue': 'Streck Tube',
-    'image': './static/images/tube5.PNG',
-    'name': 'tube60',
-    'concept': specimenCollection.numToCid['0060'],
-    'id': '0060',
-    'tubeColor': 'Black-Tan',
-    'collectionChkBox': true,
-    'deviationChkBox': true,
-    'deviationOptions': deviationCollection2,
-    'tubeNotCollectedOptions': tubeNotCollectedOptions1
+/**
+ * Create Streck Tube object determined by workflow type
+ * @param {'research' | 'clinical'} workflowType - Must be 'research' or 'clinical'.
+ * @returns {object} tube object
+ */
+const createTube0060 = (workflowType) => {
+    const validTypes = ['research', 'clinical'];
+
+    if (!validTypes.includes(workflowType)) {
+        console.warn(
+            `[createTube0060] Invalid workflowType: '${workflowType}'. Expected 'research' or 'clinical'.`
+        );
+    }
+    
+    return {
+        'specimenType': 'Streck Tube',
+        'tubeType': 'Blood tube',
+        'readableValue': 'Streck Tube',
+        'image': `./static/images/tube-streck-${workflowType}.png`,
+        'name': 'tube60',
+        'concept': specimenCollection.numToCid['0060'],
+        'id': '0060',
+        'tubeColor': (workflowType === 'research') 
+            ? 'Dark-Tan' 
+            : 'Charcoal',
+        'collectionChkBox': true,
+        'deviationChkBox': true,
+        'deviationOptions': deviationCollection2,
+        'tubeNotCollectedOptions': tubeNotCollectedOptions1
+    };
 };
 
 export const workflows = {
@@ -347,7 +364,7 @@ export const workflows = {
         // tube0003, // Heparin tubes removed July 2025
         tube0004,
         // tube0005, // ACD tubes removed March 1, 2024
-        tube0060,
+        createTube0060('research'),
         tube0006,
         tube0007,
         tube0008,
@@ -365,7 +382,7 @@ export const workflows = {
         tube0014,
         tube0024,
         // tube0005, // ACD tubes removed March 1, 2024
-        tube0060,
+        createTube0060('clinical'),
         tube0006,
         tube0008
     ]
@@ -432,37 +449,9 @@ export const additionalTubeIDRequirement = {
     length: 4
 }
 
-export const tubes = [
-  tube0001,
-  tube0002,
-  tube0003,
-  tube0004,
-  tube0005,
-  tube0006,
-  tube0007,
-  tube0008,
-  tube0009,
-  tube0011,
-  tube0012,
-  tube0013,
-  tube0014,
-  tube0021,
-  tube0024,
-  tube0060,
-];
-
-
 export const getTubesToConceptsMap = () => ({ ...specimenCollection.numToCid });
 
 export const getConceptsToTubesMap = () => ({ ...specimenCollection.cidToNum });
-
-export const getTubeList = () => {
-  return tubes.map((tube) => tube.id);
-};
-
-export const getConceptList = () => {
-  return tubes.map((tube) => tube.concept);
-};
 
 const getUniqueDeviationReasonsList = () => {
     const sumDeviationCollections = [...deviationCollection1, ...deviationCollection2, ...deviationCollection3, ...deviationCollection4];
@@ -475,5 +464,6 @@ const getUniqueDeviationReasonsList = () => {
             return true;
         }
     })
-}
+};
+
 export const deviationReasons = getUniqueDeviationReasonsList();
