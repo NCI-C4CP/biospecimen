@@ -42,33 +42,8 @@ const packageReceiptTemplate = async (name) => {
                 </div>
             </div>
 
-            <div class="row mb-3">
-                <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
-                    <select required class="form-select" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
-                        <option id="select-dashboard" value="">-- Select Package Condition --</option>
-                        <option id="select-packageGoodCondition" value=${fieldMapping.packageGood}>Package in good condition</option>
-                        <option id="select-noIcePack" value=${fieldMapping.coldPacksNone}>No Ice Pack</option>
-                        <option id="select-warmIcePack" value=${fieldMapping.coldPacksWarm}>Warm Ice Pack</option>
-                        <option id="select-incorrectMaterialTypeSent" value=${fieldMapping.vialsIncorrectMaterialType}>Vials - Incorrect Material Type Sent</option>
-                        <option id="select-noLabelonVials" value=${fieldMapping.vialsMissingLabels}>No Label on Vials</option>
-                        <option id="select-returnedEmptyVials" value=${fieldMapping.vialsEmpty}>Returned Empty Vials</option>
-                        <option id="select-participantRefusal" value=${fieldMapping.participantRefusal}>Participant Refusal</option>
-                        <option id="select-crushed" value=${fieldMapping.crushed}>Crushed</option>
-                        <option id="select-damagedContainer" value=${fieldMapping.damagedContainer}>Damaged Container (outer and inner)</option>
-                        <option id="select-materialThawed" value=${fieldMapping.materialThawed}>Material Thawed</option>
-                        <option id="select-insufficientIce" value=${fieldMapping.coldPacksInsufficient}>Insufficient Ice</option>
-                        <option id="select-improperPackaging" value=${fieldMapping.improperPackaging}>Improper Packaging</option>
-                        <option id="select-damagedVials" value=${fieldMapping.damagedVials}>Damaged Vials</option>
-                        <option id="select-other" value=${fieldMapping.other}>Other</option>
-                        <option id="select-noPreNotification" value=${fieldMapping.noPreNotification}>No Pre-notification</option>
-                        <option id="select-noRefrigerant" value=${fieldMapping.noRefrigerant}>No Refrigerant</option>
-                        <option id="select-infoDoNotMatch" value=${fieldMapping.manifestDoNotMatch}>Manifest/Vial/Paperwork info do not match</option>
-                        <option id="select-shipmentDelay" value=${fieldMapping.shipmentDelay}>Shipment Delay</option>
-                        <option id="select-noManifestProvided" value=${fieldMapping.manifestNotProvided}>No Manifest provided</option>
-                    </select>
-                </div>
-            </div>
+            <!-- Create package condition select dropdown  (Delete this comment later)-->
+            ${createPackageConditionSelect(packageConditions)}
 
             <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
@@ -840,5 +815,89 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
         <div class="row" style="display:flex; justify-content:center;">
             <button type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Close</button>
         </div>
+    `;
+};
+
+const packageConditions  = [
+    {
+        value: fieldMapping.packageGood,
+        text: 'Package in Good Condition (shipper and specimens)'
+    },
+    {
+        value: fieldMapping.manifestDoNotMatch,
+        text: 'Manifest/Vial/Paperwork info do not match'
+    },
+    {
+        value: fieldMapping.improperPackaging,
+        text: 'Improper Packaging (i.e. missing cold packs, filler, etc)'
+    },
+    {
+        value: fieldMapping.coldPacksWarm,
+        text: 'Cold Packs - Warm'
+    },
+    {
+        value: fieldMapping.damagedVials,
+        text: 'Damaged Vials'
+    },
+    {
+        value: fieldMapping.vialsEmpty,
+        text: 'Returned Empty Vials'
+    },
+    {
+        value: fieldMapping.vialsMissingLabels,
+        text: 'No Connect Label on Vials'
+    },
+    {
+        value: fieldMapping.shipmentDelay,
+        text: 'Shipment Delay'
+    },
+    {
+        value: fieldMapping.damagedContainer,
+        text: 'Damaged Shipper (outer and/or inner)'
+    },
+    {
+        value: fieldMapping.other,
+        text: 'Other'
+    }
+];
+
+const createPackageConditionSelect = (packageConditions) => { 
+    console.log("packageConditions", packageConditions);
+
+    // add a variable to add element options 
+    let conditionOptions;
+
+    // In the scenario where there are no options
+    if (packageConditions.length === 0) { 
+        conditionOptions = `<option value="" disabled>No Package Conditions Available</option>`;
+    }
+
+    // Add condition to check if packageConditions array has items
+    if (packageConditions.length > 0) {
+        const addOptionsToSelect = () => {
+            
+            // make a loop to create option elements 
+            // for each item in the loop add a value attribute and a text
+            for (const {value, text} of packageConditions) {
+                // destructuring option 
+                conditionOptions += `<option value="${value}">${text}</option>`
+            }
+
+        }
+        addOptionsToSelect();
+
+        console.log("conditionOptions", conditionOptions);
+    }
+    
+
+    return `
+        <div class="row mb-3">
+            <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
+            <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                <select required class="form-select" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
+                    ${conditionOptions}
+                </select>
+            </div>
+        </div>    
     `;
 };
