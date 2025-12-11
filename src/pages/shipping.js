@@ -256,7 +256,7 @@ const populateBoxesToShipTable = () => {
             const boxLocation = currBox.boxData[conceptIds.shippingLocation] ? locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]["siteSpecificLocation"] : '';
             const numTubesInBox = bagKeys.reduce((total, bagKey) => total + currBox[bagKey]['arrElements'].length, 0);
 
-            if (numTubesInBox > 0) {   
+            if (numTubesInBox > 0) {
                 const currRow = table.insertRow(rowCount + 1);
                 currRow.style['background-color'] = rowCount % 2 === 1 ? 'lightgrey' : '';
                 currRow.innerHTML += renderBoxesToShipRow(boxStartedTimestamp, boxLastModifiedTimestamp, box, boxLocation, numTubesInBox);
@@ -269,7 +269,7 @@ const populateBoxesToShipTable = () => {
             }
         });
     }
-}
+};
 
 const populateShippingBoxContentsRows = (bagNum, cellNum, row, currBagId, fullTubeId, tubeType) => {
     bagNum % 2 === 1 ? row.style['background-color'] = 'lightgrey' : row.style['background-color'] = 'white'; {
@@ -490,7 +490,6 @@ const getLargestLocationBoxId = (boxesList, siteLocationId) => {
     const boxIdsForLocation = boxesList.filter(box => box[conceptIds.shippingLocation] === siteLocationId).map(box => parseInt(box[conceptIds.shippingBoxId].substring(3)));
     return boxIdsForLocation.length > 0 ? Math.max(...boxIdsForLocation) : -1;
 }
-
 export const generateBoxManifest = (currBox) => {
     const currInstitute = currBox.boxData.siteAcronym || getSiteAcronym();
     const currShippingLocationNumberObj = locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]
@@ -500,7 +499,6 @@ export const generateBoxManifest = (currBox) => {
     const navBarBoxManifestBtn = document.getElementById('navBarBoxManifest');
     navBarBoxManifestBtn.classList.add('active');
     document.getElementById('contentBody').innerHTML = renderBoxManifestTemplate(currInstitute, currLocation);
-
     populateBoxManifestHeader(currBox, currShippingLocationNumberObj);
     populateBoxManifestTable(currBox);
     document.getElementById('printBox').addEventListener('click', e => {
@@ -509,7 +507,7 @@ export const generateBoxManifest = (currBox) => {
     });
 
     addEventReturnToPackaging();
-}
+};
 
 export const populateBoxManifestHeader = (currBox, currShippingLocationNumberObj) => {
     if(!currBox) return;
@@ -825,16 +823,24 @@ const populateBoxManifestTable = (currBox) => {
     bagList.forEach((bagKey, bagIndex) => {
         const bagIndexStart = bagIndex + 1;
         const tubesList = currBox[bagKey].arrElements;
+        
         for (let i = 0; i < tubesList.length; i++) {
             const tubeDetail = currBox[bagKey].specimenDetails[tubesList[i]];
             const currRow = boxManifestTable.insertRow(i + 1);
             const fullTubeId = tubesList[i];
             const tubeId = fullTubeId.split(' ');
-            let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) ? translateNumToType[tubeId[1]] : 'N/A';
+
+            let tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, tubeId[1]) 
+                ? translateNumToType[tubeId[1]] 
+                : 'N/A';
+
             if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj, fullTubeId)) {
                 let [,originalTubeId] = replacementTubeLabelObj[fullTubeId].split(' '); 
-                tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) ? translateNumToType[originalTubeId] : tubeTypeAndColor;
+                tubeTypeAndColor = Object.prototype.hasOwnProperty.call(translateNumToType, originalTubeId) 
+                    ? translateNumToType[originalTubeId] 
+                    : tubeTypeAndColor;
             }
+
             currRow.insertCell(0).innerHTML = i === 0 ? bagKey : '';
             currRow.insertCell(1).innerHTML = tubesList[i];
             currRow.insertCell(2).innerHTML = tubeTypeAndColor;
@@ -842,7 +848,7 @@ const populateBoxManifestTable = (currBox) => {
             addDeviationTypeCommentsContent(tubeDetail, currRow, bagIndexStart);
         };
     });
-}
+};
 
 const sortSpecimenKeys = (a, b) => {
     const numA = parseInt(a.split(' ')[0].substring(3));

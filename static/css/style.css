@@ -577,6 +577,11 @@ canvas.drawingBuffer {
         size: a3
     }
 
+    html, body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     body {
         min-width: 992px !important
     }
@@ -627,4 +632,9 @@ canvas.drawingBuffer {
 #xlsxCheck,
 #csvCheck {
     border: 1px solid #444;
+}
+
+.tube-image {
+    height: 43px;
+    width: 186px;
 }
