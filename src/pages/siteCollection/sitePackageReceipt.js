@@ -879,7 +879,15 @@ const createPackageConditionSelect = (packageConditions) => {
         <div class="row mb-3">
             <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
             <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
-                <select required class="form-select" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
+                <select 
+                    required 
+                    class="form-select" 
+                    id="packageCondition" 
+                    style="width:100%" 
+                    multiple="multiple" 
+                    data-selected="[]" 
+                    data-initial-value="[]"
+                >
                     ${conditionOptions}
                 </select>
             </div>
