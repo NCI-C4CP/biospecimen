@@ -7,6 +7,15 @@ import { confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
 
 let hasUnsavedChanges = false;
 
+const escapeHtml = (unsafe) => {
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 export const packageReceiptScreen = async (auth, route) => {
   const user = auth.currentUser;
   if (!user) return;
@@ -41,7 +50,7 @@ const packageReceiptTemplate = async (name) => {
                     </div>
                 </div>
             </div>
-            < !-- Package Condition Select Section -- > 
+            <!-- Package Condition Select Section --> 
             ${createPackageConditionSelect(packageConditions)}
 
             <div class="row mb-3">
@@ -871,8 +880,8 @@ const packageConditions  = [
 const createPackageConditionSelect = (packageConditions) => { 
     let conditionOptions = packageConditions.length === 0 
         ? `<option value="" disabled>No Package Conditions Available</option>`
-        : packageConditions.map(({ value,text }) => 
-            `<option value="${value}">${text}</option>`
+        : packageConditions.map(({ value, text }) => 
+            `<option value="${escapeHtml(value)}">${escapeHtml(text)}</option>`
           ).join("")
     
     return `
