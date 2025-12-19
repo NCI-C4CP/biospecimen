@@ -41,8 +41,7 @@ const packageReceiptTemplate = async (name) => {
                     </div>
                 </div>
             </div>
-
-            <!-- Create package condition select dropdown  (Delete this comment later)-->
+            < !-- Package Condition Select Section -- > 
             ${createPackageConditionSelect(packageConditions)}
 
             <div class="row mb-3">
@@ -861,6 +860,14 @@ const packageConditions  = [
     }
 ];
 
+/**
+ * Creates a multi-select dropdown section for package conditions. 
+ * Loop through the packageConditions array and create an option element for each condition with its value and text.
+ * If the array is empty, display a disabled option indicating no package conditions are available.
+ * Return the complete HTML string for the select section.
+ * @param {Array} packageConditions - An array of package condition objects with 'value' and 'text' properties.
+ * @returns {string} - HTML string for the package condition select section.
+*/
 const createPackageConditionSelect = (packageConditions) => { 
     let conditionOptions = packageConditions.length === 0 
         ? `<option value="" disabled>No Package Conditions Available</option>`
