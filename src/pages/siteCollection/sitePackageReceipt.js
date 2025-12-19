@@ -862,34 +862,12 @@ const packageConditions  = [
 ];
 
 const createPackageConditionSelect = (packageConditions) => { 
-    console.log("packageConditions", packageConditions);
-
-    // add a variable to add element options 
-    let conditionOptions;
-
-    // In the scenario where there are no options
-    if (packageConditions.length === 0) { 
-        conditionOptions = `<option value="" disabled>No Package Conditions Available</option>`;
-    }
-
-    // Add condition to check if packageConditions array has items
-    if (packageConditions.length > 0) {
-        const addOptionsToSelect = () => {
-            
-            // make a loop to create option elements 
-            // for each item in the loop add a value attribute and a text
-            for (const {value, text} of packageConditions) {
-                // destructuring option 
-                conditionOptions += `<option value="${value}">${text}</option>`
-            }
-
-        }
-        addOptionsToSelect();
-
-        console.log("conditionOptions", conditionOptions);
-    }
+    let conditionOptions = packageConditions.length === 0 
+        ? `<option value="" disabled>No Package Conditions Available</option>`
+        : packageConditions.map(({ value,text }) => 
+            `<option value="${value}">${text}</option>`
+          ).join("")
     
-
     return `
         <div class="row mb-3">
             <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
