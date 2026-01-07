@@ -443,6 +443,7 @@ export const conceptIds = {
     collectionDateTimeStamp: 678166505,
     collectionCardFlag: 137401245,
     collectionAddtnlNotes: 260133861,
+    unexpectedCollectionDateConfirm: 858101893,
     pkgComments: 870456401,
     kitPkgComments: 755095663
 
