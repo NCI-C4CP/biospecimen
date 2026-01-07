@@ -826,7 +826,7 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
     `;
 };
 
-const packageConditions  = [
+export const packageConditions = [
     {
         value: fieldMapping.packageGood,
         text: 'Package in Good Condition (shipper and specimens)'
