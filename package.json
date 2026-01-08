@@ -4,7 +4,7 @@
   "description": "Connect 4 Cancer Bio-Specimen Dashboard.",
   "main": "index.js",
   "directories": {
-    "test": "test"
+    "test": "tests"
   },
   "scripts": {
     "lint": "eslint \"src/**/*.js\" \"tests/**/*.js\" index.js serviceWorker.js",
@@ -17,7 +17,7 @@
   "devDependencies": {
     "chai": "^6.0.1",
     "esbuild": "^0.27.2",
-    "esbuild-register": "3.6",
+    "esbuild-register": "^3.6.0",
     "jsdom": "^24.1.3",
     "mocha": "^11.7.2"
   }

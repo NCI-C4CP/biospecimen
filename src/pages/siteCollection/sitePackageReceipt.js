@@ -882,7 +882,7 @@ const createPackageConditionSelect = (packageConditions) => {
         ? `<option value="" disabled>No Package Conditions Available</option>`
         : packageConditions.map(({ value, text }) => 
             `<option value="${escapeHtml(value)}">${escapeHtml(text)}</option>`
-          ).join("")
+          ).join("");
     
     return `
         <div class="row mb-3">
