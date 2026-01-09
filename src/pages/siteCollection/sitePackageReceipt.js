@@ -691,9 +691,10 @@ export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl
     `;
 }
 
-export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
+export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate) => {
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
+    const collectionDateEntered = document.getElementById("dateCollectionCard")?.value;
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
@@ -720,7 +721,39 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
     `;
 
     displaySelectedPackageConditionList(parseSelectPackageConditionsList);
-    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt);
+    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered);
+}
+
+const displayConfirmPossibleInvalidDateModal = (modalHeaderEl,modalBodyEl, collectionDateEntered) => {
+    const formattedCollectionDate = new Date(collectionDateEntered).toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+    });
+    modalHeaderEl.innerHTML = `
+        <h5>Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+    `;
+    modalBodyEl.innerHTML = `
+        <div>
+            <div>Check collection date, possible invalid entry.</div>
+            <div class="fw-bold">Collection Date Entered: ${formattedCollectionDate}</div>
+            <br >
+            <div style="display:inline-block;">
+                <div class="row">
+                    <div class="col-5">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</strong> confirmed. Return to Kit Receipt.</button>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-5">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="confirmReceipt" target="_blank">Collection date confirmed. Confirm Kit Receipt.</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitReceipt) => {
@@ -752,12 +785,16 @@ const displaySelectedPackageConditionList = (parseSelectPackageConditionsList) =
     }
 }
 
-const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
+const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered) => {
     const confirmPackageConditionButtondocument = document.getElementById("confirmPackageConditionButton");
     confirmPackageConditionButtondocument.addEventListener("click", async () => {
-        displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
+        if (isKitReceipt && questionableCollectionDate) {
+            displayConfirmPossibleInvalidDateModal(modalHeaderEl,modalBodyEl, collectionDateEntered);
+        } else {
+            displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
+        }
         if (isKitReceipt) { 
-            confirmKitReceipt(); 
+            confirmKitReceipt(questionableCollectionDate); 
         } else { 
             confirmPackageReceipt(); 
         }
@@ -798,13 +835,43 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
         && isNonEmptyString(dateReceived);
 };
 
+export const validateCollectionDate = async () => {
+    const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
+    const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
+    const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
+    const timeCollectionCard = document.getElementById("timeCollectionCard")?.value;
+
+    const collectionDateTimestamp = dateCollectionCard + 'T' + timeCollectionCard + ':00.000Z';
+
+    try {
+        const idToken = await getIdToken();
+        const response = await fetch(`${baseAPI}api=validateKitReceiptCollectionDate&collectionDateTimestamp=${collectionDateTimestamp}&receivedDateTime=${receivedDateTime}&returnKitTrackingNum=${returnKitTrackingNum}`, {
+            method: "get",
+            headers: {
+                Authorization: "Bearer " + idToken
+            }
+        });
+        const responseData = await response.json();
+        if(responseData.code === 200) {
+            return !response.response;
+        } else {
+            throw new Error(responseData.message);
+        }
+
+    } catch(err) {
+        console.error('Error', err);
+        throw new Error('Error validating package information: ' + err.message);
+    }
+
+}
+
 const handleUnsavedChangesListeners = (hasUnsavedChanges) => {
     setupLeavingPageMessage(hasUnsavedChanges);
     toggleClearFormBtnListener(hasUnsavedChanges);
     toggleBeforeUnloadListener(hasUnsavedChanges);
 };
 
-export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage) => {
+export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage, callback) => {
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
@@ -821,9 +888,16 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-danger col-auto" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</em> confirmed. Return to Kit Receipt.</button>
+            <button type="button" id="confirm-collection-date" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Collection date confirmed. Confirm kit receipt.</button>
         </div>
     `;
+
+    if(callback) {
+        const confirmBtn = document.getElementById('confirm-collection-date');
+        confirmBtn.addEventListener('click', callback);
+
+    }
 };
 
 export const packageConditions = [
