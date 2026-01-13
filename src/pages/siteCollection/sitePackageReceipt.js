@@ -728,7 +728,9 @@ const displayConfirmPossibleInvalidDateModal = (modalHeaderEl,modalBodyEl, colle
     const formattedCollectionDate = new Date(collectionDateEntered).toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
+        // Because the timezone in the timestamp is UTC, we must specify UTC
+        timeZone: "UTC"
     });
     modalHeaderEl.innerHTML = `
         <h5>Confirmation</h5>
