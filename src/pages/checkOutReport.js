@@ -12,7 +12,6 @@ export const checkOutReportTemplate = (auth, route) => {
                 restrictNonBiospecimenUser();
                 return;
             }
-            if(!response.role) return;
             renderCheckOutReport();
         }
         else {
