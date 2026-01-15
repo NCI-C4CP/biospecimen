@@ -450,18 +450,18 @@ export const conceptIds = {
 };
 
 export const packageConditionConversion = {
-    679749262: "Package in good condition",
+    679749262: "Package in Good Condition (shipper and specimens)",
     405513630: "No Ice Pack",
-    595987358: "Warm Ice Pack",
+    595987358: "Cold Packs - Warm",
     200183516: "Vials - Incorrect Material Type Sent",
-    399948893: "No Label on Vials",
+    399948893: "No Connect Label on Vials",
     631290535: "Returned Empty Vials",
     442684673: "Participant Refusal",
     121149986: "Crushed",
     678483571: "Damaged Container (outer and inner)",
     289322354: "Material Thawed",
     909529446: "Insufficient Ice",
-    847410060: "Improper Packaging",
+    847410060: "Improper Packaging (i.e. missing cold packs, filler, etc)",
     387564837: "Damaged Vials",
     933646000: "Other",
     842171722: "No Pre-notification",
