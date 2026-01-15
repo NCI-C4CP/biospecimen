@@ -131,7 +131,7 @@ describe('packageConditionConversion mapping', () => {
             '595987358': 'Cold Packs - Warm',
             '613022284': 'No Refrigerant',
             '631290535': 'Returned Empty Vials',
-            '678483571': 'Damaged Container (outer and inner)',
+            '678483571': 'Damaged Shipper (outer and/or inner)',
             '679749262': 'Package in Good Condition (shipper and specimens)',
             '842171722': 'No Pre-notification',
             '847410060': 'Improper Packaging (i.e. missing cold packs, filler, etc)',
