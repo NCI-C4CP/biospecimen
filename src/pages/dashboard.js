@@ -10,7 +10,6 @@ export const userDashboard = (auth, route, goToSpecimenSearch) => {
                 restrictNonBiospecimenUser();
                 return;
             }
-            if(!response.role) return;
             searchTemplate(goToSpecimenSearch);
         }
         else {

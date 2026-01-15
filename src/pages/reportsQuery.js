@@ -12,7 +12,6 @@ export const reportsQuery = (auth, route) => {
                 restrictNonBiospecimenUser();
                 return;
             }
-            if (!response.role) return;
             
             appState.setState({
                 reportData: {
