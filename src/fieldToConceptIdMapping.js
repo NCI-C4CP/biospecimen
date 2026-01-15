@@ -458,7 +458,7 @@ export const packageConditionConversion = {
     631290535: "Returned Empty Vials",
     442684673: "Participant Refusal",
     121149986: "Crushed",
-    678483571: "Damaged Container (outer and inner)",
+    678483571: "Damaged Shipper (outer and/or inner)",
     289322354: "Material Thawed",
     909529446: "Insufficient Ice",
     847410060: "Improper Packaging (i.e. missing cold packs, filler, etc)",
