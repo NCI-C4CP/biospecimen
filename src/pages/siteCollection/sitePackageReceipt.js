@@ -837,6 +837,10 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
         && isNonEmptyString(dateReceived);
 };
 
+/**
+ * Returns false if date is valid and true if not.
+ * @returns boolean
+ */
 export const validateCollectionDate = async () => {
     const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
     const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
@@ -855,7 +859,7 @@ export const validateCollectionDate = async () => {
         });
         const responseData = await response.json();
         if(responseData.code === 200) {
-            return !response.response;
+            return !responseData.response;
         } else {
             throw new Error(responseData.message);
         }
