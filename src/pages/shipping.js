@@ -18,7 +18,6 @@ export const shippingDashboard = (auth, route) => {
                 document.getElementById("navbarNavAltMarkup").innerHTML = unAuthorizedUser();
                 return;
             }
-            if (!responseData.role) return;
             startShipping(user.displayName || user.email || responseData.email);
         }
         else {

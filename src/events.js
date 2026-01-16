@@ -1,5 +1,5 @@
 import {
-    appState, performSearch, showAnimation, addBiospecimenUsers, getSpecimensByCollectionIds, hasObjectChanged, getAddedStrayTubes, hideAnimation, showNotifications, biospecimenUsers, removeBiospecimenUsers, findParticipant,
+    appState, performSearch, showAnimation, getSpecimensByCollectionIds, hasObjectChanged, getAddedStrayTubes, hideAnimation, showNotifications, findParticipant,
     errorMessage, removeAllErrors, storeSpecimen, updateSpecimen, searchSpecimen, generateBarCode, updateBox,
     ship, disableInput, updateNewTempDate, getSiteTubesLists, getWorkflow, fixMissingTubeData,
     getSiteCouriers, getPage, getNumPages, removeSingleError, displayManifestContactInfo, checkShipForage, checkAlertState, retrieveDateFromIsoString,
@@ -13,7 +13,6 @@ import { searchTemplate, searchBiospecimenTemplate } from './pages/dashboard.js'
 import { showReportsManifest } from './pages/reportsQuery.js';
 import { addNewBox, buildSpecimenDataInModal, createShippingModalBody, startShipping, generateBoxManifest, populateViewShippingBoxContentsList,
         renderShippingModalHeader, generateShippingManifest, finalShipmentTracking, populateModalSelect, prepareBoxToUpdate, processCheckedModalElements, shipmentTracking, updateBoxListModalUIValue } from './pages/shipping.js';
-import { userListTemplate } from './pages/users.js';
 import { checkInTemplate } from './pages/checkIn.js';
 import { specimenTemplate } from './pages/specimen.js';
 import { tubeCollectedTemplate } from './pages/collectProcess.js';
@@ -379,91 +378,6 @@ export const addEventHideNotification = (element) => {
         });
         setTimeout(() => { btn.dispatchEvent(new Event('click')) }, 8000);
     });
-}
-
-export const addEventModalBtn = (role, userEmail) => {
-    const btn = document.getElementById("modalBtn");
-    btn.addEventListener('click', () => {
-        const header = document.getElementById('biospecimenModalHeader');
-        const body = document.getElementById('biospecimenModalBody');
-        header.innerHTML = `<h5 class="modal-title">Add user</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            </button>`;
-
-        body.innerHTML = `
-            <form id="addNewUser" method="POST">
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Name</label>
-                    <input class="form-control" required type="name" autocomplete="off" id="userName" placeholder="Enter name"/>
-                </div>
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Email</label>
-                    <input class="form-control" required autocomplete="off" type="email" autocomplete="off" id="userEmail" placeholder="Enter name"/>
-                </div>
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Role</label>
-                    <select class="form-control" required id="userRole">
-                        <option value="">-- Select role --</option>
-                        ${role === 'admin' ? `
-                            <option value="manager">Manager</option>
-                            <option value="user">User</option>
-                        ` : `
-                            <option value="user">User</option>
-                        `}
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-outline-primary">Add</button>
-                </div>
-            </form>
-        `;
-        addEventNewUserForm(userEmail);
-    })
-};
-
-const addEventNewUserForm = (userEmail) => {
-    const form = document.getElementById('addNewUser');
-    form.addEventListener('submit', async e => {
-        e.preventDefault();
-        const array = [];
-        let data = {};
-        data['name'] = document.getElementById('userName').value;
-        data['email'] = document.getElementById('userEmail').value;
-        data['role'] = document.getElementById('userRole').value;
-        array.push(data)
-        showAnimation();
-        const response = await addBiospecimenUsers(array);
-        if (response.code === 200) {
-            showNotifications({ title: 'New user added!', body: `<b>${data.email}</b> is added as <b>${data.role}</b>` });
-            form.reset();
-            const users = await biospecimenUsers();
-            hideAnimation();
-            if (users.code === 200 && users.data.users.length > 0) {
-                document.getElementById('usersList').innerHTML = userListTemplate(users.data.users, userEmail);
-                addEventRemoveUser();
-            }
-        }
-        else if (response.code === 400 && response.message === 'User with this email already exists') {
-            hideAnimation();
-            showNotifications({ title: 'User already exists!', body: `User with email: <b>${data.email}</b> already exists` });
-        }
-    })
-}
-
-export const addEventRemoveUser = () => {
-    const elements = document.getElementsByClassName('fa-user-minus');
-    Array.from(elements).forEach(element => {
-        element.addEventListener('click', async () => {
-            const email = element.dataset.email;
-            showAnimation();
-            const response = await removeBiospecimenUsers(email);
-            hideAnimation();
-            if (response.code === 200) {
-                element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
-                showNotifications({ title: 'User removed!', body: `User with email <b>${email}</b> is removed.` });
-            }
-        })
-    })
 }
 
 export const addGoToCheckInEvent = () => {

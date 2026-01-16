@@ -2,7 +2,6 @@ import { inactivityTime, urls, appState } from "./src/shared.js";
 import { firebaseConfig as devFirebaseConfig } from "./src/dev/config.js";
 import { firebaseConfig as stageFirebaseConfig } from "./src/stage/config.js";
 import { firebaseConfig as prodFirebaseConfig } from "./src/prod/config.js";
-import { manageUsers } from "./src/pages/users.js";
 import { userDashboard } from "./src/pages/dashboard.js";
 import { shippingDashboard } from "./src/pages/shipping.js";
 import { reportsQuery } from "./src/pages/reportsQuery.js";
@@ -140,7 +139,6 @@ const manageRoutes = async () => {
         else if (route === "#checkoutReport") checkOutReportTemplate(auth, route);
         else if (route === "#dailyReport") dailyReportTemplate(auth, route);
         else if (route === "#bptlShipReports") bptlShipReportsScreen(auth, route);
-        else if (route === "#manage_users") manageUsers(auth, route);
         else if (route === "#sign_out") signOut();
         else window.location.hash = "#welcome";
     } else {

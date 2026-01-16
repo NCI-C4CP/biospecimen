@@ -12,7 +12,6 @@ export const dailyReportTemplate = (auth, route) => {
                 restrictNonBiospecimenUser();
                 return;
             }
-            if(!response.role) return;
             renderDailyReport();
         }
         else {
