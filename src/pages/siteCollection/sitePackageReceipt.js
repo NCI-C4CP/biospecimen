@@ -838,10 +838,10 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
 };
 
 /**
- * Returns false if date is valid and true if not.
+ * Returns true if date is valid and false if not.
  * @returns boolean
  */
-export const validateCollectionDate = async () => {
+export const isCollectionDateValid = async () => {
     const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
     const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
     const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
@@ -859,7 +859,7 @@ export const validateCollectionDate = async () => {
         });
         const responseData = await response.json();
         if(responseData.code === 200) {
-            return !responseData.response;
+            return responseData.data;
         } else {
             throw new Error(responseData.message);
         }
