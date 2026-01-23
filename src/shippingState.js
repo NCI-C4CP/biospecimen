@@ -1,4 +1,4 @@
-import { appState, getSiteAcronym, siteSpecificLocationToConceptId } from './shared.js';
+import { appState, getSiteAcronym, siteSpecificLocationToConceptId, getBagList, getBagConceptId } from './shared.js';
 import { specimenCollection } from './tubeValidation.js';
 import { conceptIds } from './fieldToConceptIdMapping.js';
 
@@ -11,6 +11,7 @@ import { conceptIds } from './fieldToConceptIdMapping.js';
  * @param {string} userName - the name of the logged in user
  */
 export const setAllShippingState = (availableCollectionsObj, availableLocations, allBoxesList, finalizedSpecimenList, userName, replacementTubeLabelObj) => {
+    console.log('setAllShippingState');
     const boxesByProviderList = filterUnshippedBoxes(allBoxesList);
     const boxesByLocationList = filterBoxListBoxesByLocation(boxesByProviderList);
     const providerBoxesObj = createBoxAndBagsObj(boxesByProviderList);
@@ -78,15 +79,17 @@ export const updateShippingStateAddBagToBox = (boxId, bagId, boxToUpdate, update
  * @param {*} bagsToMove - the bags being removed from the box
  */
 const addBagToAvailableCollections = (boxId, bagId, bagsToMove) => {
+    console.error('Back Track HERE');
     const availableCollectionsObj = appState.getState().availableCollectionsObj;
     const detailedProviderBoxes = appState.getState().detailedProviderBoxes;
 
     if (bagId === 'unlabelled') {
-        const collectionToMove = detailedProviderBoxes[boxId]['unlabelled'].arrElements;
+        const collectionToMove = detailedProviderBoxes[boxId]['unlabelled'][conceptIds.tubesCollected];
         availableCollectionsObj['unlabelled'].push(...collectionToMove);
     } else {
         for (const bagLabel of bagsToMove) {
-            const collectionToMove = detailedProviderBoxes[boxId][bagLabel].arrElements;
+            const bagConceptId = getBagConceptId(detailedProviderBoxes[boxId], bagLabel);
+            const collectionToMove = detailedProviderBoxes[boxId][bagConceptId][conceptIds.tubesCollected];
             const tubeIdArray = collectionToMove.map(tubeId => tubeId.slice(-4));
     
             availableCollectionsObj[bagLabel] = tubeIdArray;
@@ -107,7 +110,8 @@ const removeBagFromBox = (boxId, bagId, bagsToMove) => {
         }
 
         bagsToMove.forEach(bagLabel => {
-            delete allBoxesList[boxIndex].bags[bagLabel];
+            const bagConceptId = getBagConceptId(allBoxesList[boxIndex], bagLabel);
+            delete allBoxesList[boxIndex][bagConceptId];
         });
 
         appState.setState({
@@ -161,9 +165,10 @@ const addBagToBox = (boxId, bagId, boxToUpdate) => {
 
 const getStrayTubesFromUncheckedModalBoxes = (boxToUpdate, bagId) => {
     const availableCollectionsObj = appState.getState().availableCollectionsObj;
-    const tubesInBoxArray = (boxToUpdate.bags[bagId]?.arrElements ?? []).map(tubeId => tubeId.slice(-4));
+    const bagConceptId = getBagConceptId(boxToUpdate, bagId);
+    const tubesInBoxArray = (bagConceptId && boxToUpdate[bagConceptId] && boxToUpdate[bagConceptId][conceptIds.tubesCollected] ? boxToUpdate[bagConceptId][conceptIds.tubesCollected] : []).map(tubeId => tubeId.slice(-4));
     if (tubesInBoxArray.length === 0) return [];
-    const tubesInAvailableCollectionsList = availableCollectionsObj[bagId];
+    const tubesInAvailableCollectionsList = availableCollectionsObj[bagId] || [];
     const strayTubesForCurrentCollection = tubesInAvailableCollectionsList.filter(tube => !tubesInBoxArray.includes(tube));
     return [...strayTubesForCurrentCollection.map(tubeId => `${bagId.split(' ')[0]} ${tubeId}`)];
 }
@@ -238,9 +243,11 @@ const filterBoxListBoxesByLocation = (boxList) => {
 const createBoxAndBagsObj = (boxList) => {
     return boxList.reduce((createdObj, boxInList) => {
         const boxId = boxInList[conceptIds.shippingBoxId];
-        const bags = { ...boxInList['bags'] };
-
-        delete bags['undefined'];
+        const bagIds = getBagList(boxInList);
+        let bags = {};
+        bagIds.forEach(bagId => {
+            bags[bagId] = boxInList[bagId];
+        });
 
         if (boxId) {
             createdObj[boxId] = bags;
@@ -252,13 +259,13 @@ const createBoxAndBagsObj = (boxList) => {
 
 /**
  * Add specimen details to the box object. This is used in generateBoxManifest.
- * @param {object} boxAndBagsObj - the basic box object with bag ids and tube ids (arrElements)
+ * @param {object} boxAndBagsObj - the basic box object with bag ids and tube ids (conceptIds.tubesCollected)
  * @param {object} finalizedSpecimenList - the list of specimen data where finalized === true
  * @returns {object} - the box object with specimen details added
  * iterate through the box object, focusing on each bag in the box.
- * for each bag, find the specimen bag id (first element in the arrElements array)
+ * for each bag, find the specimen bag id (first element in the conceptIds.tubesCollected array)
  * find the specimen details for that specimen bag id in the finalizedSpecimenList
- * add the specimen details to the box object (collectionId, healthcareProvider, collectionLocation, collection.note, and detailed specimen data for each specimenId in arrElements)
+ * add the specimen details to the box object (collectionId, healthcareProvider, collectionLocation, collection.note, and detailed specimen data for each specimenId in conceptIds.tubesCollected)
  */
 const addSpecimenDataToDetailBox = (boxAndBagsObj, finalizedSpecimenList) => {
     const specimenBagLookup = finalizedSpecimenList.reduce((acc, specimen) => {
@@ -271,8 +278,8 @@ const addSpecimenDataToDetailBox = (boxAndBagsObj, finalizedSpecimenList) => {
         for (let bagId in box) {
             const bag = box[bagId];
             const specimenDetails = boxAndBagsObj[boxObj][bagId]['specimenDetails'] = {};
-            if (bag.arrElements && bag.arrElements.length > 0) {
-                const specimenBagId = bag.arrElements[0].split(' ')[0];
+            if (bag[conceptIds.tubesCollected] && bag[conceptIds.tubesCollected].length > 0) {
+                const specimenBagId = bag[conceptIds.tubesCollected][0].split(' ')[0];
                 const foundSpecimenDetailsBag = specimenBagLookup[specimenBagId];
                 if (foundSpecimenDetailsBag) {
                     specimenDetails['collectionData'] = {
@@ -284,7 +291,7 @@ const addSpecimenDataToDetailBox = (boxAndBagsObj, finalizedSpecimenList) => {
                         [conceptIds.strayTubesList]: foundSpecimenDetailsBag[conceptIds.strayTubesList],
                     };
                     
-                    for (let specimenId of bag.arrElements) {
+                    for (let specimenId of bag[conceptIds.tubesCollected]) {
                         const specimenKey = specimenCollection.numToCid[specimenId.split(' ')[1]];    
                         specimenDetails[specimenId] = foundSpecimenDetailsBag[specimenKey] ?? {};
                     }
@@ -293,6 +300,7 @@ const addSpecimenDataToDetailBox = (boxAndBagsObj, finalizedSpecimenList) => {
             boxAndBagsObj[boxObj][bagId]['specimenDetails'] = specimenDetails;
         }
     }
+
 
     return boxAndBagsObj;
 }
