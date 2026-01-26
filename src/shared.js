@@ -1,4 +1,4 @@
-import { userNavBar, adminNavBar, nonUserNavBar, unAuthorizedUser } from "./navbar.js";
+import { userNavBar, nonUserNavBar, unAuthorizedUser } from "./navbar.js";
 import { searchResults } from "./pages/dashboard.js";
 import { generateShippingManifest } from "./pages/shipping.js";
 import { masterSpecimenIDRequirement, siteSpecificTubeRequirements, workflows, specimenCollection } from "./tubeValidation.js";
@@ -196,41 +196,6 @@ export const sendInstantNotification = async (requestData) => {
   return false;
 };
 
-export const biospecimenUsers = async () => {
-    const idToken = await getIdToken();
-    const response = await fetch(`${api}api=users`, {
-        method: "GET",
-        headers: {
-            Authorization:"Bearer "+idToken
-        }
-    });
-    return await response.json();
-}
-
-export const addBiospecimenUsers = async (data) => {
-    const idToken = await getIdToken();
-    const response = await fetch(`${api}api=addUsers`, {
-        method: "POST",
-        headers: {
-            Authorization:"Bearer "+idToken,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-    return await response.json();
-}
-
-export const removeBiospecimenUsers = async (email) => {
-    const idToken = await getIdToken();
-    const response = await fetch(`${api}api=removeUser&email=${email}`, {
-        method: "GET",
-        headers: {
-            Authorization:"Bearer "+idToken
-        }
-    });
-    return await response.json();
-}
-
 export const getIdToken = () => {
     return new Promise((resolve, reject) => {
         const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -263,8 +228,7 @@ export const userAuthorization = async (route, name) => {
     logAPICallEndDev('userAuthorization');
     if(response.code === 200) {
         const responseData = response.data;
-        if(responseData.role === 'admin' || responseData.role === 'manager') document.getElementById('navbarNavAltMarkup').innerHTML = adminNavBar(name || responseData.email);
-        else if(responseData.role === 'user') document.getElementById('navbarNavAltMarkup').innerHTML = userNavBar(name || responseData.email);
+        document.getElementById('navbarNavAltMarkup').innerHTML = userNavBar(name || responseData.email);
         toggleCurrentPage(route);
         hideAnimation();
         return responseData;
@@ -278,7 +242,7 @@ export const userAuthorization = async (route, name) => {
 
 
 export const toggleCurrentPage = async (route) => {
-    const IDs = ['dashboard', 'manageUsers', 'shipping', 'reports'];
+    const IDs = ['dashboard', 'shipping', 'reports'];
     IDs.forEach(id => {
         const element = document.getElementById(id);
         if(!element) return;
@@ -290,7 +254,6 @@ export const toggleCurrentPage = async (route) => {
     });
 
     if(route === '#dashboard') document.getElementById('dashboard') ? document.getElementById('dashboard').click() : '';
-    else if(route === '#manage_users') document.getElementById('manageUsers') ? document.getElementById('manageUsers').click() : '';
     else if(route === '#shipping') document.getElementById('shipping') ? document.getElementById('shipping').click() : '';
     else  if(route === '#reports') document.getElementById('reports') ? document.getElementById('reports').click() : '';
 }
@@ -2073,9 +2036,7 @@ export const healthProviderAbbrToConceptIdObj = {
     "nci": 13,
     "kpHI": 300267574,
     "kpGA": 327912200,
-    "kpCO": 125001209,
     "healthPartners" : 531629870,
-    "sanfordHealth": 657167265,
     "henryFordHealth": 548392715,
     "marshfieldClinic": 303349821,
     "uOfChicagoMed": 809703864,

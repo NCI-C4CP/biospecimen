@@ -7,6 +7,15 @@ import { confirmKitReceipt } from "../homeCollection/kitsReceipt.js";
 
 let hasUnsavedChanges = false;
 
+const escapeHtml = (unsafe) => {
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 export const packageReceiptScreen = async (auth, route) => {
   const user = auth.currentUser;
   if (!user) return;
@@ -41,34 +50,8 @@ const packageReceiptTemplate = async (name) => {
                     </div>
                 </div>
             </div>
-
-            <div class="row mb-3">
-                <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
-                <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
-                    <select required class="form-select" id="packageCondition"  style="width:100%" multiple="multiple" data-selected="[]" data-initial-value="[]">
-                        <option id="select-dashboard" value="">-- Select Package Condition --</option>
-                        <option id="select-packageGoodCondition" value=${fieldMapping.packageGood}>Package in good condition</option>
-                        <option id="select-noIcePack" value=${fieldMapping.coldPacksNone}>No Ice Pack</option>
-                        <option id="select-warmIcePack" value=${fieldMapping.coldPacksWarm}>Warm Ice Pack</option>
-                        <option id="select-incorrectMaterialTypeSent" value=${fieldMapping.vialsIncorrectMaterialType}>Vials - Incorrect Material Type Sent</option>
-                        <option id="select-noLabelonVials" value=${fieldMapping.vialsMissingLabels}>No Label on Vials</option>
-                        <option id="select-returnedEmptyVials" value=${fieldMapping.vialsEmpty}>Returned Empty Vials</option>
-                        <option id="select-participantRefusal" value=${fieldMapping.participantRefusal}>Participant Refusal</option>
-                        <option id="select-crushed" value=${fieldMapping.crushed}>Crushed</option>
-                        <option id="select-damagedContainer" value=${fieldMapping.damagedContainer}>Damaged Container (outer and inner)</option>
-                        <option id="select-materialThawed" value=${fieldMapping.materialThawed}>Material Thawed</option>
-                        <option id="select-insufficientIce" value=${fieldMapping.coldPacksInsufficient}>Insufficient Ice</option>
-                        <option id="select-improperPackaging" value=${fieldMapping.improperPackaging}>Improper Packaging</option>
-                        <option id="select-damagedVials" value=${fieldMapping.damagedVials}>Damaged Vials</option>
-                        <option id="select-other" value=${fieldMapping.other}>Other</option>
-                        <option id="select-noPreNotification" value=${fieldMapping.noPreNotification}>No Pre-notification</option>
-                        <option id="select-noRefrigerant" value=${fieldMapping.noRefrigerant}>No Refrigerant</option>
-                        <option id="select-infoDoNotMatch" value=${fieldMapping.manifestDoNotMatch}>Manifest/Vial/Paperwork info do not match</option>
-                        <option id="select-shipmentDelay" value=${fieldMapping.shipmentDelay}>Shipment Delay</option>
-                        <option id="select-noManifestProvided" value=${fieldMapping.manifestNotProvided}>No Manifest provided</option>
-                    </select>
-                </div>
-            </div>
+            <!-- Package Condition Select Section --> 
+            ${createPackageConditionSelect(packageConditions)}
 
             <div class="row mb-3">
                 <label class="col-form-label col-md-4" for="receivePackageComments">Comment</label>
@@ -708,9 +691,10 @@ export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl
     `;
 }
 
-export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
+export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate) => {
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
+    const collectionDateEntered = document.getElementById("dateCollectionCard")?.value;
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
@@ -737,7 +721,41 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
     `;
 
     displaySelectedPackageConditionList(parseSelectPackageConditionsList);
-    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt);
+    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered);
+}
+
+const displayConfirmPossibleInvalidDateModal = (modalHeaderEl,modalBodyEl, collectionDateEntered) => {
+    const formattedCollectionDate = new Date(collectionDateEntered).toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        // Because the timezone in the timestamp is UTC, we must specify UTC
+        timeZone: "UTC"
+    });
+    modalHeaderEl.innerHTML = `
+        <h5>Confirmation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+    `;
+    modalBodyEl.innerHTML = `
+        <div>
+            <div>Check collection date, possible invalid entry.</div>
+            <div class="fw-bold">Collection Date Entered: ${formattedCollectionDate}</div>
+            <br >
+            <div style="display:inline-block;">
+                <div class="row">
+                    <div class="col-5">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</strong> confirmed. Return to Kit Receipt.</button>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col-5">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="confirmReceipt" target="_blank">Collection date confirmed. Confirm Kit Receipt.</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitReceipt) => {
@@ -769,12 +787,16 @@ const displaySelectedPackageConditionList = (parseSelectPackageConditionsList) =
     }
 }
 
-const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
+const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered) => {
     const confirmPackageConditionButtondocument = document.getElementById("confirmPackageConditionButton");
     confirmPackageConditionButtondocument.addEventListener("click", async () => {
-        displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
+        if (isKitReceipt && questionableCollectionDate) {
+            displayConfirmPossibleInvalidDateModal(modalHeaderEl,modalBodyEl, collectionDateEntered);
+        } else {
+            displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
+        }
         if (isKitReceipt) { 
-            confirmKitReceipt(); 
+            confirmKitReceipt(questionableCollectionDate); 
         } else { 
             confirmPackageReceipt(); 
         }
@@ -815,13 +837,47 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
         && isNonEmptyString(dateReceived);
 };
 
+/**
+ * Returns true if date is valid and false if not.
+ * @returns boolean
+ */
+export const isCollectionDateValid = async () => {
+    const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
+    const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
+    const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
+    const timeCollectionCard = document.getElementById("timeCollectionCard")?.value;
+
+    const collectionDateTimestamp = dateCollectionCard + 'T' + timeCollectionCard + ':00.000Z';
+
+    try {
+        const idToken = await getIdToken();
+        const response = await fetch(`${baseAPI}api=validateKitReceiptCollectionDate&collectionDateTimestamp=${collectionDateTimestamp}&receivedDateTime=${receivedDateTime}&returnKitTrackingNum=${returnKitTrackingNum}`, {
+            method: "get",
+            headers: {
+                Authorization: "Bearer " + idToken
+            }
+        });
+        const responseData = await response.json();
+        if(responseData.code === 200) {
+            return responseData.data;
+        } else {
+            throw new Error(responseData.message);
+        }
+
+    } catch(err) {
+        console.error('Error', err);
+        throw new Error('Error validating package information: ' + err.message);
+    }
+
+}
+
 const handleUnsavedChangesListeners = (hasUnsavedChanges) => {
     setupLeavingPageMessage(hasUnsavedChanges);
     toggleClearFormBtnListener(hasUnsavedChanges);
     toggleBeforeUnloadListener(hasUnsavedChanges);
 };
 
-export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage) => {
+export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage, callback) => {
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
@@ -838,7 +894,92 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, er
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Close</button>
+            <button type="button" class="btn btn-danger col-auto" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</em> confirmed. Return to Kit Receipt.</button>
+            <button type="button" id="confirm-collection-date" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Collection date confirmed. Confirm kit receipt.</button>
         </div>
+    `;
+
+    if(callback) {
+        const confirmBtn = document.getElementById('confirm-collection-date');
+        confirmBtn.addEventListener('click', callback);
+
+    }
+};
+
+export const packageConditions = [
+    {
+        value: fieldMapping.packageGood,
+        text: 'Package in Good Condition (shipper and specimens)'
+    },
+    {
+        value: fieldMapping.manifestDoNotMatch,
+        text: 'Manifest/Vial/Paperwork info do not match'
+    },
+    {
+        value: fieldMapping.improperPackaging,
+        text: 'Improper Packaging (i.e. missing cold packs, filler, etc)'
+    },
+    {
+        value: fieldMapping.coldPacksWarm,
+        text: 'Cold Packs - Warm'
+    },
+    {
+        value: fieldMapping.damagedVials,
+        text: 'Damaged Vials'
+    },
+    {
+        value: fieldMapping.vialsEmpty,
+        text: 'Returned Empty Vials'
+    },
+    {
+        value: fieldMapping.vialsMissingLabels,
+        text: 'No Connect Label on Vials'
+    },
+    {
+        value: fieldMapping.shipmentDelay,
+        text: 'Shipment Delay'
+    },
+    {
+        value: fieldMapping.damagedContainer,
+        text: 'Damaged Shipper (outer and/or inner)'
+    },
+    {
+        value: fieldMapping.other,
+        text: 'Other'
+    }
+];
+
+/**
+ * Creates a multi-select dropdown section for package conditions. 
+ * Loop through the packageConditions array and create an option element for each condition with its value and text.
+ * If the array is empty, display a disabled option indicating no package conditions are available.
+ * Return the complete HTML string for the select section.
+ * @param {Array} packageConditions - An array of package condition objects with 'value' and 'text' properties.
+ * @returns {string} - HTML string for the package condition select section.
+*/
+const createPackageConditionSelect = (packageConditions) => { 
+    let conditionOptions = packageConditions.length === 0 
+        ? `<option value="" disabled>No Package Conditions Available</option>`
+        : packageConditions.map(({ value, text }) => 
+            `<option value="${escapeHtml(value)}">${escapeHtml(text)}</option>`
+          ).join("");
+    
+    return `
+        <div class="row mb-3">
+            <label class="col-form-label col-md-4" for="packageCondition">Select Package Condition</label>
+            <div style="display:inline-block; max-width:90%;" class="col-md-8"> 
+                <select 
+                    required 
+                    class="form-select" 
+                    id="packageCondition" 
+                    style="width:100%" 
+                    multiple="multiple" 
+                    data-selected="[]" 
+                    data-initial-value="[]"
+                >
+                    ${conditionOptions}
+                </select>
+            </div>
+        </div>    
     `;
 };

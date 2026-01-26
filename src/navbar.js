@@ -1,4 +1,4 @@
-import { getWorkflow, appState } from "./shared.js";
+import { appState } from "./shared.js";
 
 export const homeNavBar = () => {
     return `
@@ -89,48 +89,7 @@ export const unAuthorizedUser = () => {
     `;
 }
 
-export const adminNavBar = (name) => {
-    return `
-        <div class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#welcome" id="welcome" title="Home"><i class="fas fa-home"></i> Home</a>
-            </li>
-        </div>
-        <div class="navbar-nav current-page">
-            <li class="nav-item">
-                <a class="nav-link" href="#dashboard" id="dashboard" title="Dashboard"><i class="fas fa-file-alt"></i> Dashboard</a>
-            </li>
-        </div>
-        <div class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#shipping" id="shipping" title="Shipping"><i class="fas fa-shipping-fast"></i> Shipping</a>
-            </li>
-        </div>
-        <div class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#reports" id="reports" title="Reports"><i class="fa fa-table"></i> Reports</a>
-            </li>
-        </div>
-        <div class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#manage_users" id="manageUsers" title="Manage users"><i class="fas fa-users"></i> Manage users</a>
-            </li>
-        </div>
-        <div class="navbar-nav ms-auto">
-            <div class="grid-elements dropdown">
-                <button class="nav-link nav-menu-links dropdown-toggle dropdown-btn"  title="Welcome, ${name}!" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user"></i> ${name}
-                </button>
-                <div class="dropdown-menu navbar-dropdown" aria-labelledby="navbarDropdown">
-                    <a class="nav-link" href="#sign_out" id="signOut" title="Sign Out"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
 export const bodyNavBar = () => {
-    const workflow = getWorkflow();
     let template = `
         <ul class="nav nav-tabs d-print-none">
             <li class="nav-item">
@@ -171,27 +130,6 @@ export const reportSideNavBar = () => {
         </ul>`;
 }
 
-/**
- ${workflow && workflow === 'clinical' ? ``:`
-                <li class="nav-item">
-                    <button class="nav-link disabled navbar-btn" id="navBarParticipantCheckIn">Participant Check-In</button>
-                </li>
-            `}
-            <li class="nav-item">
-                <button class="nav-link disabled navbar-btn" id="navBarSpecimenLink">Specimen Link</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link disabled navbar-btn" id="navBarSpecimenProcess">${workflow && workflow === 'clinical' ? `Labeling and Scanning`: `Collect/Process`}</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link disabled navbar-btn" id="navBarSpecimenFinalize">${workflow && workflow === 'clinical' ? `Receipt Summary`: `Review`}</button>
-            </li>
-            ${workflow && workflow === 'clinical' ? ``:`
-                <li class="nav-item">
-                    <button class="nav-link disabled navbar-btn" id="participantCheckOut">Participant Check-Out</button>
-                </li>
-            `}
- */
 export const shippingNavBar = () => {
     return `
         <ul class="nav nav-tabs d-print-none">
