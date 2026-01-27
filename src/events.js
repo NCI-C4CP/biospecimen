@@ -802,7 +802,7 @@ const btnsClicked = async (connectId, formData) => {
     console.log("specimen data", specimenData);
     console.log("-----");
     console.log("form data", formData);
-    return;
+    // return;
 
     if (!formData?.collectionId) {
         const storeResponse = await storeSpecimen([formData]);  
