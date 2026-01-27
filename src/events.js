@@ -1087,11 +1087,20 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
 };
 
 const redirectSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    console.log("redirectSpecimenPage blood raw:", accessionID1?.value, "coerced:", +accessionID1?.value);
-    console.log("redirectSpecimenPage urine raw:", accessionID3?.value, "coerced:", +accessionID3?.value);
+    if (accessionID1?.value) {
+        const parsedID1 = parseInt(accessionID1.value);
+        if (Number.isInteger(parsedID1)) {
+            formData[conceptIds.collection.bloodAccessionNumber] = parsedID1;
+        }
+    }
 
-    if (accessionID1?.value) formData = { ...formData, [conceptIds.collection.bloodAccessionNumber]: +accessionID1.value || '' };
-    if (accessionID3?.value) formData[conceptIds.collection.urineAccessionNumber] = +accessionID3.value || '';
+    if (accessionID3?.value) {
+        const parsedID3 = parseInt(accessionID3.value);
+        if (Number.isInteger(parsedID3)) {
+            formData[conceptIds.collection.urineAccessionNumber] = parsedID3;
+        }
+    }
+
     if (selectedVisit) formData[conceptIds.collection.selectedVisit] =  +selectedVisit;
     let query = `connectId=${parseInt(connectId)}`;
     const response = await findParticipant(query);
