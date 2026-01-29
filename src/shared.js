@@ -813,7 +813,7 @@ export const updateBox = async (box) => {
                 Authorization:"Bearer "+idToken,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(convertToFirestoreBox(box)),
+            body: JSON.stringify(box)
         }
 
         const response = await fetch(`${api}api=updateBox`, requestObj);
@@ -937,131 +937,69 @@ const bagConversionKeys = [
   conceptIds.orphanBagFlag,
 ];
 
-export const convertToOldBox = (inputBox) => {
-  // If the box already has a bags property, return early
-  if (inputBox.bags) return inputBox;
+/**
+ * Pulls the list of bag conceptIds that are in a box
+ * @param {*} box 
+ * @return String[] bag conceptIds
+ */
+export const getBagList = (box) => {
+    return Object.keys(box)
+        .filter(key => bagConceptIdList.includes(parseInt(key, 10)))
+        .sort((a, b) => {
+            return bagConceptIdList.indexOf(parseInt(a, 10)) < bagConceptIdList.indexOf(parseInt(b, 10)) ? -1 : 1
+        });
+}
 
-  // Otherwise, process the bags
-  let bags = {};
-  let outputBox = { ...inputBox };
-  let hasOrphanBag = false;
-  let orphanBag = { arrElements: [] };
-
-  for (let bagConceptId of bagConceptIdList) {
-    // If there's no bag corresponding to the current bagConceptId, skip to the next one
-    if (!inputBox[bagConceptId]) continue;
-
-    // Extract properties from inputBag
-    let outputBag = {};
-    const inputBag = inputBox[bagConceptId];
-
-    for (let k of bagConversionKeys) {
-      if (inputBag[k]) outputBag[k] = inputBag[k];
-    }
-
-    // Handle the orphanBag case
-    if (inputBag[conceptIds.bagscan_orphanBag]) {
-      hasOrphanBag = true;
-      orphanBag = { ...orphanBag, ...outputBag };
-      orphanBag.arrElements.push(...inputBag[conceptIds.tubesCollected]);
-    // Handle the regular bag case
-    } else {
-      outputBag.arrElements = inputBag[conceptIds.tubesCollected];
-      let bagID;
-
-      if (inputBag[conceptIds.bagscan_bloodUrine]) {
-        bagID = inputBag[conceptIds.bagscan_bloodUrine];
-        outputBag.isBlood = true;
-      } else if (inputBag[conceptIds.bagscan_mouthWash]) {
-        bagID = inputBag[conceptIds.bagscan_mouthWash];
-        outputBag.isBlood = false;
-      }
-        
-      bags[bagID] = outputBag;
-    }
-      
-    // Clean up the outputBox
-    delete outputBox[bagConceptId];
-  }
-
-  // Handle the orphanBag case
-  if (hasOrphanBag) {
-    bags['unlabelled'] = orphanBag;
-  }
-
-  // Finalize the outputBox
-  outputBox.bags = bags;
-  const locationConceptID = inputBox[conceptIds.shippingLocation];
-  outputBox.siteAcronym = locationConceptIDToLocationMap[locationConceptID]?.siteAcronym || 'Not Found';
-
-  return outputBox;
-};
-
-export const convertToFirestoreBox = (inputBox) => {
-  let { bags } = inputBox;
-  let outputBox = { ...inputBox };
-  let bagConceptIDIndex = 0;
-  outputBox[conceptIds.containsOrphanFlag] = conceptIds.no;
-  delete outputBox.bags;
-  const defaultOutputBag = { [conceptIds.bagscan_bloodUrine]: '', [conceptIds.bagscan_mouthWash]: '', [conceptIds.bagscan_orphanBag]: '' };
-    
-  for (let [bagID, inputBag] of Object.entries(bags)) {
-      if (bagConceptIDIndex >= bagConceptIdList.length) break;      
-      inputBag.arrElements = Array.from(new Set(inputBag.arrElements));
-
-    if (bagID === 'unlabelled') {
-        outputBox[conceptIds.containsOrphanFlag] = conceptIds.yes;       
-      for (let tubeID of inputBag.arrElements) {
-          let outputBag = {...defaultOutputBag};          
-          const bagConceptID = bagConceptIdList[bagConceptIDIndex];
-          const keysNeeded = [            
-              conceptIds.scannedByFirstName,              
-              conceptIds.scannedByLastName,        
-              conceptIds.orphanBagFlag,
-          ];
-
-        for (let k of keysNeeded) {
-          if (inputBag[k]) outputBag[k] = inputBag[k];
+/**
+ * Finds the bagConceptId from an exiting box
+ * 
+ * @param {*} box
+ * @param {string} bagId 
+ * @returns number|boolean
+ */
+export const getBagConceptId = (box, bagId) => {
+    let bagConceptId = false;
+    Object.keys(box).forEach((conceptId) => {
+        if (box[conceptId][conceptIds.bagscan_bloodUrine] === bagId ||
+            box[conceptId][conceptIds.bagscan_mouthWash] === bagId ||
+            box[conceptId][conceptIds.bagscan_orphanBag] === bagId
+        ) {
+            bagConceptId = conceptId;
         }
+    })
 
-        outputBag[conceptIds.bagscan_orphanBag] = tubeID;
-        outputBag[conceptIds.orphanBagFlag] = conceptIds.yes;
-        outputBag[conceptIds.tubesCollected] = [tubeID];
-        outputBox[bagConceptID] = outputBag;
-        bagConceptIDIndex++;
-      }
-    } else {
-      let outputBag = {...defaultOutputBag};
-      const bagConceptID = bagConceptIdList[bagConceptIDIndex];
-      const keysNeeded = [
-        conceptIds.scannedByFirstName,
-        conceptIds.scannedByLastName,
-      ];
+    return bagConceptId;
+}
 
-      for (let k of keysNeeded) {
-        if (inputBag[k]) outputBag[k] = inputBag[k];
-      }
+/**
+ * Pulls the bags out as an object
+ * @param {*} box 
+ * @returns {} bags
+ */
+export const getBags = (box) => {
+    const bagList = getBagList(box);
+    let bags = {};
+    bagList.forEach((bagId) => {
+        bags[bagId] = Object.assign({}, box[bagId]);
+    })
 
-      const bagIDEndString = bagID.split(' ')[1];
-        if (bagIDEndString === '0008') {  
-          outputBag[conceptIds.bagscan_bloodUrine] = bagID;
-        } else if (bagIDEndString === '0009') {
-            outputBag[conceptIds.bagscan_mouthWash] = bagID;
-      }
+    return bags;
+}
 
-      outputBag[conceptIds.orphanBagFlag] = conceptIds.no;
-      outputBag[conceptIds.tubesCollected] = inputBag.arrElements;
-      outputBox[bagConceptID] = outputBag;
-      bagConceptIDIndex++;
+/**
+ * Finds the next available bag concept Id
+ * 
+ * @param {*} box 
+ * @returns string
+ */
+export const getNextBagConceptId = (box) => {
+    let conceptIdIndex = 0;
+    while (Object.prototype.hasOwnProperty.call(box, bagConceptIdList[conceptIdIndex])) {
+        conceptIdIndex++;
     }
-  }
 
-  let keysToRomove = ['siteAcronym'];
-  for (let k of keysToRomove) {
-    if (outputBox[k]) delete outputBox[k];
-  }
-  return outputBox;
-};
+    return bagConceptIdList[conceptIdIndex];
+}
 
 // Fetches all boxes for site
 export const getBoxes = async () => {
@@ -1076,7 +1014,6 @@ export const getBoxes = async () => {
   const res = await response.json();
 
   const boxesToReturn = res.data
-      .map(convertToOldBox)
       .filter(box => box[conceptIds.submitShipmentFlag] !== conceptIds.yes);
 
   logAPICallEndDev('getBoxes');
@@ -1096,7 +1033,6 @@ export const getAllBoxes = async (flagValue) => {
         }
     });
     let res = await response.json();
-    res.data = res.data.map(convertToOldBox);
     logAPICallEndDev('getAllBoxes');
     return res;
 };
@@ -1117,7 +1053,6 @@ export const getUnshippedBoxes = async (isBPTL = false) => {
         if (!response.ok) throw new Error(`Unexpected server error: ${response.status}`);
 
         const unshippedBoxRes = await response.json();
-        unshippedBoxRes.data = unshippedBoxRes.data.map(convertToOldBox);
         return unshippedBoxRes;
     } catch (error) {
         console.error(error);
@@ -1460,28 +1395,27 @@ export const getSpecimensInBoxes = async (boxList, isBPTL = false) => {
  * @param {array} boxList - list of boxes to process
  * @returns {array} - array of unique collectionIds
  * Bag types: 787237543 (Biohazard Blood/Urine), 223999569 (Biohazard Mouthwash), 522094118 (Orphan)
- * For non-unlabelled bag keys, the first element's collectionId represents all collectionIds in the arrElements list.
+ * For non-unlabelled bag keys, the first element's collectionId represents all collectionIds in the conceptIds.tubesCollecteds list.
  */
 const extractCollectionIdsFromBoxes = (boxList) => {
     const tubeIdSet = new Set(); 
     const collectionIdSet = new Set();
-
+    
     boxList.forEach(box => {
-        const bagKeys = Object.keys(box.bags);
-
+        const bagKeys = getBagList(box);
         bagKeys.forEach(key => {
-            const arrElements = box.bags[key]?.arrElements;
-            if (arrElements && arrElements.length) {
+            const tubes = box[key]?.[conceptIds.tubesCollected];
+            if (tubes && tubes.length) {
                 if (key === 'unlabelled') {
-                    arrElements.forEach(tube => {
+                    tubes.forEach(tube => {
                         tubeIdSet.add(tube);
                         const [collectionId] = tube.split(' ');
                         collectionId && collectionIdSet.add(collectionId);
                     });
                 } else {
-                    const [collectionId] = arrElements[0].split(' ');
+                    const [collectionId] = tubes[0].split(' ');
                     collectionId && collectionIdSet.add(collectionId);
-                    arrElements.forEach(tube => {
+                    tubes.forEach(tube => {
                         tubeIdSet.add(tube);
                     });
                 }
@@ -1549,7 +1483,6 @@ export const getBoxesByLocation = async (location) => {
     });
 
     let res = await response.json();
-    res.data = res.data.map(convertToOldBox);
     return res;
 }
 

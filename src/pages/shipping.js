@@ -1,6 +1,6 @@
 import { addBoxAndUpdateSiteDetails, appState, conceptIdToSiteSpecificLocation, combineAvailableCollectionsObjects, displayManifestContactInfo, filterDuplicateSpecimensInList, getAllBoxes, getBoxes, getSpecimensInBoxes, getUnshippedBoxes, getLocationsInstitute, getSiteMostRecentBoxId, getSpecimensByBoxedStatus, hideAnimation, locationConceptIDToLocationMap,
         miscTubeIdSet, removeActiveClass, removeBag, removeMissingSpecimen, showAnimation, showNotifications, siteSpecificLocation, siteSpecificLocationToConceptId, sortBiospecimensList,
-        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict } from "../shared.js"
+        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict, getBagList, getBagConceptId, getNextBagConceptId, getBags } from "../shared.js"
 import { addDeviationTypeCommentsContent, addEventAddSpecimenToBox, addEventBackToSearch, addEventBoxSelectListChanged, addEventCheckValidTrackInputs,
         addEventCompleteShippingButton, addEventModalAddBox, addEventNavBarBoxManifest, addEventNavBarShipment, addEventNavBarShippingManifest, addEventNavBarAssignTracking, addEventLocationSelect,
         addEventPreventTrackingConfirmPaste, addEventReturnToPackaging, addEventReturnToReviewShipmentContents, addEventSaveButton, addEventSaveAndContinueButton, addEventShipPrintManifest,
@@ -249,11 +249,11 @@ const populateBoxesToShipTable = () => {
         let rowCount = 0;
         sortedBoxKeys.forEach(box => {
             const currBox = detailedBoxes[box];
-            const bagKeys = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined').sort((a, b) => a.split(/\s+/)[1] - b.split(/\s+/)[1]);
+            const bagKeys = getBagList(currBox);
             const boxStartedTimestamp = currBox.boxData[conceptIds.firstBagAddedToBoxTimestamp] ? formatTimestamp(Date.parse(currBox.boxData[conceptIds.firstBagAddedToBoxTimestamp])) : '';
             const boxLastModifiedTimestamp = currBox.boxData[conceptIds.shippingShipDateModify] ? formatTimestamp(Date.parse(currBox.boxData[conceptIds.shippingShipDateModify])) : '';
             const boxLocation = currBox.boxData[conceptIds.shippingLocation] ? locationConceptIDToLocationMap[currBox.boxData[conceptIds.shippingLocation]]["siteSpecificLocation"] : '';
-            const numTubesInBox = bagKeys.reduce((total, bagKey) => total + currBox[bagKey]['arrElements'].length, 0);
+            const numTubesInBox = bagKeys.reduce((total, bagKey) => total + currBox[bagKey][conceptIds.tubesCollected].length, 0);
 
             if (numTubesInBox > 0) {
                 const currRow = table.insertRow(rowCount + 1);
@@ -298,15 +298,15 @@ export const populateViewShippingBoxContentsList = (selectedBoxId) => {
 
     if (currBoxId !== '') {
         const currBox = detailedLocationBoxes[currBoxId];    
-        const boxKeys = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined');
+        const boxKeys = getBagList(currBox);
         shippingBoxContentsTable.innerHTML = renderViewBoxContentsTableHeader(selectedLocation);
 
         if (selectedLocation !== 'none') {
             //set up the table
             const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
             for (let bagNum = 0; bagNum < boxKeys.length; bagNum++) {
-                const currBagId = boxKeys[bagNum];
-                const currTubes = currBox[boxKeys[bagNum]]['arrElements'];
+                const currBagId = currBox[boxKeys[bagNum]][conceptIds.bagscan_bloodUrine] || currBox[boxKeys[bagNum]][conceptIds.bagscan_mouthWash] || currBox[boxKeys[bagNum]][conceptIds.bagscan_orphanBag];
+                const currTubes = currBox[boxKeys[bagNum]][conceptIds.tubesCollected];
                 for (let tubeNum = 0; tubeNum < currTubes.length; tubeNum++) {
                     const fullTubeId = currTubes[tubeNum];
                     const tubeTypeStringArr = fullTubeId.split(' ');
@@ -394,7 +394,7 @@ export const addNewBox = async () => {
     
         const largestLocationBoxNum = largestBoxNum === -1 ? -1 : getLargestLocationBoxId(boxList, siteLocationConversion);
         const largestLocationBoxIndex = boxList.findIndex(box => box[conceptIds.shippingBoxId] === 'Box' + largestLocationBoxNum.toString());
-        const shouldCreateNewBox = Object.keys(boxList[largestLocationBoxIndex]?.['bags'] ?? {}).length !== 0 || largestLocationBoxIndex === -1;
+        const shouldCreateNewBox = largestLocationBoxIndex === -1 || getBagList(boxList[largestLocationBoxIndex]).length !== 0;
 
         if (shouldCreateNewBox) {
             const boxToAdd = await createNewBox(boxList, siteLocationConversion, siteCode, largestBoxNum, docId);
@@ -513,7 +513,7 @@ export const populateBoxManifestHeader = (currBox, currShippingLocationNumberObj
 
     const currKeys = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined');
     const numBags = currKeys.length;
-    const numTubes = currKeys.reduce((acc, bagKey) => acc + currBox[bagKey]['arrElements'].length, 0);
+    const numTubes = currKeys.reduce((acc, bagKey) => acc + currBox[bagKey][conceptIds.tubesCollected].length, 0);
 
     const boxId = currBox.boxData[conceptIds.shippingBoxId];
     const boxStartedTimestamp = formatTimestamp(currBox.boxData[conceptIds.firstBagAddedToBoxTimestamp]);
@@ -604,7 +604,7 @@ export const createShippingModalBody = (biospecimensList, masterBiospecimenId, i
     let boxIdAndBagsObj = {};
     for (let i = 0; i < boxList.length; i++) {
         const box = boxList[i];
-        boxIdAndBagsObj[box[conceptIds.shippingBoxId]] = box['bags'];
+        boxIdAndBagsObj[box[conceptIds.shippingBoxId]] = getBags(box);
     }
     
     const tubeTable = document.createElement('table');
@@ -685,32 +685,60 @@ export const processCheckedModalElements = (boxIdAndBagsObj, bagId, boxId, isOrp
 
     if (isOrphan) bagId = 'unlabelled';
 
+    let bagConceptId = getBagConceptId(boxIdAndBagsObj[boxId], bagId);
+    if (!bagConceptId && !isOrphan) {
+        bagConceptId = getNextBagConceptId(boxIdAndBagsObj[boxId]);
+    }
+
     for (const checkedEle of checkedEleList) {
         const specimenIdToAdd = checkedEle.getAttribute("data-full-specimen-id"); // data-full-specimen-id (Ex. "CXA444444 0007")
         const [collectionId, tubeId] = specimenIdToAdd.split(/\s+/);
         tubesToDelete.push(tubeId);
 
-        if (!isOrphan) {
-            bagId = assignBagId(tubeId, collectionId);
+        if (isOrphan) {
+            bagConceptId = getBagConceptId(boxIdAndBagsObj[boxId], specimenIdToAdd);
+            if (!bagConceptId) {
+                bagConceptId = getNextBagConceptId(boxIdAndBagsObj[boxId]);
+            }
         }
 
         if (boxIdAndBagsObj.hasOwnProperty(boxId)) {
-            if (boxIdAndBagsObj[boxId].hasOwnProperty(bagId)) {
-                boxIdAndBagsObj[boxId][bagId]['arrElements'].push(specimenIdToAdd);
+            if (boxIdAndBagsObj[boxId].hasOwnProperty(bagConceptId)) {
+                boxIdAndBagsObj[boxId][bagConceptId][conceptIds.tubesCollected].push(specimenIdToAdd);
             } else {
-                boxIdAndBagsObj[boxId][bagId] = {
-                    'arrElements': [specimenIdToAdd],
+                boxIdAndBagsObj[boxId][bagConceptId] = {
+                    [conceptIds.tubesCollected]: [specimenIdToAdd],
                     [conceptIds.scannedByFirstName]: firstName,
-                    [conceptIds.scannedByLastName]: lastName
+                    [conceptIds.scannedByLastName]: lastName,
+                    [conceptIds.bagscan_bloodUrine]: '', 
+                    [conceptIds.bagscan_mouthWash]: '', 
+                    [conceptIds.bagscan_orphanBag]: '' 
                 };
             }
         } else {
             boxIdAndBagsObj[boxId] = {}
-            boxIdAndBagsObj[boxId][bagId] = {
-                'arrElements': [specimenIdToAdd],
+            boxIdAndBagsObj[boxId][bagConceptId] = {
+                [conceptIds.tubesCollected]: [specimenIdToAdd],
                 [conceptIds.scannedByFirstName]: firstName,
-                [conceptIds.scannedByLastName]: lastName
+                [conceptIds.scannedByLastName]: lastName,
+                [conceptIds.bagscan_bloodUrine]: '', 
+                [conceptIds.bagscan_mouthWash]: '', 
+                [conceptIds.bagscan_orphanBag]: '' 
             };
+
+        }
+
+        if (!isOrphan) {
+            boxIdAndBagsObj[boxId][bagConceptId][conceptIds.orphanBagFlag] = conceptIds.no;
+            const bagIdEndString = bagId.split(' ')[1];
+            if (bagIdEndString === '0008') {  
+                boxIdAndBagsObj[boxId][bagConceptId][conceptIds.bagscan_bloodUrine] = bagId;
+            } else if (bagIdEndString === '0009') {
+                boxIdAndBagsObj[boxId][bagConceptId][conceptIds.bagscan_mouthWash] = bagId;
+            }
+        } else {
+            boxIdAndBagsObj[boxId][bagConceptId][conceptIds.orphanBagFlag] = conceptIds.yes;
+            boxIdAndBagsObj[boxId][bagConceptId][conceptIds.bagscan_orphanBag] = specimenIdToAdd;
         }
     }
     handleAvailableCollectionsTableRows(tableIndex, tubesToDelete);
@@ -721,10 +749,15 @@ export const processCheckedModalElements = (boxIdAndBagsObj, bagId, boxId, isOrp
 export const prepareBoxToUpdate = (boxId, boxList, boxIdAndBagsObj, locations, addedTubes) => {
     const currTime = new Date().toISOString();
     const foundBox = boxList.find(box => box[conceptIds.shippingBoxId] == boxId) || {};
-
+    let hasStrayTubes = false;
+    Object.keys(boxIdAndBagsObj[boxId]).forEach(bagConceptId => {
+        if (boxIdAndBagsObj[boxId][bagConceptId][conceptIds.orphanBagFlag] === conceptIds.yes) {
+            hasStrayTubes = true;
+        }
+    })
     return {
         ...foundBox,
-        'bags': boxIdAndBagsObj[boxId],
+        ...boxIdAndBagsObj[boxId],
         'addedTubes': addedTubes,
         [conceptIds.shippingShipDateModify]: currTime,
         [conceptIds.shippingBoxId]: boxId,
@@ -733,6 +766,7 @@ export const prepareBoxToUpdate = (boxId, boxList, boxIdAndBagsObj, locations, a
         [conceptIds.firstBagAddedToBoxTimestamp]: foundBox[conceptIds.firstBagAddedToBoxTimestamp]
             ? foundBox[conceptIds.firstBagAddedToBoxTimestamp]
             : currTime,
+        [conceptIds.containsOrphanFlag]: hasStrayTubes ? conceptIds.yes : conceptIds.no
     };
 }
 
@@ -817,11 +851,11 @@ const populateSelectLocationList = async (availableLocations, loadFromState) => 
 
 const populateBoxManifestTable = (currBox) => {
     const boxManifestTable = document.getElementById('boxManifestTable');
-    const bagList = Object.keys(currBox).filter(key => key !== 'boxData' && key !== 'undefined').sort(sortSpecimenKeys);
+    const bagList = getBagList(currBox).sort(sortSpecimenKeys.bind(this, currBox));
     const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
     bagList.forEach((bagKey, bagIndex) => {
         const bagIndexStart = bagIndex + 1;
-        const tubesList = currBox[bagKey].arrElements;
+        const tubesList = currBox[bagKey][conceptIds.tubesCollected];
         
         for (let i = 0; i < tubesList.length; i++) {
             const tubeDetail = currBox[bagKey].specimenDetails[tubesList[i]];
@@ -840,7 +874,7 @@ const populateBoxManifestTable = (currBox) => {
                     : tubeTypeAndColor;
             }
 
-            currRow.insertCell(0).innerHTML = i === 0 ? bagKey : '';
+            currRow.insertCell(0).innerHTML = i === 0 ? currBox[bagKey][conceptIds.bagscan_bloodUrine] || currBox[bagKey][conceptIds.bagscan_mouthWash] || currBox[bagKey][conceptIds.bagscan_orphanBag] : '';
             currRow.insertCell(1).innerHTML = tubesList[i];
             currRow.insertCell(2).innerHTML = tubeTypeAndColor;
 
@@ -849,9 +883,10 @@ const populateBoxManifestTable = (currBox) => {
     });
 };
 
-const sortSpecimenKeys = (a, b) => {
-    const numA = parseInt(a.split(' ')[0].substring(3));
-    const numB = parseInt(b.split(' ')[0].substring(3));
+const sortSpecimenKeys = (currBox, a, b) => {
+    console.log(currBox, a, b);
+    const numA = parseInt((currBox[a][conceptIds.bagscan_bloodUrine] || currBox[a][conceptIds.bagscan_mouthWash] || currBox[a][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
+    const numB = parseInt((currBox[b][conceptIds.bagscan_bloodUrine] || currBox[b][conceptIds.bagscan_mouthWash] || currBox[b][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
     return numB - numA;
 }
 
@@ -873,8 +908,15 @@ export const generateShippingManifest = async (boxIdArray, userName, isTempMonit
         const boxId = box[conceptIds.shippingBoxId];
         if (!boxIdArray.includes(boxId)) continue;
 
-        boxIdAndBagsObjToDisplay[boxId] = box['bags'];
-        !siteAcronym && (siteAcronym = box['siteAcronym']);
+        let bagList = getBagList(box);
+        boxIdAndBagsObjToDisplay[boxId] = {};
+        bagList.forEach(bagId => {
+            boxIdAndBagsObjToDisplay[boxId][bagId] = Object.assign({}, box[bagId]); 
+        })
+        if (!siteAcronym) {
+            const locationConceptId = box[conceptIds.shippingLocation];
+            siteAcronym = locationConceptIDToLocationMap[locationConceptId]?.siteAcronym || 'Not Found';
+        }
     }
 
     removeActiveClass('navbar-btn', 'active')
@@ -990,9 +1032,9 @@ export const populateShippingManifestTable = (boxIdAndBagsObj) => {
     let firstSpecimenInBox = true;
 
     boxIdArray.forEach((currBoxId) => {
-        const specimens = Object.keys(boxIdAndBagsObj[currBoxId]);        
+        const specimens = Object.keys(boxIdAndBagsObj[currBoxId]).sort(sortSpecimenKeys.bind(this, boxIdAndBagsObj[currBoxId]));        
         specimens.forEach((specimen) => {
-            const tubes = boxIdAndBagsObj[currBoxId][specimen]['arrElements'];
+            const tubes = boxIdAndBagsObj[currBoxId][specimen][conceptIds.tubesCollected];
 
             tubes.forEach((currTube, tubeIndex) => {
                 const specimenData = boxIdAndBagsObj[currBoxId][specimen];
@@ -1001,7 +1043,7 @@ export const populateShippingManifestTable = (boxIdAndBagsObj) => {
                     : '';
                 const currRow = table.insertRow(-1);
                 currRow.insertCell(0).innerHTML = firstSpecimenInBox && tubeIndex === 0 ? currBoxId : '';
-                currRow.insertCell(1).innerHTML = tubeIndex === 0 ? specimen : '';
+                currRow.insertCell(1).innerHTML = tubeIndex === 0 ? specimenData[conceptIds.bagscan_bloodUrine] || specimenData[conceptIds.bagscan_mouthWash] || specimenData[conceptIds.bagscan_orphanBag] : '';
                 currRow.insertCell(2).innerHTML = currTube;
                 currRow.insertCell(3).innerHTML = fullScannerName;
 
