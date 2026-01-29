@@ -727,7 +727,6 @@ const existingCollectionAlert = async (collections, connectId, formData) => {
  * @param {*} formData 
  */
 const btnsClicked = async (connectId, formData) => {
-    console.log("form data at btnsClicked", formData);
     removeAllErrors();
 
     let scanSpecimenID = document.getElementById('scanSpecimenID') && escapeHTML(document.getElementById('scanSpecimenID')?.value).toUpperCase();
@@ -799,10 +798,6 @@ const btnsClicked = async (connectId, formData) => {
     showAnimation();
 
     formData[conceptIds.collection.selectedVisit] = formData?.[conceptIds.collection.selectedVisit] || parseInt(getCheckedInVisit(particpantData));
-    console.log("specimen data", specimenData);
-    console.log("-----");
-    console.log("form data", formData);
-    // return;
 
     if (!formData?.collectionId) {
         const storeResponse = await storeSpecimen([formData]);  
@@ -814,7 +809,6 @@ const btnsClicked = async (connectId, formData) => {
     }
 
     const biospecimenData = (await searchSpecimen(formData?.collectionId || formData[conceptIds.collection.id])).data;
-    console.log("🚀 ~ btnsClicked ~ biospecimenData:", biospecimenData)
     await createTubesForCollection(formData, biospecimenData);
     // if 'clinical' and no existing collection ID, check email trigger
     if (formData[conceptIds.collection.collectionSetting] === conceptIds.clinical && !formData?.collectionId) {
@@ -945,7 +939,6 @@ const clinicalBtnsClicked = async (participantData, formData) => {
     if (hasError) return;
 
     // Modal triggers
-    console.log("modal Context", modalContext);
     const collectedModalResult = await displayClinicalSpecimenCollectedModal(modalContext);
     if (!collectedModalResult) return;
 
@@ -981,7 +974,6 @@ const clinicalBtnsClicked = async (participantData, formData) => {
 
 const triggerConfirmationModal = (modalData) => {
     const { accessionID2, accessionID4, participantFullName, selectedVisit, formData, connectId } = modalData.modalContext;
-    console.log("triggerConfirmationModal modalData:", modalData);
 
     const button = document.createElement('button');
     button.dataset.bsTarget = '#modalShowMoreData';
@@ -1033,11 +1025,6 @@ const triggerConfirmationModal = (modalData) => {
 
 
 const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    console.log("accessionID1:", accessionID1.value, "----", "+accessionID1", +accessionID1.value);
-    console.log("----")
-    console.log("accessionID3:", accessionID3.value, "----", "+accessionID3", +accessionID3.value);
-    console.log("----")
-    console.log("proceedToSpecimenPage formData:", formData);
     const bloodAccessionId = await checkAccessionId({ accessionId: +accessionID1.value, accessionIdType: `${conceptIds.collection.bloodAccessionNumber}` });
 
     if (bloodAccessionId.code == 200) {
