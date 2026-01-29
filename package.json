@@ -20,5 +20,11 @@
     "esbuild-register": "^3.6.0",
     "jsdom": "^24.1.3",
     "mocha": "^11.7.2"
+  },
+  "overridesNote": {
+    "diff": "8.0.3 for GHSA-73rr-hh4g-fpgx"
+  },
+  "overrides": {
+    "diff": "8.0.3"
   }
 }
