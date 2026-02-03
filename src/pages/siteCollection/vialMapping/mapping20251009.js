@@ -1,5 +1,5 @@
 const mapping20251009 = {
-    effectiveDate: "2025-10-09", // Note: This mapping will be shown in Production on 2025-10-29.
+    effectiveDate: "2025-10-30", // Note: This mapping will be shown in Production on 2025-10-29.
     research: {
         default: {
             "0001": ["10 ml Serum separator tube", "SST", "Serum", "10"],
