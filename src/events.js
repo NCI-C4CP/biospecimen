@@ -1971,9 +1971,9 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
 }
 
 const validateShipperEmail = (email) => {
-    const finalizeSignInputEle = document.getElementById('finalizeSignInput');
-    if (finalizeSignInputEle.value.toUpperCase() !== email.toUpperCase()) {
-        showNotifications({ title: 'Error Shipping Box(es)', body: `Email mismatch. You entered: ${finalizeSignInputEle.value}, which does not match the email on record.` });
+    const finalizedSignInput = document.getElementById('finalizeSignInput').value;
+    if (finalizedSignInput.toUpperCase() !== email.toUpperCase()) {
+        showNotifications({ title: 'Error Shipping Box(es)', body: `Email mismatch. You entered: ${finalizedSignInput}, which does not match the email on record.` });
         return false;
     }
     return true;

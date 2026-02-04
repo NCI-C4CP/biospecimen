@@ -1,4 +1,4 @@
-import { showAnimation, hideAnimation, getIdToken, getParticipantsByKitStatus} from "../../shared.js";
+import { showAnimation, hideAnimation, getIdToken, getParticipantsByKitStatus, escapeHTML} from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { handleKitStatusSelectionDropdown } from "./kitStatusReports.js";
 import { nonUserNavBar, unAuthorizedUser } from "./../../navbar.js";
@@ -61,7 +61,7 @@ const assignKitButton = () => {
   // Loop over list of buttons and assign a click event listener
   allAssignKitButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
-      kitAssignmentInfoText = e.target.getAttribute("data-kitAssignmentInfo");
+      kitAssignmentInfoText = escapeHTML(e.target.getAttribute("data-kitAssignmentInfo"));
       const userId = e.target.getAttribute("data-id"); // grabs the pt user id
       let confirmButton = document.querySelector(".confirm-assignment");
       let modalBody = document.querySelector(".modal-body");

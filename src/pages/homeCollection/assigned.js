@@ -235,14 +235,14 @@ const cancelEdit = (i) => {
     let uspsNumberText = document.getElementById(`usps-number-text-${i}`);
 
     // Target and get access to the values of the edit buttons dataset kitid and usps tracking number value
-    let editButtonKitIdValue = editButton.getAttribute("data-kitid")
-    let editButtonUspsNumValue = editButton.getAttribute("data-uspstrackingnumber")
+    let editButtonKitIdValue = editButton.getAttribute("data-kitid");
+    let editButtonUspsNumValue = editButton.getAttribute("data-uspstrackingnumber");
 
     // Updates supply kit id and usps number text from targetted input element 
-    supplyKitIdText.setAttribute("data-kitid",editButtonKitIdValue)
-    uspsNumberText.setAttribute("data-uspstrackingnumber",editButtonUspsNumValue)
-    document.getElementById("kit-id-" + i).innerHTML = supplyKitIdText.getAttribute("data-kitid");
-    document.getElementById("usps-" + i).innerHTML = uspsNumberText.getAttribute("data-uspstrackingnumber");
+    supplyKitIdText.setAttribute("data-kitid",editButtonKitIdValue);
+    uspsNumberText.setAttribute("data-uspstrackingnumber",editButtonUspsNumValue);
+    document.getElementById("kit-id-" + i).innerHTML = escapeHTML(supplyKitIdText.getAttribute("data-kitid"));;
+    document.getElementById("usps-" + i).innerHTML = escapeHTML(uspsNumberText.getAttribute("data-uspstrackingnumber"));;
 
     // Toggles appearance by hiding cancel and save button, edit becomes visible 
     saveButton.style.display = "none";
