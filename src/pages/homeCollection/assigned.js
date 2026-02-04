@@ -241,8 +241,8 @@ const cancelEdit = (i) => {
     // Updates supply kit id and usps number text from targetted input element 
     supplyKitIdText.setAttribute("data-kitid",editButtonKitIdValue);
     uspsNumberText.setAttribute("data-uspstrackingnumber",editButtonUspsNumValue);
-    document.getElementById("kit-id-" + i).innerHTML = escapeHTML(supplyKitIdText.getAttribute("data-kitid"));;
-    document.getElementById("usps-" + i).innerHTML = escapeHTML(uspsNumberText.getAttribute("data-uspstrackingnumber"));;
+    document.getElementById("kit-id-" + i).innerHTML = escapeHTML(supplyKitIdText.getAttribute("data-kitid"));
+    document.getElementById("usps-" + i).innerHTML = escapeHTML(uspsNumberText.getAttribute("data-uspstrackingnumber"));
 
     // Toggles appearance by hiding cancel and save button, edit becomes visible 
     saveButton.style.display = "none";

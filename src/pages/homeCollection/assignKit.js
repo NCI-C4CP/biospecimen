@@ -61,19 +61,21 @@ const assignKitButton = () => {
   // Loop over list of buttons and assign a click event listener
   allAssignKitButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
-      kitAssignmentInfoText = escapeHTML(e.target.getAttribute("data-kitAssignmentInfo"));
+      kitAssignmentInfoText = e.target.getAttribute("data-kitAssignmentInfo");
       const userId = e.target.getAttribute("data-id"); // grabs the pt user id
       let confirmButton = document.querySelector(".confirm-assignment");
       let modalBody = document.querySelector(".modal-body");
-      console.log(kitAssignmentInfoText);
+
+      const kitAssignmentInfoTextFullName = escapeHTML(kitAssignmentInfoText.split("\n")[0]);
+      const kitAssignmentInfoTextAddress = escapeHTML(kitAssignmentInfoText.split("\n").splice(1).join(" "));
+      
       modalBody.innerHTML = `<div style="display:flex;flex-direction:column;justify-content:center;align-items:center; flex-wrap:wrap; padding:1rem 2.5rem">
               <label for="search-scan-kit-Id" style="flex-flow:wrap;align-self:flex-start"><strong>Scan Supply Kit ID</strong>: <input type="text" id="search-scan-kit-Id" /></label>
-              <p style="display:block; align-self:flex-start; width: 100%"><strong>Full Name:</strong> ${
-                kitAssignmentInfoText.split("\n")[0]
-              }</p>
-              <p style="display:block; align-self:flex-start; width: 100%"><strong>Address:</strong> ${kitAssignmentInfoText.split("\n").splice(1).join(" ")}</p>
+              <p style="display:block; align-self:flex-start; width: 100%"><strong>Full Name:</strong> ${kitAssignmentInfoTextFullName}</p>
+              <p style="display:block; align-self:flex-start; width: 100%"><strong>Address:</strong> ${kitAssignmentInfoTextAddress}</p>
               <label for="search-scan-usps-tracking" style="flex-flow:wrap; align-self:flex-start; display:flex; height:32px;"><strong style="margin-right: .5rem;">Scan USPS Tracking Number on Supply Kit: </strong> <input id="search-scan-usps-tracking" type="search" style="appearance:auto;"/></label>
           </div>`;
+
       // Event Handler
       confirmButton.addEventListener("click", async (e) => {
         const supplyKitId = document.getElementById("search-scan-kit-Id").value;
