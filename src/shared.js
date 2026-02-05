@@ -951,7 +951,7 @@ export const getBagList = (box) => {
 }
 
 /**
- * Finds the bagConceptId from an exiting box
+ * Finds the bagConceptId from an existing box
  * 
  * @param {*} box
  * @param {string} bagId 
@@ -1395,7 +1395,7 @@ export const getSpecimensInBoxes = async (boxList, isBPTL = false) => {
  * @param {array} boxList - list of boxes to process
  * @returns {array} - array of unique collectionIds
  * Bag types: 787237543 (Biohazard Blood/Urine), 223999569 (Biohazard Mouthwash), 522094118 (Orphan)
- * For non-unlabelled bag keys, the first element's collectionId represents all collectionIds in the conceptIds.tubesCollecteds list.
+ * For non-unlabelled bag keys, the first element's collectionId represents all collectionIds in the conceptIds.tubesCollected list.
  */
 const extractCollectionIdsFromBoxes = (boxList) => {
     const tubeIdSet = new Set(); 

@@ -305,7 +305,9 @@ export const populateViewShippingBoxContentsList = (selectedBoxId) => {
             //set up the table
             const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
             for (let bagNum = 0; bagNum < boxKeys.length; bagNum++) {
-                const currBagId = currBox[boxKeys[bagNum]][conceptIds.bagscan_bloodUrine] || currBox[boxKeys[bagNum]][conceptIds.bagscan_mouthWash] || currBox[boxKeys[bagNum]][conceptIds.bagscan_orphanBag];
+                const currBagId = currBox[boxKeys[bagNum]][conceptIds.bagscan_bloodUrine] || 
+                    currBox[boxKeys[bagNum]][conceptIds.bagscan_mouthWash] || 
+                    currBox[boxKeys[bagNum]][conceptIds.bagscan_orphanBag];
                 const currTubes = currBox[boxKeys[bagNum]][conceptIds.tubesCollected];
                 for (let tubeNum = 0; tubeNum < currTubes.length; tubeNum++) {
                     const fullTubeId = currTubes[tubeNum];
@@ -884,9 +886,12 @@ const populateBoxManifestTable = (currBox) => {
 };
 
 const sortSpecimenKeys = (currBox, a, b) => {
-    console.log(currBox, a, b);
-    const numA = parseInt((currBox[a][conceptIds.bagscan_bloodUrine] || currBox[a][conceptIds.bagscan_mouthWash] || currBox[a][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
-    const numB = parseInt((currBox[b][conceptIds.bagscan_bloodUrine] || currBox[b][conceptIds.bagscan_mouthWash] || currBox[b][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
+    const numA = parseInt((currBox[a][conceptIds.bagscan_bloodUrine] || 
+        currBox[a][conceptIds.bagscan_mouthWash] || 
+        currBox[a][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
+    const numB = parseInt((currBox[b][conceptIds.bagscan_bloodUrine] || 
+        currBox[b][conceptIds.bagscan_mouthWash] || 
+        currBox[b][conceptIds.bagscan_orphanBag]).split(' ')[0].substring(3), 10);
     return numB - numA;
 }
 

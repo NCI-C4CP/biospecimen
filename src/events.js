@@ -2305,7 +2305,9 @@ export const populateReportManifestTable = (currPage, searchSpecimenInstituteArr
             const currTube = tubes[j]
             let currRow = currTable.insertRow(rowCount);
             if (j == 0) {
-                currRow.insertCell(0).innerHTML = currPage[bags[i]][conceptIds.bagscan_bloodUrine] || currPage[bags[i]][conceptIds.bagscan_mouthWash] || currPage[bags[i]][conceptIds.bagscan_orphanBag];
+                currRow.insertCell(0).innerHTML = currPage[bags[i]][conceptIds.bagscan_bloodUrine] || 
+                    currPage[bags[i]][conceptIds.bagscan_mouthWash] || 
+                    currPage[bags[i]][conceptIds.bagscan_orphanBag];
             } else {
                 currRow.insertCell(0).innerHTML = '';
             }

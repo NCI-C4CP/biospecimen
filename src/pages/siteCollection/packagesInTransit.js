@@ -473,7 +473,10 @@ const groupShippedByArr = (allBoxesShippedBySiteAndNotReceived) => {
 const groupBagIdArr = (bagsArr) => {
     const arrBagId = [];
     bagsArr.forEach((bag) => {
-        const bagKeys = Object.keys(bag).map(bagConceptId => bag[bagConceptId][fieldToConceptIdMapping.bagscan_bloodUrine] || bag[bagConceptId][fieldToConceptIdMapping.bagscan_mouthWash] || bag[bagConceptId][fieldToConceptIdMapping.bagscan_orphanBag]);
+        const bagKeys = Object.keys(bag).map(bagConceptId => 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_bloodUrine] || 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_mouthWash] || 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_orphanBag]);
         arrBagId.push(bagKeys);
     });
     return arrBagId;

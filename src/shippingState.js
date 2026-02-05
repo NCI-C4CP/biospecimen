@@ -11,7 +11,6 @@ import { conceptIds } from './fieldToConceptIdMapping.js';
  * @param {string} userName - the name of the logged in user
  */
 export const setAllShippingState = (availableCollectionsObj, availableLocations, allBoxesList, finalizedSpecimenList, userName, replacementTubeLabelObj) => {
-    console.log('setAllShippingState');
     const boxesByProviderList = filterUnshippedBoxes(allBoxesList);
     const boxesByLocationList = filterBoxListBoxesByLocation(boxesByProviderList);
     const providerBoxesObj = createBoxAndBagsObj(boxesByProviderList);
@@ -79,7 +78,6 @@ export const updateShippingStateAddBagToBox = (boxId, bagId, boxToUpdate, update
  * @param {*} bagsToMove - the bags being removed from the box
  */
 const addBagToAvailableCollections = (boxId, bagId, bagsToMove) => {
-    console.error('Back Track HERE');
     const availableCollectionsObj = appState.getState().availableCollectionsObj;
     const detailedProviderBoxes = appState.getState().detailedProviderBoxes;
 
