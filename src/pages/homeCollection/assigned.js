@@ -155,7 +155,7 @@ const editAssignedRow = (i) => {
   let saveButton = document.getElementById(`save-assign-button-${i}`);
   let cancelButton = document.getElementById(`cancel-assign-button-${i}`);
 
-  editButton.addEventListener("click", (e) => {
+  editButton.addEventListener("click", () => {
     editButton.style.display = "none";
     saveButton.style.display = "block";
     cancelButton.style.display = "block"
@@ -170,9 +170,8 @@ const editAssignedRow = (i) => {
     let uspsTrackingNumberData = uspsTrackingNumber.innerHTML;
 
     // Change innerHTML with input element with original values from text inside
-    supplyKitId.innerHTML = `<input type="text" id="supply-kit-id-text-${i}" value=${supplyKitIdData} style="width:95px;"></input>`;
-
-    uspsTrackingNumber.innerHTML = `<input type="text" id="usps-number-text-${i}" value=${uspsTrackingNumberData} style="width:190px;"></input>`;
+    supplyKitId.innerHTML = `<input type="text" id="supply-kit-id-text-${i}" value=${escapeHTML(supplyKitIdData)} style="width:95px;"></input>`;
+    uspsTrackingNumber.innerHTML = `<input type="text" id="usps-number-text-${i}" value=${escapeHTML(uspsTrackingNumberData)} style="width:190px;"></input>`;
   });
 };
 
@@ -181,9 +180,9 @@ const saveAssignedRow = (i) => {
   let editButton = document.getElementById(`edit-assign-button-${i}`);
   let cancelButton = document.getElementById(`cancel-assign-button-${i}`);
 
-  saveButton.addEventListener("click", (e) => {
-    let supplyKitIdValue = escapeHTML(document.getElementById(`supply-kit-id-text-${i}`).value);
-    let uspsNumberValue = escapeHTML(document.getElementById(`usps-number-text-${i}`).value);
+  saveButton.addEventListener("click", () => {
+    let supplyKitIdValue = document.getElementById(`supply-kit-id-text-${i}`).value;
+    let uspsNumberValue = document.getElementById(`usps-number-text-${i}`).value;
 
     if (uspsNumberValue === `` || supplyKitIdValue === ``) {
       let alertList = document.getElementById("alert_placeholder");
@@ -205,8 +204,8 @@ const saveAssignedRow = (i) => {
       editButton.setAttribute("data-uspstrackingnumber", `${uspsNumberValue}`);
       editButton.setAttribute("data-kitid", `${supplyKitIdValue}`); 
       updateInputFields(jsonObj);
-      document.getElementById("kit-id-" + i).innerHTML = supplyKitIdValue;
-      document.getElementById("usps-" + i).innerHTML = uspsNumberValue;
+      document.getElementById("kit-id-" + i).innerHTML = escapeHTML(supplyKitIdValue);
+      document.getElementById("usps-" + i).innerHTML = escapeHTML(uspsNumberValue);
 
       saveButton.style.display = "none";
       cancelButton.style.display = "none"
