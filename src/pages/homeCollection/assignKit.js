@@ -1,7 +1,7 @@
-import { showAnimation, hideAnimation, getIdToken, getParticipantsByKitStatus, escapeHTML} from "../../shared.js";
+import { showAnimation, hideAnimation, getIdToken, getParticipantsByKitStatus, escapeHTML } from "../../shared.js";
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { handleKitStatusSelectionDropdown } from "./kitStatusReports.js";
-import { nonUserNavBar, unAuthorizedUser } from "./../../navbar.js";
+import { nonUserNavBar } from "./../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 
 export const addressesPrintedScreen = async (auth, route) => {

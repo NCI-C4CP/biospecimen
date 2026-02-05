@@ -170,8 +170,8 @@ const editAssignedRow = (i) => {
     let uspsTrackingNumberData = uspsTrackingNumber.innerHTML;
 
     // Change innerHTML with input element with original values from text inside
-    supplyKitId.innerHTML = `<input type="text" id="supply-kit-id-text-${i}" value=${escapeHTML(supplyKitIdData)} style="width:95px;"></input>`;
-    uspsTrackingNumber.innerHTML = `<input type="text" id="usps-number-text-${i}" value=${escapeHTML(uspsTrackingNumberData)} style="width:190px;"></input>`;
+    supplyKitId.innerHTML = `<input type="text" id="supply-kit-id-text-${i}" value="${escapeHTML(supplyKitIdData)}" style="width:95px;"></input>`;
+    uspsTrackingNumber.innerHTML = `<input type="text" id="usps-number-text-${i}" value="${escapeHTML(uspsTrackingNumberData)}" style="width:190px;"></input>`;
   });
 };
 
@@ -208,7 +208,7 @@ const saveAssignedRow = (i) => {
       document.getElementById("usps-" + i).innerHTML = escapeHTML(uspsNumberValue);
 
       saveButton.style.display = "none";
-      cancelButton.style.display = "none"
+      cancelButton.style.display = "none";
       editButton.style.display = "block";
 
       let alertList = document.getElementById("alert_placeholder");
