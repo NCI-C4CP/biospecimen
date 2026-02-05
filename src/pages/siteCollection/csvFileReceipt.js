@@ -375,11 +375,11 @@ const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) =
 const materialTypeMapping = (specimenId) => {
   const tubeId = specimenId.split(" ")[1];
   const materialTypeObject = {
-    "0001": "Serum",
-    "0002": "Serum",
-    "0011": "Serum",
-    "0012": "Serum",
-    "0021": "Serum",
+    "0001": "WHOLE BL",
+    "0002": "WHOLE BL",
+    "0011": "WHOLE BL",
+    "0012": "WHOLE BL",
+    "0021": "WHOLE BL",
     "0003": "WHOLE BL",
     "0004": "WHOLE BL",
     "0005": "WHOLE BL",
