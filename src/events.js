@@ -233,7 +233,15 @@ export const addEventAddSpecimensToListModalButton = (bagId, tableIndex, isOrpha
         }
 
         const currBoxId = updateBoxListModalUIValue();
-        boxIdAndBagsObj = processCheckedModalElements(boxIdAndBagsObj, bagId, currBoxId, isOrphan, tableIndex);
+        try {
+            boxIdAndBagsObj = processCheckedModalElements(boxIdAndBagsObj, bagId, currBoxId, isOrphan, tableIndex);
+        } catch (error) {
+            hideAnimation();
+            console.error('Failed to update box.', error);
+            showNotifications({ title: 'Error Adding Specimen(s)', body: `There was an error adding ${bagId.split(' ')[0]}. Please try again.` });
+            return;
+        }
+        
         let bagConceptId = getBagConceptId(boxIdAndBagsObj[currBoxId], bagId);
         const addedTubes = bagConceptId && boxIdAndBagsObj[currBoxId][bagConceptId][conceptIds.tubesCollected] ? boxIdAndBagsObj[currBoxId][bagConceptId][conceptIds.tubesCollected] : [];
 

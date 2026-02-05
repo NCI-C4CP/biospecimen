@@ -960,9 +960,10 @@ export const getBagList = (box) => {
 export const getBagConceptId = (box, bagId) => {
     let bagConceptId = false;
     Object.keys(box).forEach((conceptId) => {
-        if (box[conceptId][conceptIds.bagscan_bloodUrine] === bagId ||
+        if (typeof box[conceptId] === 'object' && 
+            (box[conceptId][conceptIds.bagscan_bloodUrine] === bagId ||
             box[conceptId][conceptIds.bagscan_mouthWash] === bagId ||
-            box[conceptId][conceptIds.bagscan_orphanBag] === bagId
+            box[conceptId][conceptIds.bagscan_orphanBag] === bagId)
         ) {
             bagConceptId = conceptId;
         }
@@ -998,7 +999,7 @@ export const getNextBagConceptId = (box) => {
         conceptIdIndex++;
     }
 
-    return bagConceptIdList[conceptIdIndex];
+    return conceptIdIndex < bagConceptIdList.length ? bagConceptIdList[conceptIdIndex] : null;
 }
 
 // Fetches all boxes for site

@@ -690,6 +690,9 @@ export const processCheckedModalElements = (boxIdAndBagsObj, bagId, boxId, isOrp
     let bagConceptId = getBagConceptId(boxIdAndBagsObj[boxId], bagId);
     if (!bagConceptId && !isOrphan) {
         bagConceptId = getNextBagConceptId(boxIdAndBagsObj[boxId]);
+        if (!bagConceptId) {
+            throw new Error('Box Full');
+        }
     }
 
     for (const checkedEle of checkedEleList) {
@@ -701,6 +704,9 @@ export const processCheckedModalElements = (boxIdAndBagsObj, bagId, boxId, isOrp
             bagConceptId = getBagConceptId(boxIdAndBagsObj[boxId], specimenIdToAdd);
             if (!bagConceptId) {
                 bagConceptId = getNextBagConceptId(boxIdAndBagsObj[boxId]);
+                if (!bagConceptId) {
+                    throw new Error('Box Full');
+                }
             }
         }
 
