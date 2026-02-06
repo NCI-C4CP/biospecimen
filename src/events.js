@@ -720,7 +720,7 @@ const btnsClicked = async (connectId, formData) => {
     showAnimation();
 
     formData[conceptIds.collection.selectedVisit] = formData?.[conceptIds.collection.selectedVisit] || parseInt(getCheckedInVisit(particpantData));
-    
+
     if (!formData?.collectionId) {
         const storeResponse = await storeSpecimen([formData]);  
         if (storeResponse.code === 400) {
@@ -732,7 +732,6 @@ const btnsClicked = async (connectId, formData) => {
 
     const biospecimenData = (await searchSpecimen(formData?.collectionId || formData[conceptIds.collection.id])).data;
     await createTubesForCollection(formData, biospecimenData);
-    
     // if 'clinical' and no existing collection ID, check email trigger
     if (formData[conceptIds.collection.collectionSetting] === conceptIds.clinical && !formData?.collectionId) {
         await checkSurveyEmailTrigger(particpantData, formData[conceptIds.collection.selectedVisit]);
@@ -997,8 +996,20 @@ const proceedToSpecimenPage = async (accessionID1, accessionID3, selectedVisit, 
 };
 
 const redirectSpecimenPage = async (accessionID1, accessionID3, selectedVisit, formData, connectId) => {
-    if (accessionID1?.value) formData = { ...formData, [conceptIds.collection.bloodAccessionNumber]: +accessionID1.value || '' };
-    if (accessionID3?.value) formData[conceptIds.collection.urineAccessionNumber] = +accessionID3.value || '';
+    if (accessionID1?.value) {
+        const parsedID1 = parseInt(accessionID1.value);
+        if (Number.isInteger(parsedID1)) {
+            formData[conceptIds.collection.bloodAccessionNumber] = parsedID1;
+        }
+    }
+
+    if (accessionID3?.value) {
+        const parsedID3 = parseInt(accessionID3.value);
+        if (Number.isInteger(parsedID3)) {
+            formData[conceptIds.collection.urineAccessionNumber] = parsedID3;
+        }
+    }
+
     if (selectedVisit) formData[conceptIds.collection.selectedVisit] =  +selectedVisit;
     let query = `connectId=${parseInt(connectId)}`;
     const response = await findParticipant(query);
