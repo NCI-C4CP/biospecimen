@@ -1,4 +1,4 @@
-import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime } from "../../shared.js";
+import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime, getBagList, getBags, locationConceptIDToLocationMap} from "../../shared.js";
 import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
@@ -150,7 +150,8 @@ const createPackagesInTransitRows = (boxes, sumSamplesArr) => {
                     break;
 
                 case 'Shipped from Site':
-                    const shippedFromSite = currBoxShippedNotReceived['siteAcronym'] ? currBoxShippedNotReceived['siteAcronym'] : '';
+                    const locationConceptId = currBoxShippedNotReceived[fieldToConceptIdMapping.shippingLocation];
+                    const shippedFromSite = locationConceptIDToLocationMap[locationConceptId]?.siteAcronym || '';
                     cellEle.innerText = shippedFromSite;
                     break;
 
@@ -368,9 +369,9 @@ const manifestButton = (allBoxesShippedBySiteAndNotReceived, bagIdArr, manifestM
 const groupAllBags = (allBoxesShippedBySiteAndNotReceived) => {
     const arrBoxes = [];
     allBoxesShippedBySiteAndNotReceived.forEach((box) => {
-        const specimenBags = Object.keys(box.bags);
+        const specimenBags = getBagList(box);
         if (specimenBags.length) {
-            arrBoxes.push(box.bags);
+            arrBoxes.push(getBags(box));
         }
     });
     return arrBoxes;
@@ -388,7 +389,7 @@ const countSamplesArr = (bagsArr) => {
 
         if (groupBagKeys.length) {
             for (let bag of groupBagKeys) {
-                let bagSamples = groupBag[bag].arrElements
+                let bagSamples = groupBag[bag][fieldToConceptIdMapping.tubesCollected];
                 sampleNumber += bagSamples.length;
             }
             return sampleNumber;
@@ -411,7 +412,7 @@ const groupSamplesArr = (bagsArr) => {
 
         if (bagKeys.length) {
             for (let bag of bagKeys) {
-                groupSamples.push(groupBag[bag].arrElements)
+                groupSamples.push(groupBag[bag][fieldToConceptIdMapping.tubesCollected])
             }
             arrSamples.push(groupSamples);
         }
@@ -472,7 +473,10 @@ const groupShippedByArr = (allBoxesShippedBySiteAndNotReceived) => {
 const groupBagIdArr = (bagsArr) => {
     const arrBagId = [];
     bagsArr.forEach((bag) => {
-        const bagKeys = Object.keys(bag);
+        const bagKeys = Object.keys(bag).map(bagConceptId => 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_bloodUrine] || 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_mouthWash] || 
+            bag[bagConceptId][fieldToConceptIdMapping.bagscan_orphanBag]);
         arrBagId.push(bagKeys);
     });
     return arrBagId;
@@ -641,7 +645,8 @@ const savePackagesInTransitModalData = (packagesInTransitDataObject, index, allB
         loginSite: "",
     }
 
-    packagesInTransitModalData.site = allBoxesShippedBySiteAndNotReceived[index].siteAcronym;
+    const locationConceptId = allBoxesShippedBySiteAndNotReceived[index][fieldToConceptIdMapping.shippingLocation];
+    packagesInTransitModalData.site = locationConceptIDToLocationMap[locationConceptId]?.siteAcronym || '';
     packagesInTransitModalData.date = allBoxesShippedBySiteAndNotReceived[index][shippingShipDate];
     packagesInTransitModalData.location = allBoxesShippedBySiteAndNotReceived[index][shippingLocation];
     packagesInTransitModalData.boxNumber = allBoxesShippedBySiteAndNotReceived[index][shippingBoxId];
