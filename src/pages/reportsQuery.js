@@ -1,4 +1,4 @@
-import { userAuthorization, removeActiveClass, restrictNonBiospecimenUser, hideAnimation, showAnimation, getNumPages, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, showNotifications } from "./../shared.js";
+import { userAuthorization, removeActiveClass, restrictNonBiospecimenUser, hideAnimation, showAnimation, getNumPages, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, showNotifications, locationConceptIDToLocationMap} from "./../shared.js";
 import { handleBoxReportsData, populateReportManifestHeader, populateReportManifestTable, addPaginationFunctionality, addEventFilter } from "./../events.js";
 import { homeNavBar, reportSideNavBar } from '../navbar.js';
 import { siteCollectionNavbar } from "./siteCollection/siteCollectionNavbar.js";
@@ -12,7 +12,6 @@ export const reportsQuery = (auth, route) => {
                 restrictNonBiospecimenUser();
                 return;
             }
-            if (!response.role) return;
             
             appState.setState({
                 reportData: {
@@ -137,7 +136,8 @@ export const showReportsManifest = async (currBox, source) => {
         showAnimation();
         const loginSite = currBox[conceptIds.loginSite];
         const boxId = currBox[conceptIds.shippingBoxId];
-        const siteAcronym = currBox['siteAcronym'] || '';
+        const locationConceptId = currBox[conceptIds.shippingLocation];
+        const siteAcronym = locationConceptIDToLocationMap[locationConceptId]?.siteAcronym || '';
         const shippingLocation = conceptIdToSiteSpecificLocation[currBox[conceptIds.shippingLocation]] || '';
         const trackingNumber = currBox[conceptIds.shippingTrackingNumber] || '';
 

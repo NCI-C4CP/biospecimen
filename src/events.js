@@ -1,19 +1,19 @@
 import {
-    appState, performSearch, showAnimation, addBiospecimenUsers, getSpecimensByCollectionIds, hasObjectChanged, getAddedStrayTubes, hideAnimation, showNotifications, biospecimenUsers, removeBiospecimenUsers, findParticipant,
+    appState, performSearch, showAnimation, getSpecimensByCollectionIds, hasObjectChanged, getAddedStrayTubes, hideAnimation, showNotifications, findParticipant,
     errorMessage, removeAllErrors, storeSpecimen, updateSpecimen, searchSpecimen, generateBarCode, updateBox,
     ship, disableInput, updateNewTempDate, getSiteTubesLists, getWorkflow, fixMissingTubeData,
     getSiteCouriers, getPage, getNumPages, removeSingleError, displayManifestContactInfo, checkShipForage, checkAlertState, retrieveDateFromIsoString,
     convertConceptIdToPackageCondition, checkFedexShipDuplicate, shippingDuplicateMessage, checkInParticipant, checkOutParticipant, getCheckedInVisit, participantCanCheckIn, shippingPrintManifestReminder,
     checkNonAlphanumericStr, shippingNonAlphaNumericStrMessage, visitType, getParticipantCollections, updateBaselineData,
-    siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, convertToOldBox, translateNumToType,
+    siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, translateNumToType,
     getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
-    showConfirmationModal, dismissBiospecimenModal, submitSpecimen, escapeHTML
+    showConfirmationModal, dismissBiospecimenModal, submitSpecimen, escapeHTML,
+    getBagList, getBagConceptId
 } from './shared.js';
 import { searchTemplate, searchBiospecimenTemplate } from './pages/dashboard.js';
 import { showReportsManifest } from './pages/reportsQuery.js';
 import { addNewBox, buildSpecimenDataInModal, createShippingModalBody, startShipping, generateBoxManifest, populateViewShippingBoxContentsList,
         renderShippingModalHeader, generateShippingManifest, finalShipmentTracking, populateModalSelect, prepareBoxToUpdate, processCheckedModalElements, shipmentTracking, updateBoxListModalUIValue } from './pages/shipping.js';
-import { userListTemplate } from './pages/users.js';
 import { checkInTemplate } from './pages/checkIn.js';
 import { specimenTemplate } from './pages/specimen.js';
 import { tubeCollectedTemplate } from './pages/collectProcess.js';
@@ -224,22 +224,29 @@ export const addEventAddSpecimensToListModalButton = (bagId, tableIndex, isOrpha
         let boxIdAndBagsObj = {};
         for (let i = 0; i < boxList.length; i++) {
             const box = boxList[i];
-            if (!box['bags']) box['bags'] = {};
-            boxIdAndBagsObj[box[conceptIds.shippingBoxId]] = box['bags'];
+            const bagList = getBagList(box);
+            boxIdAndBagsObj[box[conceptIds.shippingBoxId]] = {};
+            bagList.forEach((bagId) => {
+                boxIdAndBagsObj[box[conceptIds.shippingBoxId]][bagId] = box[bagId];
+            })
             locations[box[conceptIds.shippingBoxId]] = box[conceptIds.shippingLocation];
         }
 
         const currBoxId = updateBoxListModalUIValue();
-        boxIdAndBagsObj = processCheckedModalElements(boxIdAndBagsObj, bagId, currBoxId, isOrphan, tableIndex);
-
-        const addedTubes = isOrphan
-            ? [boxIdAndBagsObj[currBoxId]['unlabelled'].arrElements.find(tubeId => tubeId === bagId)].filter(Boolean)
-            : boxIdAndBagsObj[currBoxId][bagId].arrElements || [];
+        try {
+            boxIdAndBagsObj = processCheckedModalElements(boxIdAndBagsObj, bagId, currBoxId, isOrphan, tableIndex);
+        } catch (error) {
+            hideAnimation();
+            console.error('Failed to update box.', error);
+            showNotifications({ title: 'Error Adding Specimen(s)', body: `There was an error adding ${bagId.split(' ')[0]}. Please try again.` });
+            return;
+        }
+        
+        let bagConceptId = getBagConceptId(boxIdAndBagsObj[currBoxId], bagId);
+        const addedTubes = bagConceptId && boxIdAndBagsObj[currBoxId][bagConceptId][conceptIds.tubesCollected] ? boxIdAndBagsObj[currBoxId][bagConceptId][conceptIds.tubesCollected] : [];
 
         if (boxIdAndBagsObj.hasOwnProperty(currBoxId) && addedTubes.length > 0) {
-            const labeledBagCount = Object.keys(boxIdAndBagsObj[currBoxId]).filter(key => key !== 'unlabelled' && key !== 'undefined').length ?? 0; // Labeled bags: Keys in boxIdAndBagsObj[currBoxId].
-            const unlabeledBagCount = boxIdAndBagsObj[currBoxId]?.['unlabelled']?.['arrElements']?.length ?? 0; // Unlabeled bags: Hold stray tubes. Each is a separate bag.
-            const bagCount = labeledBagCount + unlabeledBagCount;
+            const bagCount = Object.keys(boxIdAndBagsObj[currBoxId]).filter(key => key !== 'unlabelled' && key !== 'undefined').length ?? 0; // Labeled bags: Keys in boxIdAndBagsObj[currBoxId].
 
             const canAddBag = checkBagCount(bagCount, bagId, currBoxId);
             if (!canAddBag) return;
@@ -379,91 +386,6 @@ export const addEventHideNotification = (element) => {
         });
         setTimeout(() => { btn.dispatchEvent(new Event('click')) }, 8000);
     });
-}
-
-export const addEventModalBtn = (role, userEmail) => {
-    const btn = document.getElementById("modalBtn");
-    btn.addEventListener('click', () => {
-        const header = document.getElementById('biospecimenModalHeader');
-        const body = document.getElementById('biospecimenModalBody');
-        header.innerHTML = `<h5 class="modal-title">Add user</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                            </button>`;
-
-        body.innerHTML = `
-            <form id="addNewUser" method="POST">
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Name</label>
-                    <input class="form-control" required type="name" autocomplete="off" id="userName" placeholder="Enter name"/>
-                </div>
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Email</label>
-                    <input class="form-control" required autocomplete="off" type="email" autocomplete="off" id="userEmail" placeholder="Enter name"/>
-                </div>
-                <div class="mb-3">
-                    <label class="col-form-label search-label">Role</label>
-                    <select class="form-control" required id="userRole">
-                        <option value="">-- Select role --</option>
-                        ${role === 'admin' ? `
-                            <option value="manager">Manager</option>
-                            <option value="user">User</option>
-                        ` : `
-                            <option value="user">User</option>
-                        `}
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-outline-primary">Add</button>
-                </div>
-            </form>
-        `;
-        addEventNewUserForm(userEmail);
-    })
-};
-
-const addEventNewUserForm = (userEmail) => {
-    const form = document.getElementById('addNewUser');
-    form.addEventListener('submit', async e => {
-        e.preventDefault();
-        const array = [];
-        let data = {};
-        data['name'] = document.getElementById('userName').value;
-        data['email'] = document.getElementById('userEmail').value;
-        data['role'] = document.getElementById('userRole').value;
-        array.push(data)
-        showAnimation();
-        const response = await addBiospecimenUsers(array);
-        if (response.code === 200) {
-            showNotifications({ title: 'New user added!', body: `<b>${data.email}</b> is added as <b>${data.role}</b>` });
-            form.reset();
-            const users = await biospecimenUsers();
-            hideAnimation();
-            if (users.code === 200 && users.data.users.length > 0) {
-                document.getElementById('usersList').innerHTML = userListTemplate(users.data.users, userEmail);
-                addEventRemoveUser();
-            }
-        }
-        else if (response.code === 400 && response.message === 'User with this email already exists') {
-            hideAnimation();
-            showNotifications({ title: 'User already exists!', body: `User with email: <b>${data.email}</b> already exists` });
-        }
-    })
-}
-
-export const addEventRemoveUser = () => {
-    const elements = document.getElementsByClassName('fa-user-minus');
-    Array.from(elements).forEach(element => {
-        element.addEventListener('click', async () => {
-            const email = element.dataset.email;
-            showAnimation();
-            const response = await removeBiospecimenUsers(email);
-            hideAnimation();
-            if (response.code === 200) {
-                element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);
-                showNotifications({ title: 'User removed!', body: `User with email <b>${email}</b> is removed.` });
-            }
-        })
-    })
 }
 
 export const addGoToCheckInEvent = () => {
@@ -2068,9 +1990,9 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
 }
 
 const validateShipperEmail = (email) => {
-    const finalizeSignInputEle = document.getElementById('finalizeSignInput');
-    if (finalizeSignInputEle.value.toUpperCase() !== email.toUpperCase()) {
-        showNotifications({ title: 'Error Shipping Box(es)', body: `Email mismatch. You entered: ${finalizeSignInputEle.value}, which does not match the email on record.` });
+    const finalizedSignInput = document.getElementById('finalizeSignInput').value;
+    if (finalizedSignInput.toUpperCase() !== email.toUpperCase()) {
+        showNotifications({ title: 'Error Shipping Box(es)', body: `Email mismatch. You entered: ${escapeHTML(finalizedSignInput)}, which does not match the email on record.` });
         return false;
     }
     return true;
@@ -2146,7 +2068,7 @@ export const populateFinalCheck = (boxIdAndTrackingObj) => {
         let numTubes = 0;
 
         for (const bag of bagArray) {
-            numTubes += specimenObj[bag]['arrElements']?.length ?? 0;
+            numTubes += specimenObj[bag][conceptIds.tubesCollected]?.length ?? 0;
         }
 
         let row = table.insertRow();
@@ -2316,7 +2238,7 @@ const populateBoxReportsTable = (source) => {
     for (let i = 0; i < reportPageBoxes.length; i++) {
         rowCount = currTable.rows.length;
         currRow = currTable.insertRow(rowCount);
-        const currBox = convertToOldBox(reportPageBoxes[i]);
+        const currBox = reportPageBoxes[i];
         const trackingNumber = currBox[conceptIds.shippingTrackingNumber] ?? '';
         const shippedDate = currBox[conceptIds.shippingShipDate] ? retrieveDateFromIsoString(currBox[conceptIds.shippingShipDate]) : '';
         const receivedDate = currBox[conceptIds.siteShipmentDateReceived] ? retrieveDateFromIsoString(currBox[conceptIds.siteShipmentDateReceived]) : '';
@@ -2394,15 +2316,17 @@ export const populateReportManifestHeader = (currPage) => {
 export const populateReportManifestTable = (currPage, searchSpecimenInstituteArray) => {
     const currTable = document.getElementById('boxManifestTable');
     const replacementTubeLabelObj = findReplacementTubeLabels(searchSpecimenInstituteArray);
-    let bags = Object.keys(currPage['bags']);    
+    let bags = getBagList(currPage);    
     let rowCount = 1;
     for (let i = 0; i < bags.length; i++) {
-        let tubes = currPage['bags'][bags[i]]['arrElements'];
+        let tubes = currPage[bags[i]][conceptIds.tubesCollected];
         for (let j = 0; j < tubes.length; j++) {
             const currTube = tubes[j]
             let currRow = currTable.insertRow(rowCount);
             if (j == 0) {
-                currRow.insertCell(0).innerHTML = bags[i];
+                currRow.insertCell(0).innerHTML = currPage[bags[i]][conceptIds.bagscan_bloodUrine] || 
+                    currPage[bags[i]][conceptIds.bagscan_mouthWash] || 
+                    currPage[bags[i]][conceptIds.bagscan_orphanBag];
             } else {
                 currRow.insertCell(0).innerHTML = '';
             }
@@ -2420,12 +2344,11 @@ export const populateReportManifestTable = (currPage, searchSpecimenInstituteArr
             }
             currRow.insertCell(2).innerHTML = toAddType;
             let fullScannerName = '';
-            let currBox = currPage['bags'];
-            if (currBox[bags[i]].hasOwnProperty('469819603') && j == 0) {
-                fullScannerName += currBox[bags[i]]['469819603'] + ' ';
+            if (currPage[bags[i]].hasOwnProperty(conceptIds.scannedByFirstName) && j == 0) {
+                fullScannerName += currPage[bags[i]][conceptIds.scannedByFirstName] + ' '; 
             }
-            if (currBox[bags[i]].hasOwnProperty('618036638') && j == 0) {
-                fullScannerName += currBox[bags[i]]['618036638'];
+            if (currPage[bags[i]].hasOwnProperty(conceptIds.scannedByLastName) && j == 0) { 
+                fullScannerName += currPage[bags[i]][conceptIds.scannedByLastName]; 
             }
             addDeviationTypeCommentsContentReports(searchSpecimenInstituteArray, currTube, currRow, i);
             rowCount += 1;
@@ -2551,7 +2474,7 @@ export const addEventFilter = (source) => {
  * @param {string} masterSpecimenId - specimenId to search for
  * @returns {boolean} true if the specimenId is found in the shipped boxes, false otherwise.
  * If the specimenId is a masterId, search for the key in the bags.
- * If the bag is unlabelled, search arrElements for the key.
+ * If the bag is unlabelled, search conceptIds.tubesCollected for the key.
  */
 export const isScannedIdShipped = async (allBoxesList, masterSpecimenId) => {
     if (!allBoxesList.length) return false;
@@ -2563,13 +2486,14 @@ export const isScannedIdShipped = async (allBoxesList, masterSpecimenId) => {
         if (box[conceptIds.submitShipmentFlag] !== conceptIds.yes) continue;
         
         const { bags } = box;
-        if (isMasterId) {
-            if (bags[masterSpecimenId] || (bags.unlabelled && bags.unlabelled.arrElements.includes(masterSpecimenId))) {
-                return true;
-            }
-        } else {
-            for (const bagId in bags) {
-                if (bags[bagId].arrElements.includes(masterSpecimenId)) {
+        let bagConceptId = getBagConceptId(box, masterSpecimenId);
+        if (bagConceptId) {
+            return true;
+        } else if (!isMasterId) {
+            let bags = getBagList(box);
+            for (let i = 0; i < bags.length; i++) {
+                let bagId = bags[i];
+                if (box[bagId]?.[conceptIds.tubesCollected]?.includes(masterSpecimenId)) {
                     return true;
                 }
             }
@@ -2603,16 +2527,16 @@ const findScannedIdInUnshippedBoxes = (allBoxesList, masterSpecimenId) => {
 
     for (const box of allBoxesList) {
         if (box[conceptIds.submitShipmentFlag] === conceptIds.yes) continue;        
-        const { bags } = box;
 
-        if (isMasterId) {
-            if (bags[masterSpecimenId] || (bags.unlabelled && bags.unlabelled.arrElements.includes(masterSpecimenId))) {
-                dataObj = buildFoundDataObj(box);
-                return dataObj;
-            }
-        } else {
-            for (const bagId in bags) {
-                if (bags[bagId]?.arrElements?.includes(masterSpecimenId)) {
+        let bagConceptId = getBagConceptId(box, masterSpecimenId);
+        if (bagConceptId) {
+            dataObj = buildFoundDataObj(box);
+            return dataObj;
+        } else if (!isMasterId) {
+            let bags = getBagList(box);
+            for (let i = 0; i < bags.length; i++) {
+                let bagId = bags[i];
+                if (box[bagId]?.[conceptIds.tubesCollected]?.includes(masterSpecimenId)) {
                     dataObj = buildFoundDataObj(box);
                     return dataObj;
                 }

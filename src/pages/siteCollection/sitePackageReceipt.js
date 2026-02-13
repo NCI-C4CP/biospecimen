@@ -728,7 +728,9 @@ const displayConfirmPossibleInvalidDateModal = (modalHeaderEl,modalBodyEl, colle
     const formattedCollectionDate = new Date(collectionDateEntered).toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
+        // Because the timezone in the timestamp is UTC, we must specify UTC
+        timeZone: "UTC"
     });
     modalHeaderEl.innerHTML = `
         <h5>Confirmation</h5>
@@ -835,7 +837,11 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
         && isNonEmptyString(dateReceived);
 };
 
-export const validateCollectionDate = async () => {
+/**
+ * Returns true if date is valid and false if not.
+ * @returns boolean
+ */
+export const isCollectionDateValid = async () => {
     const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
     const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
     const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
@@ -853,7 +859,7 @@ export const validateCollectionDate = async () => {
         });
         const responseData = await response.json();
         if(responseData.code === 200) {
-            return !response.response;
+            return responseData.data;
         } else {
             throw new Error(responseData.message);
         }

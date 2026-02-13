@@ -2,7 +2,7 @@ import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollecti
 import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
-import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation, validateCollectionDate } from "../siteCollection/sitePackageReceipt.js";
+import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation, isCollectionDateValid } from "../siteCollection/sitePackageReceipt.js";
 
 const contentBody = document.getElementById("contentBody");
 
@@ -165,7 +165,7 @@ const formSubmit = () => {
       const modalHeaderEl = document.getElementById("modalHeader");
       const modalBodyEl = document.getElementById("modalBody");
       const isPackageInfoValid = validatePackageInformation(true);
-      const questionableCollectionDate = await validateCollectionDate();
+      const questionableCollectionDate = !await isCollectionDateValid();
 
       if (isPackageInfoValid) {
         displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl, true, questionableCollectionDate);
