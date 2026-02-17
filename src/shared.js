@@ -3543,16 +3543,51 @@ export const convertISODateTime = (isoDateTime) => {
  * @param {string} isoDateTime - ISO DateTime (UTC)
  * @returns {string} - Local DateTime in a human readable format: either MM/DD/YYYY HH:MM
  */
-export const convertISODateTimeToLocal = (isoDateTime) => {
+export const convertISODateTimeToLocal = (isoDateTime, options) => {
     const date = new Date(isoDateTime);
-    const month = setZeroDateTime(date.getMonth() + 1);
-    const day = setZeroDateTime(date.getDate());
-    const year = date.getFullYear();
-    const hours = setZeroDateTime(date.getHours());
-    const minutes = setZeroDateTime(date.getMinutes());
+    const month = setZeroDateTime(date.getMonth(options) + 1);
+    const day = setZeroDateTime(date.getDate(options));
+    const year = date.getFullYear(options);
+    const hours = setZeroDateTime(date.getHours(options));
+    const minutes = setZeroDateTime(date.getMinutes(options));
 
     return `${month}/${day}/${year} ${hours}:${minutes}`;
 };
+
+
+/**
+ * Takes an ISO date/time string and displays it in EST
+ * regardless of browser local time.
+ * @param {string} isoDateTime 
+ * @returns 
+ */
+export const convertISODateTimeToEST = (isoDateTime) => {
+    const date = new Date(isoDateTime);
+    const options = {
+        timezone: 'America/New_York',
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hourCycle: 'h12',
+        hour: "2-digit",
+        minute: "2-digit",
+    };
+    const month = setZeroDateTime(date.getMonth(options) + 1);
+    const day = setZeroDateTime(date.getDate(options));
+    const year = date.getFullYear(options);
+    let hours = date.getHours(options);
+    let amPM = 'AM';
+    if(hours > 12) {
+        hours = setZeroDateTime(hours - 12);
+        amPM = 'PM';
+    } else {
+        hours = setZeroDateTime(hours);
+    }
+    const minutes = setZeroDateTime(date.getMinutes(options));
+
+    return `${month}/${day}/${year} ${hours}:${minutes} ${amPM}`;
+
+}
 
 // append 0 before min. if single digit min. or hour
 const setZeroDateTime = (dateTimeInput) => {
