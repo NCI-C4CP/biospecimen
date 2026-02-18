@@ -3543,13 +3543,13 @@ export const convertISODateTime = (isoDateTime) => {
  * @param {string} isoDateTime - ISO DateTime (UTC)
  * @returns {string} - Local DateTime in a human readable format: either MM/DD/YYYY HH:MM
  */
-export const convertISODateTimeToLocal = (isoDateTime, options) => {
+export const convertISODateTimeToLocal = (isoDateTime) => {
     const date = new Date(isoDateTime);
-    const month = setZeroDateTime(date.getMonth(options) + 1);
-    const day = setZeroDateTime(date.getDate(options));
-    const year = date.getFullYear(options);
-    const hours = setZeroDateTime(date.getHours(options));
-    const minutes = setZeroDateTime(date.getMinutes(options));
+    const month = setZeroDateTime(date.getMonth() + 1);
+    const day = setZeroDateTime(date.getDate());
+    const year = date.getFullYear();
+    const hours = setZeroDateTime(date.getHours());
+    const minutes = setZeroDateTime(date.getMinutes());
 
     return `${month}/${day}/${year} ${hours}:${minutes}`;
 };
@@ -3563,29 +3563,16 @@ export const convertISODateTimeToLocal = (isoDateTime, options) => {
  */
 export const convertISODateTimeToEST = (isoDateTime) => {
     const date = new Date(isoDateTime);
-    const options = {
+    const dayString = date.toLocaleDateString('en-US', {
         timezone: 'America/New_York',
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hourCycle: 'h12',
-        hour: "2-digit",
-        minute: "2-digit",
-    };
-    const month = setZeroDateTime(date.getMonth(options) + 1);
-    const day = setZeroDateTime(date.getDate(options));
-    const year = date.getFullYear(options);
-    let hours = date.getHours(options);
-    let amPM = 'AM';
-    if(hours > 12) {
-        hours = setZeroDateTime(hours - 12);
-        amPM = 'PM';
-    } else {
-        hours = setZeroDateTime(hours);
-    }
-    const minutes = setZeroDateTime(date.getMinutes(options));
+        dateStyle: "short"
+    });
+    const timeString = date.toLocaleTimeString('en-US', {
+        timezone: 'America/New_York',
+        timeStyle: "short"
+    });
 
-    return `${month}/${day}/${year} ${hours}:${minutes} ${amPM}`;
+    return `${dayString} ${timeString}`;
 
 }
 
