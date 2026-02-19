@@ -225,9 +225,7 @@ const csvFileButtonSubmit = () => {
 
     try {
         const results = await getSpecimensByReceivedDate(dateFilter);
-        console.log('results', JSON.parse(JSON.stringify(results)));
         const modifiedResults = modifyBSIQueryResults(results.data);
-        console.log('modifiedResults', JSON.parse(JSON.stringify(modifiedResults)));
         generateBSIqueryCSVData(modifiedResults);
         hideAnimation();
     } catch (e) {
@@ -276,7 +274,6 @@ const getSpecimensByReceivedDate = async (dateFilter) => {
 const modifyBSIQueryResults = (results) => {
   const csvDataArray = [];
   results.forEach((result) => {
-    console.log('result', result);
     const collectionType = result[conceptIds.collectionType] || conceptIds.research;
     const healthcareProvider = result[conceptIds.healthcareProvider] || "default";
     const specimenKeysArray =
@@ -285,7 +282,6 @@ const modifyBSIQueryResults = (results) => {
         : [];
     for (const specimenKey of specimenKeysArray) {
       const specimen = result.specimens[specimenKey];
-      console.log('specimen', specimen);
       let [collectionId = "", tubeId = ""] = result.specimens[specimenKey]?.[conceptIds.collectionId]?.split(" ") ?? [];
       if (miscTubeIdSet.has(tubeId)) {
         tubeId = specimenCollection.cidToNum[specimenKey];
