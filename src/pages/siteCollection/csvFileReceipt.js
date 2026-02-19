@@ -1,5 +1,5 @@
 import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbrObj, keyToLocationObj, baseAPI, keyToNameCSVObj,
-  formatISODateTimeDateOnly, convertISODateTime, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
+  convertISODateTime, convertISODateTimeToEST, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
   miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal, 
   appState, 
   getBagList, getBags, locationConceptIDToLocationMap} from "../../shared.js";
@@ -428,8 +428,10 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
       ? keyToNameCSVObj[filteredResult[conceptIds.healthcareProvider]] || ""
       : keyToLocationObj[filteredResult[conceptIds.collectionLocation]] || "";
 
+      // Per request, this is currently always displayed in EST
+      // regardless of browser local time.
   const dateReceived = filteredResult[conceptIds.dateReceived]
-    ? formatISODateTimeDateOnly(filteredResult[conceptIds.dateReceived])
+    ? convertISODateTimeToEST(filteredResult[conceptIds.dateReceived])
     : "";
 
   // Dummy date for clinical files requested in issue 936
