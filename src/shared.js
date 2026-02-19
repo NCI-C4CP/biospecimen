@@ -3571,6 +3571,28 @@ export const convertISODateTimeToLocal = (isoDateTime) => {
     return `${month}/${day}/${year} ${hours}:${minutes}`;
 };
 
+
+/**
+ * Takes an ISO date/time string and displays it in EST
+ * regardless of browser local time.
+ * @param {string} isoDateTime 
+ * @returns 
+ */
+export const convertISODateTimeToEST = (isoDateTime) => {
+    const date = new Date(isoDateTime);
+    const dayString = date.toLocaleDateString('en-US', {
+        timezone: 'America/New_York',
+        dateStyle: "short"
+    });
+    const timeString = date.toLocaleTimeString('en-US', {
+        timezone: 'America/New_York',
+        timeStyle: "short"
+    });
+
+    return `${dayString} ${timeString}`;
+
+}
+
 // append 0 before min. if single digit min. or hour
 const setZeroDateTime = (dateTimeInput) => {
     return dateTimeInput < 10 ? '0' + dateTimeInput : dateTimeInput.toString();

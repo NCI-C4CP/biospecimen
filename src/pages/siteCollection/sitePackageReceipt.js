@@ -59,12 +59,6 @@ const packageReceiptTemplate = async (name) => {
                     <textarea class="form-control" id="receivePackageComments" cols="30" rows="5" placeholder="Any comments?" ></textarea>
                 </div>
             </div>
-            <div class="row mb-3">
-                <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
-                <div class="col-md-8">
-                    <input autocomplete="off" required class="form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
-                </div>
-            </div>
             <div class="mt-4 mb-4" style="display:inline-block;">
                 <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
                 <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" id="save">Save</button>
@@ -149,10 +143,10 @@ const confirmPackageReceipt = () => {
                   if (scannedBarcode.length === 12 || (!uspsFirstThreeNumbersCheck(scannedBarcode))) {  
                       receiptedPackageObj[`${fieldMapping.siteShipmentReceived}`] = fieldMapping.yes;
                       receiptedPackageObj[`${fieldMapping.siteShipmentComments}`] = document.getElementById('receivePackageComments').value.trim();
-                      receiptedPackageObj[`${fieldMapping.siteShipmentDateReceived}`] = convertDateReceivedinISO(document.getElementById('dateReceived').value);
+                      receiptedPackageObj[`${fieldMapping.siteShipmentDateReceived}`] = new Date().toISOString();
                   } else { 
                       receiptedPackageObj['receivePackageComments'] = document.getElementById('receivePackageComments').value.trim();
-                      receiptedPackageObj['dateReceived'] = convertDateReceivedinISO(document.getElementById('dateReceived').value);
+                      receiptedPackageObj['dateReceived'] = new Date().toISOString();
                   }
 
                 await storeSpecimenPackageReceipt(receiptedPackageObj);
@@ -416,17 +410,6 @@ const handleInputChange = (e) => {
 }
 
 /**
- * A custom handler for input element with dateReceived id.
- * Checks if current input has changed or any other input has changed. Changes the value of hasUnsavedChanges. Adds or removes listeners in handleUnsavedChangesListeners function.
- * @param {Event} e - The input event object. 
-*/
-const handleInputDateChange = (e) => {
-    const isCurrentDate = e.target.value.trim() === getCurrentDate();
-    hasUnsavedChanges = !isCurrentDate || checkAllInputChanges();
-    handleUnsavedChangesListeners(hasUnsavedChanges);
-}
-
-/**
  * A custom handler for the checkbox element with collectionCheckBox id.
  * Checks if current input has changed or any other input has changed. Changes the value of hasUnsavedChanges. Adds or removes listeners in handleUnsavedChangesListeners function.
  * @param {Event} e - The input event object. 
@@ -552,14 +535,6 @@ const inputChangeList = [
         listenerType: "input",
         onlyKitsReceipt: false,
         reset: (input) => input.value = "",
-    },
-    {
-        selector: "dateReceived",
-        check: (input) => input.value.trim() !== getCurrentDate(),
-        listenerType: "input",
-        onlyKitsReceipt: false,
-        customHandler: handleInputDateChange,
-        reset: (input) => input.value = getCurrentDate(),
     },
     {
         selector: "collectionCheckBox",
@@ -817,7 +792,6 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
     const scannedBarcode = document.getElementById("scannedBarcode")?.value;
-    const dateReceived = document.getElementById("dateReceived")?.value;
     const collectionId = document.getElementById("collectionId")?.value;
     const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
     const timeCollectionCard = document.getElementById("timeCollectionCard")?.value;
@@ -827,14 +801,12 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
     if (isMouthwashKit) {
         return (parseSelectPackageConditionsList.length !== 0) 
             && isNonEmptyString(scannedBarcode)
-            && isNonEmptyString(dateReceived)
             && isNonEmptyString(collectionId) 
             && isNonEmptyString(dateCollectionCard) 
             && isNonEmptyString(timeCollectionCard);
     }
     return (selectPackageConditionsList.length !== 0) 
-        && isNonEmptyString(scannedBarcode) 
-        && isNonEmptyString(dateReceived);
+        && isNonEmptyString(scannedBarcode);
 };
 
 /**
@@ -843,7 +815,6 @@ export const validatePackageInformation = (isMouthwashKit = false) => {
  */
 export const isCollectionDateValid = async () => {
     const returnKitTrackingNum = document.getElementById("scannedBarcode")?.value;
-    const receivedDateTime = convertDateReceivedinISO(document.getElementById('dateReceived').value);
     const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
     const timeCollectionCard = document.getElementById("timeCollectionCard")?.value;
 
@@ -851,7 +822,7 @@ export const isCollectionDateValid = async () => {
 
     try {
         const idToken = await getIdToken();
-        const response = await fetch(`${baseAPI}api=validateKitReceiptCollectionDate&collectionDateTimestamp=${collectionDateTimestamp}&receivedDateTime=${receivedDateTime}&returnKitTrackingNum=${returnKitTrackingNum}`, {
+        const response = await fetch(`${baseAPI}api=validateKitReceiptCollectionDate&collectionDateTimestamp=${collectionDateTimestamp}&returnKitTrackingNum=${returnKitTrackingNum}`, {
             method: "get",
             headers: {
                 Authorization: "Bearer " + idToken
