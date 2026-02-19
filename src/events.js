@@ -2695,7 +2695,6 @@ export const addDeviationTypeCommentsContentReports = (searchSpecimenInstituteAr
 
 const searchAvailableCollectionsForSpecimen = (specimenId) => {
     const availableCollectionsObj = appState.getState().availableCollectionsObj;
-    console.log(availableCollectionsObj);
     if (specimenId.endsWith('0008') || specimenId.endsWith('0009')) {
         const specimenCollection = availableCollectionsObj?.[specimenId];
         if (specimenCollection) {
