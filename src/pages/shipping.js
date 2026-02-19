@@ -1,6 +1,6 @@
 import { addBoxAndUpdateSiteDetails, appState, conceptIdToSiteSpecificLocation, combineAvailableCollectionsObjects, displayManifestContactInfo, filterDuplicateSpecimensInList, getAllBoxes, getBoxes, getSpecimensInBoxes, getUnshippedBoxes, getLocationsInstitute, getSiteMostRecentBoxId, getSpecimensByBoxedStatus, hideAnimation, locationConceptIDToLocationMap,
         miscTubeIdSet, removeActiveClass, removeBag, removeMissingSpecimen, showAnimation, showNotifications, siteSpecificLocation, siteSpecificLocationToConceptId, sortBiospecimensList,
-        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict, getBagList, getBagConceptId, getNextBagConceptId, getBags } from "../shared.js"
+        translateNumToType, userAuthorization, getSiteAcronym, findReplacementTubeLabels, createBagToSpecimenDict, getBagList, getBagConceptId, getNextBagConceptId, getBags, getBagId } from "../shared.js"
 import { addDeviationTypeCommentsContent, addEventAddSpecimenToBox, addEventBackToSearch, addEventBoxSelectListChanged, addEventCheckValidTrackInputs,
         addEventCompleteShippingButton, addEventModalAddBox, addEventNavBarBoxManifest, addEventNavBarShipment, addEventNavBarShippingManifest, addEventNavBarAssignTracking, addEventLocationSelect,
         addEventPreventTrackingConfirmPaste, addEventReturnToPackaging, addEventReturnToReviewShipmentContents, addEventSaveButton, addEventSaveAndContinueButton, addEventShipPrintManifest,
@@ -305,9 +305,7 @@ export const populateViewShippingBoxContentsList = (selectedBoxId) => {
             //set up the table
             const replacementTubeLabelObj = appState.getState().replacementTubeLabelObj;
             for (let bagNum = 0; bagNum < boxKeys.length; bagNum++) {
-                const currBagId = currBox[boxKeys[bagNum]][conceptIds.bagscan_bloodUrine] || 
-                    currBox[boxKeys[bagNum]][conceptIds.bagscan_mouthWash] || 
-                    currBox[boxKeys[bagNum]][conceptIds.bagscan_orphanBag];
+                const currBagId = getBagId(currBox[boxKeys[bagNum]]);
                 const currTubes = currBox[boxKeys[bagNum]][conceptIds.tubesCollected];
                 for (let tubeNum = 0; tubeNum < currTubes.length; tubeNum++) {
                     const fullTubeId = currTubes[tubeNum];
@@ -882,7 +880,7 @@ const populateBoxManifestTable = (currBox) => {
                     : tubeTypeAndColor;
             }
 
-            currRow.insertCell(0).innerHTML = i === 0 ? currBox[bagKey][conceptIds.bagscan_bloodUrine] || currBox[bagKey][conceptIds.bagscan_mouthWash] || currBox[bagKey][conceptIds.bagscan_orphanBag] : '';
+            currRow.insertCell(0).innerHTML = i === 0 ? getBagId(currBox[bagKey]) : '';
             currRow.insertCell(1).innerHTML = tubesList[i];
             currRow.insertCell(2).innerHTML = tubeTypeAndColor;
 
@@ -1054,7 +1052,7 @@ export const populateShippingManifestTable = (boxIdAndBagsObj) => {
                     : '';
                 const currRow = table.insertRow(-1);
                 currRow.insertCell(0).innerHTML = firstSpecimenInBox && tubeIndex === 0 ? currBoxId : '';
-                currRow.insertCell(1).innerHTML = tubeIndex === 0 ? specimenData[conceptIds.bagscan_bloodUrine] || specimenData[conceptIds.bagscan_mouthWash] || specimenData[conceptIds.bagscan_orphanBag] : '';
+                currRow.insertCell(1).innerHTML = tubeIndex === 0 ? getBagId(specimenData) : '';
                 currRow.insertCell(2).innerHTML = currTube;
                 currRow.insertCell(3).innerHTML = fullScannerName;
 

@@ -973,6 +973,23 @@ export const getBagConceptId = (box, bagId) => {
 }
 
 /**
+ * Returns the bag id from a tube object
+ * 
+ * @param {Object} tubeObject 
+ * @returns 
+ */
+export const getBagId = (bag) => {
+    let bagId = '';
+    if (bag[conceptIds.orphanBagFlag] === conceptIds.yes || bag[conceptIds.bagscan_orphanBag]) {
+        bagId = 'unlabelled';
+    } else {
+        bagId = bag[conceptIds.bagscan_bloodUrine] || bag[conceptIds.bagscan_mouthWash] || '';
+    }
+
+    return bagId;
+}
+
+/**
  * Pulls the bags out as an object
  * @param {*} box 
  * @returns {} bags
