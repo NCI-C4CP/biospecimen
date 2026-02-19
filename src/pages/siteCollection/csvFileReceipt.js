@@ -281,12 +281,13 @@ const modifyBSIQueryResults = (results) => {
         ? Object.keys(result.specimens)
         : [];
     for (const specimenKey of specimenKeysArray) {
+      const specimen = result.specimens[specimenKey];
       let [collectionId = "", tubeId = ""] = result.specimens[specimenKey]?.[conceptIds.collectionId]?.split(" ") ?? [];
       if (miscTubeIdSet.has(tubeId)) {
         tubeId = specimenCollection.cidToNum[specimenKey];
       }
       const vialMappings = getVialTypesMappings(tubeId, collectionType, healthcareProvider);
-      const csvRowsFromSpecimen = updateResultMappings(result, vialMappings, collectionId, tubeId);
+      const csvRowsFromSpecimen = updateResultMappings(result, specimen, vialMappings, collectionId, tubeId);
       csvDataArray.push(csvRowsFromSpecimen);
     }
   });
@@ -418,7 +419,7 @@ const getVialTypesMappings = (tubeId, collectionType, healthcareProvider) => {
   }
 };
 
-const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId) => {
+const updateResultMappings = (filteredResult, specimen, vialMappings, collectionId, tubeId) => {
   const collectionTypeValue = filteredResult[conceptIds.collectionType];
   const clinicalDateTime = filteredResult[conceptIds.clinicalDateTimeDrawn];
   const withdrawalDateTime = filteredResult[conceptIds.dateWithdrawn];
@@ -430,8 +431,8 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
 
       // Per request, this is currently always displayed in EST
       // regardless of browser local time.
-  const dateReceived = filteredResult[conceptIds.dateReceived]
-    ? convertISODateTimeToEST(filteredResult[conceptIds.dateReceived])
+  const dateReceived = specimen[conceptIds.dateReceived]
+    ? convertISODateTimeToEST(specimen[conceptIds.dateReceived])
     : "";
 
   // Dummy date for clinical files requested in issue 936
