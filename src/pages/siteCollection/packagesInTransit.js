@@ -1,4 +1,4 @@
-import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime, getBagList, getBags, locationConceptIDToLocationMap} from "../../shared.js";
+import { showAnimation, hideAnimation, getAllBoxes, conceptIdToSiteSpecificLocation, searchSpecimenByRequestedSiteAndBoxId, appState, baseAPI, getIdToken, showNotifications, convertTime, getBagList, getBags, locationConceptIDToLocationMap, getBagId} from "../../shared.js";
 import { conceptIds as fieldToConceptIdMapping } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar, unAuthorizedUser } from "../../navbar.js";
@@ -474,9 +474,7 @@ const groupBagIdArr = (bagsArr) => {
     const arrBagId = [];
     bagsArr.forEach((bag) => {
         const bagKeys = Object.keys(bag).map(bagConceptId => 
-            bag[bagConceptId][fieldToConceptIdMapping.bagscan_bloodUrine] || 
-            bag[bagConceptId][fieldToConceptIdMapping.bagscan_mouthWash] || 
-            bag[bagConceptId][fieldToConceptIdMapping.bagscan_orphanBag]);
+            getBagId(bag[bagConceptId]));
         arrBagId.push(bagKeys);
     });
     return arrBagId;

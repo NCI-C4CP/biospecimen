@@ -8,7 +8,7 @@ import {
     siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, translateNumToType,
     getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
     showConfirmationModal, dismissBiospecimenModal, submitSpecimen, escapeHTML,
-    getBagList, getBagConceptId
+    getBagList, getBagConceptId, getBagId
 } from './shared.js';
 import { searchTemplate, searchBiospecimenTemplate } from './pages/dashboard.js';
 import { showReportsManifest } from './pages/reportsQuery.js';
@@ -2324,9 +2324,7 @@ export const populateReportManifestTable = (currPage, searchSpecimenInstituteArr
             const currTube = tubes[j]
             let currRow = currTable.insertRow(rowCount);
             if (j == 0) {
-                currRow.insertCell(0).innerHTML = currPage[bags[i]][conceptIds.bagscan_bloodUrine] || 
-                    currPage[bags[i]][conceptIds.bagscan_mouthWash] || 
-                    currPage[bags[i]][conceptIds.bagscan_orphanBag];
+                currRow.insertCell(0).innerHTML = getBagId(currPage[bags[i]]);
             } else {
                 currRow.insertCell(0).innerHTML = '';
             }

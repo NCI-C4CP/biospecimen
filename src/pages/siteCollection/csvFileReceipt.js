@@ -2,7 +2,7 @@ import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbr
   convertISODateTime, convertISODateTimeToEST, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
   miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal, 
   appState, 
-  getBagList, getBags, locationConceptIDToLocationMap} from "../../shared.js";
+  getBagList, getBags, locationConceptIDToLocationMap, getBagId} from "../../shared.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar } from "../../navbar.js";
@@ -355,7 +355,7 @@ const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) =
           numSamples: specimenBagSize.length,
           tempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
           BoxId: shippedBox[conceptIds.shippingBoxId] || "",
-          specimenBagId: specimenBag[conceptIds.bagscan_bloodUrine] || specimenBag[conceptIds.bagscan_mouthWash] || specimenBag[conceptIds.bagscan_orphanBag],
+          specimenBagId: getBagId(specimenBag),
           fullSpecimenIds: fullSpecimenIds,
           materialType: materialTypeMapping(fullSpecimenIds),
         };

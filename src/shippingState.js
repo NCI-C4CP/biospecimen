@@ -50,7 +50,7 @@ export const updateShippingStateSelectedLocation = (selectedLocation) => {
  */
 export const updateShippingStateRemoveBagFromBox = (boxId, bagId, bagsToMove, removeBagResponse) => {
     addBagToAvailableCollections(boxId, bagId, bagsToMove);
-    removeBagFromBox(boxId, bagId, bagsToMove);
+    removeBagFromBox(boxId, bagsToMove);
     updateFinalizedSpecimenList(removeBagResponse);
 }
 
@@ -82,7 +82,8 @@ const addBagToAvailableCollections = (boxId, bagId, bagsToMove) => {
     const detailedProviderBoxes = appState.getState().detailedProviderBoxes;
 
     if (bagId === 'unlabelled') {
-        const collectionToMove = detailedProviderBoxes[boxId]['unlabelled'][conceptIds.tubesCollected];
+        const bagConceptId = getBagConceptId(detailedProviderBoxes[boxId], bagsToMove[0]);
+        const collectionToMove = detailedProviderBoxes[boxId][bagConceptId][conceptIds.tubesCollected];
         availableCollectionsObj['unlabelled'].push(...collectionToMove);
     } else {
         for (const bagLabel of bagsToMove) {
@@ -98,15 +99,11 @@ const addBagToAvailableCollections = (boxId, bagId, bagsToMove) => {
 }
 
 // Remove the bag from the box when user has clicked 'remove bag' in the 'View Shipping Box Contents' table.
-const removeBagFromBox = (boxId, bagId, bagsToMove) => {
+const removeBagFromBox = (boxId, bagsToMove) => {
     const allBoxesList = appState.getState().allBoxesList;
     const boxIndex = allBoxesList.findIndex(box => box[conceptIds.shippingBoxId] === boxId);
 
     if (boxIndex !== -1) { 
-        if (bagId === 'unlabelled') {
-            bagsToMove = ['unlabelled'];
-        }
-
         bagsToMove.forEach(bagLabel => {
             const bagConceptId = getBagConceptId(allBoxesList[boxIndex], bagLabel);
             delete allBoxesList[boxIndex][bagConceptId];
