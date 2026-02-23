@@ -1,7 +1,8 @@
 import { showAnimation, hideAnimation, getIdToken, conceptIdToHealthProviderAbbrObj, keyToLocationObj, baseAPI, keyToNameCSVObj,
-  formatISODateTimeDateOnly, convertISODateTime, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
+  convertISODateTime, convertISODateTimeToEST, getAllBoxes, conceptIdToSiteSpecificLocation, showNotifications, getCurrentDate,
   miscTubeIdSet, triggerSuccessModal, getSpecimensInBoxes, findReplacementTubeLabels, triggerErrorModal, 
-  appState} from "../../shared.js";
+  appState, 
+  getBagList, getBags, locationConceptIDToLocationMap, getBagId} from "../../shared.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { nonUserNavBar } from "../../navbar.js";
@@ -280,12 +281,13 @@ const modifyBSIQueryResults = (results) => {
         ? Object.keys(result.specimens)
         : [];
     for (const specimenKey of specimenKeysArray) {
+      const specimen = result.specimens[specimenKey];
       let [collectionId = "", tubeId = ""] = result.specimens[specimenKey]?.[conceptIds.collectionId]?.split(" ") ?? [];
       if (miscTubeIdSet.has(tubeId)) {
         tubeId = specimenCollection.cidToNum[specimenKey];
       }
       const vialMappings = getVialTypesMappings(tubeId, collectionType, healthcareProvider);
-      const csvRowsFromSpecimen = updateResultMappings(result, vialMappings, collectionId, tubeId);
+      const csvRowsFromSpecimen = updateResultMappings(result, specimen, vialMappings, collectionId, tubeId);
       csvDataArray.push(csvRowsFromSpecimen);
     }
   });
@@ -303,17 +305,18 @@ const updateInTransitBoxMapping = (shippedBoxes) => {
   const holdProcessedResult = [];
   shippedBoxes.forEach((shippedBox) => {
      // store specimenBagIds in an array
-    const bagKeys = Object.keys(shippedBox.bags);
-    // extract all specimen bags' arrElements and flatten into a single array
+    const bagKeys = getBagList(shippedBox);
+    // extract all specimen bags' conceptIds.tubesCollected and flatten into a single array
     const specimenBags = bagKeys
-      .map((bagKey) => shippedBox.bags[bagKey].arrElements)
+      .map((bagKey) => shippedBox[bagKey][conceptIds.tubesCollected])
       .flat();
 
+    const locationConceptID = shippedBox[conceptIds.shippingLocation];
     const boxData = {
       shipDate: shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
       trackingNumber: shippedBox[conceptIds.shippingTrackingNumber] || "",
-      shippedSite: shippedBox["siteAcronym"] || "",
-      shippedLocation: conceptIdToSiteSpecificLocation[shippedBox[conceptIds.shippingLocation]] || "",
+      shippedSite: locationConceptIDToLocationMap[locationConceptID]?.siteAcronym || '',
+      shippedLocation: conceptIdToSiteSpecificLocation[locationConceptID] || "",
       numSamples: specimenBags.length || 0,
       hasTempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
     };
@@ -331,11 +334,14 @@ const updateInTransitBoxMapping = (shippedBoxes) => {
 const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) => {
   let holdProcessedResult = [];
   shippedBoxes.forEach((shippedBox) => {
-    const bagKeys = Object.keys(shippedBox.bags); // store specimenBagId in an array
-    const specimenBags = Object.values(shippedBox.bags); // store bag content in an array
+
+    const bagKeys = getBagList(shippedBox); // store specimenBagId in an array
+    const specimenBags = getBags(shippedBox); // store bag content in an array
     let dataHolder;
-    specimenBags.forEach((specimenBag, index) => {
-      specimenBag.arrElements.forEach((fullSpecimenIds, j, specimenBagSize) => {
+    const locationConceptID = shippedBox[conceptIds.shippingLocation];
+    bagKeys.forEach((bagId, index) => {
+      const specimenBag = specimenBags[bagId];
+      specimenBag[conceptIds.tubesCollected]?.forEach((fullSpecimenIds, j, specimenBagSize) => {
         // grab fullSpecimenIds & loop thru content
 
         if (Object.prototype.hasOwnProperty.call(replacementTubeLabelObj,fullSpecimenIds)) {
@@ -344,13 +350,13 @@ const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) =
         dataHolder = {
           shipDate: shippedBox[conceptIds.shippingShipDate]?.split("T")[0] || "",
           trackingNumber: shippedBox[conceptIds.shippingTrackingNumber] || "",
-          shippedSite: shippedBox.siteAcronym || "",
+          shippedSite: locationConceptIDToLocationMap[locationConceptID]?.siteAcronym || '',
           shippedLocation:conceptIdToSiteSpecificLocation[shippedBox[conceptIds.shippingLocation]] || "",
           shipDateTime: convertISODateTime(shippedBox[conceptIds.shippingShipDate]) || "",
           numSamples: specimenBagSize.length,
           tempMonitor: shippedBox[conceptIds.tempProbe] === conceptIds.yes ? "Yes" : "No",
           BoxId: shippedBox[conceptIds.shippingBoxId] || "",
-          specimenBagId: bagKeys[index],
+          specimenBagId: getBagId(specimenBag),
           fullSpecimenIds: fullSpecimenIds,
           materialType: materialTypeMapping(fullSpecimenIds),
         };
@@ -370,11 +376,11 @@ const updateInTransitSpecimenMapping = (shippedBoxes, replacementTubeLabelObj) =
 const materialTypeMapping = (specimenId) => {
   const tubeId = specimenId.split(" ")[1];
   const materialTypeObject = {
-    "0001": "Serum",
-    "0002": "Serum",
-    "0011": "Serum",
-    "0012": "Serum",
-    "0021": "Serum",
+    "0001": "WHOLE BL",
+    "0002": "WHOLE BL",
+    "0011": "WHOLE BL",
+    "0012": "WHOLE BL",
+    "0021": "WHOLE BL",
     "0003": "WHOLE BL",
     "0004": "WHOLE BL",
     "0005": "WHOLE BL",
@@ -413,7 +419,7 @@ const getVialTypesMappings = (tubeId, collectionType, healthcareProvider) => {
   }
 };
 
-const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId) => {
+const updateResultMappings = (filteredResult, specimen, vialMappings, collectionId, tubeId) => {
   const collectionTypeValue = filteredResult[conceptIds.collectionType];
   const clinicalDateTime = filteredResult[conceptIds.clinicalDateTimeDrawn];
   const withdrawalDateTime = filteredResult[conceptIds.dateWithdrawn];
@@ -423,8 +429,10 @@ const updateResultMappings = (filteredResult, vialMappings, collectionId, tubeId
       ? keyToNameCSVObj[filteredResult[conceptIds.healthcareProvider]] || ""
       : keyToLocationObj[filteredResult[conceptIds.collectionLocation]] || "";
 
-  const dateReceived = filteredResult[conceptIds.dateReceived]
-    ? formatISODateTimeDateOnly(filteredResult[conceptIds.dateReceived])
+      // Per request, this is currently always displayed in EST
+      // regardless of browser local time.
+  const dateReceived = specimen[conceptIds.dateReceived]
+    ? convertISODateTimeToEST(specimen[conceptIds.dateReceived])
     : "";
 
   // Dummy date for clinical files requested in issue 936

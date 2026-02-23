@@ -1,6 +1,6 @@
 import { nonUserNavBar } from "../../navbar.js";
 import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { showAnimation, hideAnimation, getIdToken, baseAPI, keyToNameCSVObj, conceptIdToHealthProviderAbbrObj, triggerErrorModal, convertISODateTime } from "../../shared.js";
+import { showAnimation, hideAnimation, getIdToken, baseAPI, keyToNameCSVObj, conceptIdToHealthProviderAbbrObj, triggerErrorModal, convertISODateTime, convertISODateTimeToEST } from "../../shared.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from '../../fieldToConceptIdMapping.js';
 import { receiptedCSVFileTemplate, downloadCSVfile } from '../siteCollection/csvFileReceipt.js';
@@ -81,7 +81,8 @@ const modifyKitQueryResults = (kitsData) => {
     const bsiID = kitData[conceptIds.collection.mouthwashTube1][conceptIds.collection.tube.scannedId]; // CNA899209 0007
     const tubeID = bsiID.split(' ')[1]; // 0007
     const Connect_ID = kitData['Connect_ID'];
-    const dateReceived = convertISODateTime(kitData[conceptIds.collection.mouthwashTube1][conceptIds.receivedDateTime]);
+    // Per request, will always display in EST
+    const dateReceived = convertISODateTimeToEST(kitData[conceptIds.collection.mouthwashTube1][conceptIds.receivedDateTime]);
     const dateDrawn = convertISODateTime(kitData[conceptIds.dateWithdrawn]);
     const vialMappings = getVialTypesMapping('home', conceptIdToHealthProviderAbbrObj[kitData[conceptIds.healthcareProvider]], tubeID);
     const vialType = vialMappings[0] || '';
