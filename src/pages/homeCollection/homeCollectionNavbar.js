@@ -64,12 +64,7 @@ export const activeHomeCollectionNavbar = () => {
         kitsCsvNavItem.classList.add("active");
         kitsCsvNavItem.style.backgroundColor = "#bbcffc85";
         kitsCsvNavItem.style.borderRadius = "4px 4px 0 0";
-    } else if (location.hash.startsWith("#kitStatusReports")  || 
-        location.hash === "#allParticipants" || 
-        location.hash === "#addressPrinted" || 
-        location.hash === "#shipped" ||
-        location.hash === "#assigned" ||
-        location.hash === "#received") {
+    } else if (location.hash.startsWith("#kitStatusReports")){
         kitStatusReportsNavItem.classList.add("active");
         kitStatusReportsNavItem.style.backgroundColor = "#bbcffc85";
         kitStatusReportsNavItem.style.borderRadius = "4px 4px 0 0";

@@ -1,5 +1,5 @@
 import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, convertDateReceivedinISO, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, getCurrentDate, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation, isCollectionDateValid } from "../siteCollection/sitePackageReceipt.js";
@@ -67,12 +67,6 @@ const kitsReceiptTemplate = async (name) => {
                         <textarea class="form-control" id="receivePackageComments" cols="30" rows="3" placeholder="Any comments?"></textarea>
                       </div>
                   </div>
-                  <div class="row mb-3">
-                      <label class="col-form-label col-md-4" for="dateReceived">Date Received</label>
-                      <div class="col-md-8">
-                        <input autocomplete="off" required class="form-control" type="date" type="text" id="dateReceived" value=${getCurrentDate()}>
-                      </div>
-                  </div>
                   <div id="collectionCard">
                       <div class="row mb-3">
                           <label class="col-form-label col-md-4 for="collectionCheckBox">Check if Collection Card Missing</label>
@@ -127,7 +121,7 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
   contentBody.innerHTML = template;
 
   // Set up automatic tabbing between inputs upon scanning (assuming the scanner automatically inputs the enter key at the end)
-  autoTabAcrossArray(['scannedBarcode', 'packageCondition', 'receivePackageComments', 'dateReceived', 'collectionCheckBox', 'collectionId', 'dateCollectionCard', 'timeCollectionCard', 'collectionComments']);
+  autoTabAcrossArray(['scannedBarcode', 'packageCondition', 'receivePackageComments', 'collectionCheckBox', 'collectionId', 'dateCollectionCard', 'timeCollectionCard', 'collectionComments']);
   
   numericInputValidator(['scannedBarcode']);
   activeHomeCollectionNavbar();
@@ -188,7 +182,8 @@ export const confirmKitReceipt = (questionableCollectionDateConfirmed) => {
       }
       kitObj[conceptIds.pkgReceiptConditions] = packageConditions;
       kitObj[conceptIds.kitPkgComments] = document.getElementById('receivePackageComments').value.trim();
-      kitObj[conceptIds.receivedDateTime] = convertDateReceivedinISO(document.getElementById('dateReceived').value);
+      // Uses the current time instead of being set manually.
+      kitObj[conceptIds.receivedDateTime] = new Date().toISOString() ;
       if (document.getElementById('collectionId').value) {
         kitObj[conceptIds.collectionCupId] = document.getElementById('collectionId').value;
         const dateCollectionCard = document.getElementById('dateCollectionCard').value;
@@ -231,7 +226,6 @@ const storePackageReceipt = async (data) => {
     document.getElementById("scannedBarcode").value = "";
     document.getElementById("packageCondition").value = defaultPackageCondition;
     document.getElementById("receivePackageComments").value = "";
-    document.getElementById("dateReceived").value = getCurrentDate();
     document.getElementById("collectionComments").value = "";
     
     enableCollectionCardFields();
