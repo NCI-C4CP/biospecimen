@@ -8,7 +8,7 @@ function localDevConfigStub() {
   return {
     name: 'local-dev-config-stub',
     resolveId(source) {
-      if (source.includes('config/local-dev/')) {
+      if (source.includes('src/local-dev/')) {
         const absolute = resolve(process.cwd(), source);
         if (!existsSync(absolute)) {
           return { id: '\0local-dev-stub', external: false };
