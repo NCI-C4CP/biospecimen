@@ -1,41 +1,40 @@
-import { expect } from 'chai';
 import { packageConditions } from '../src/pages/siteCollection/sitePackageReceipt.js';
 import { packageConditionConversion } from '../src/fieldToConceptIdMapping.js';
 
 describe('packageConditions array', () => {
     it('should be an array', () => {
-        expect(packageConditions).to.be.an('array')
+        expect(Array.isArray(packageConditions)).toBe(true);
     });
 
     it('should contain 10 options', () => {
-        expect(packageConditions).to.have.length(10)
+        expect(packageConditions).toHaveLength(10);
     });
 
     it('should ensure all conceptIds are numbers', () => {
         const allNumbers = packageConditions.every(option => typeof option.value === 'number');
-        expect(allNumbers).to.be.true;
+        expect(allNumbers).toBe(true);
     });
 
     it('should ensure all values are 9-digit numbers', () => {
         const allNineDigits = packageConditions.every(option => /^\d{9}$/.test(option.value.toString()));
-        expect(allNineDigits).to.be.true;
+        expect(allNineDigits).toBe(true);
     });
 
     it('should not contain duplicate conceptIds', () => {
         const conceptIds = packageConditions.map(option => option.value);
         const uniqueConceptIds = new Set(conceptIds);
-        expect(uniqueConceptIds.size).to.equal(conceptIds.length);
+        expect(uniqueConceptIds.size).toBe(conceptIds.length);
     });
 
     it('should not have any trailing whitespace in text labels', () => {
         const labelsWithIssues = packageConditions.filter(option => option.text !== option.text.trim());
-        expect(labelsWithIssues).to.be.empty;
+        expect(labelsWithIssues).toHaveLength(0);
     });
 
     it('should not contain duplicate labels', () => {
         const labels = packageConditions.map(option => option.text);
         const uniqueLabels = new Set(labels);
-        expect(uniqueLabels.size).to.equal(labels.length);
+        expect(uniqueLabels.size).toBe(labels.length);
     });
 
     it('should contain the correct labels in order', () => {
@@ -52,7 +51,7 @@ describe('packageConditions array', () => {
             'Other'
         ];
         const actualOptionsText = packageConditions.map(option => option.text);
-        expect(actualOptionsText).to.deep.equal(expectedOptionsText);
+        expect(actualOptionsText).toEqual(expectedOptionsText);
     });
 
     it('should contain the correct concept IDs in order', () => {
@@ -69,7 +68,7 @@ describe('packageConditions array', () => {
             933646000  // other
         ];
         const actualConceptIds = packageConditions.map(option => option.value);
-        expect(actualConceptIds).to.deep.equal(expectedConceptIds);
+        expect(actualConceptIds).toEqual(expectedConceptIds);
     });
 });
 
@@ -77,16 +76,16 @@ describe('packageConditionConversion mapping', () => {
     it('should have numeric string keys only', () => {
         const keys = Object.keys(packageConditionConversion);
         const allValid = keys.every(k => /^\d+$/.test(k));
-        expect(allValid).to.be.true;
+        expect(allValid).toBe(true);
     });
 
     it('should have keys that are strings of exactly 9 digits', () => {
         const keys = Object.keys(packageConditionConversion);
         const allNineDigitKeys = keys.every(k => /^\d{9}$/.test(k));
-        expect(allNineDigitKeys).to.be.true;
+        expect(allNineDigitKeys).toBe(true);
     });
 
-    it('should contain all concept IDs in the expectedConceptIDs array as keys', () => { 
+    it('should contain all concept IDs in the expectedConceptIDs array as keys', () => {
         const expectedConceptIds = [
             679749262,
             405513630,
@@ -110,13 +109,13 @@ describe('packageConditionConversion mapping', () => {
         ];
         const mapping = packageConditionConversion;
         const missing = expectedConceptIds.filter(cid => !mapping.hasOwnProperty(cid));
-        expect(missing).to.be.empty;
+        expect(missing).toHaveLength(0);
     });
 
     it('should have string values only and not empty', () => {
         const values = Object.values(packageConditionConversion);
         const allValid = values.every(value => typeof value === 'string' && value.trim() !== '');
-        expect(allValid).to.be.true;
+        expect(allValid).toBe(true);
     });
 
     it('should match expected labels for known package receipt concept IDs', () => {
@@ -143,7 +142,7 @@ describe('packageConditionConversion mapping', () => {
         };
 
         for (const [cid, label] of Object.entries(packageReceiptLabelMap)) {
-            expect(packageConditionConversion[cid]).to.equal(label);
+            expect(packageConditionConversion[cid]).toBe(label);
         }
     });
 });
