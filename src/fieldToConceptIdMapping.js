@@ -444,6 +444,7 @@ export const conceptIds = {
     collectionCardFlag: 137401245,
     collectionAddtnlNotes: 260133861,
     unexpectedCollectionDateConfirm: 858101893,
+    collectionDateMissingInvalid: 276082785,
     pkgComments: 870456401,
     kitPkgComments: 755095663
 
