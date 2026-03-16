@@ -3776,7 +3776,7 @@ export const addBoxAndUpdateSiteDetails = async (boxAndSiteData) => {
     }
 }
 
-export const triggerErrorModal = (message, alertType) => {
+export const triggerErrorModal = (message, alertType, scrollToTop) => {
     alertType = alertType || 'warning';
     const alertList = document.getElementById("alert_placeholder");
     if (alertList) {
@@ -3786,6 +3786,7 @@ export const triggerErrorModal = (message, alertType) => {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                 </button>
         </div>`;
+        if(scrollToTop) window.scrollTo(0, 0);
     }
 }
 
