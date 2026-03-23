@@ -1,4 +1,4 @@
-import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format, removeAllErrors } from "../../shared.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
@@ -458,6 +458,7 @@ const cancelConfirm = () => {
 
     if (result) {
         resetFormInputs();
+        removeAllErrors();
         clearButtonEl.removeEventListener("click", cancelConfirm);
         window.removeEventListener("beforeunload", handleBeforeUnload);
         setupLeavingPageMessage()
@@ -831,7 +832,7 @@ export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl) =>
                 <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
                     <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Invalid Date Entered</span>
                     <ol id="validDateRules" style="margin:0 30px;">
-                        <li>Verify against card and correct date if entered incorrectly.</li>
+                        <li>Verify against card and correct date if entered incorrectly</li>
                         <li>Check box for Collection Date Missing/Invalid</li>
                         <li>Refer to package tracking information and enter date and time of package drop off/pick up as Collection Date and Time</li>
                     </ol>
