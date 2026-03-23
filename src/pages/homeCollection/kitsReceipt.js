@@ -1,5 +1,5 @@
 import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails, errorMessage, removeAllErrors } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails, errorMessage, removeAllErrors, removeSingleError } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
 import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, enableCollectionDateCheckBox, validatePackageInformation, isCollectionDateValid } from "../siteCollection/sitePackageReceipt.js";
@@ -157,6 +157,20 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
   checkTrackingNumberSource();
   performCollectionIdcheck();
   preventManualEntry();
+
+  // Clear any errors under the date and time entry fields when values are entered
+  document.getElementById('dateCollectionCard')?.addEventListener('change', e => {
+    const value = e.target?.value;
+    if(value) {
+      removeSingleError('dateCollectionCard');
+    }
+  });
+  document.getElementById('timeCollectionCard')?.addEventListener('change', e => {
+    const value = e.target?.value;
+    if(value) {
+      removeSingleError('timeCollectionCard');
+    }
+  });
 };
 
 const preventManualEntry = () => {
