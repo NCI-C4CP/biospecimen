@@ -160,14 +160,14 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
 
   // Clear any errors under the date and time entry fields when values are entered
   document.getElementById('dateCollectionCard')?.addEventListener('change', e => {
-    const value = e.target?.value;
-    if(value) {
+    const value = e.target.value;
+    if (value) {
       removeSingleError('dateCollectionCard');
     }
   });
   document.getElementById('timeCollectionCard')?.addEventListener('change', e => {
-    const value = e.target?.value;
-    if(value) {
+    const value = e.target.value;
+    if (value) {
       removeSingleError('timeCollectionCard');
     }
   });
