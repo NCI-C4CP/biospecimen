@@ -1,4 +1,4 @@
-import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format, removeAllErrors } from "../../shared.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
@@ -458,6 +458,7 @@ const cancelConfirm = () => {
 
     if (result) {
         resetFormInputs();
+        removeAllErrors();
         clearButtonEl.removeEventListener("click", cancelConfirm);
         window.removeEventListener("beforeunload", handleBeforeUnload);
         setupLeavingPageMessage()
