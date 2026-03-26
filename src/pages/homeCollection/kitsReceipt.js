@@ -1,8 +1,8 @@
 import { homeCollectionNavbar, activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { getIdToken, showAnimation, hideAnimation, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, triggerSuccessModal, triggerErrorModal, processResponse, checkTrackingNumberSource, numericInputValidator, autoTabAcrossArray, sendInstantNotification, getLoginDetails, errorMessage, removeAllErrors, removeSingleError } from "../../shared.js";
 import { nonUserNavBar } from "./../../navbar.js";
 import { conceptIds } from "../../fieldToConceptIdMapping.js";
-import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, validatePackageInformation, isCollectionDateValid } from "../siteCollection/sitePackageReceipt.js";
+import { displayInvalidCollectionDateModal, displayInvalidPackageInformationModal, displaySelectedPackageConditionListModal, setupLeavingPageMessage, addFormInputListenersOnLoad, handleBeforeUnload, enableCollectionCheckBox, enableCollectionDateCheckBox, validatePackageInformation, isCollectionDateValid } from "../siteCollection/sitePackageReceipt.js";
 
 const contentBody = document.getElementById("contentBody");
 
@@ -82,6 +82,12 @@ const kitsReceiptTemplate = async (name) => {
                           </div>
                       </div>
                       <div class="row mb-3">
+                          <label class="col-form-label col-md-4 for="collectionDareCheckBox">Check if Collection Date Missing/Invalid</label>
+                          <div class="col-md-8">
+                            <input type="checkbox" name="collectionDateCheckBox" id="collectionDateCheckBox">
+                          </div>
+                      </div>
+                      <div class="row mb-3">
                           <label class="col-form-label col-md-4" for="dateCollectionCard">Enter Collection Date from Collection Card</label>
                           <div class="col-md-8">
                             <input autocomplete="off" class="form-control" type="date" id="dateCollectionCard">
@@ -103,7 +109,7 @@ const kitsReceiptTemplate = async (name) => {
                   
                   <div class="mt-4 mb-4" style="display:inline-block;">
                       <button type="button" class="btn btn-danger" id="clearForm">Clear</button>
-                      <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalShowMoreData" id="save">Save</button>
+                      <button type="submit" class="btn btn-primary" id="save">Save</button>
                   </div>
               </div>
           </div>`;
@@ -121,13 +127,50 @@ template += `<div class="modal fade" id="modalShowMoreData" data-keyboard="false
   contentBody.innerHTML = template;
 
   // Set up automatic tabbing between inputs upon scanning (assuming the scanner automatically inputs the enter key at the end)
-  autoTabAcrossArray(['scannedBarcode', 'packageCondition', 'receivePackageComments', 'collectionCheckBox', 'collectionId', 'dateCollectionCard', 'timeCollectionCard', 'collectionComments']);
+  // Because A. the collection card missing and collection date missing/invalid checkboxes are mutually exclusive and
+  // B. those checkboxes are manually clicked in some cases vs. a part of standard package flow
+  // they have been omitted from the autotab list
+  // Going between fields via tab keys should be unaffected; this is purely for scanners which input enter automatically
+  autoTabAcrossArray(['scannedBarcode', 'packageCondition', 'receivePackageComments', 'collectionId', 'dateCollectionCard', 'timeCollectionCard', 'collectionComments']);
   
+  // Set up missing collection card and invalid collection card date checkboxes to be mutually exclusive
+  document.getElementById('collectionCheckBox')?.addEventListener('change', e => {
+    const isChecked = e.target.checked;
+    const collectionDateCheckBox = document.getElementById('collectionDateCheckBox');
+    if(isChecked && collectionDateCheckBox) {
+      collectionDateCheckBox.setAttribute("disabled", "true")
+    } else if (collectionDateCheckBox) {
+      collectionDateCheckBox.removeAttribute("disabled");
+    }
+  });
+  document.getElementById('collectionDateCheckBox')?.addEventListener('change', e => {
+    const isChecked = e.target.checked;
+    const collectionCheckBox = document.getElementById('collectionCheckBox');
+    if(isChecked && collectionCheckBox) {
+      collectionCheckBox.setAttribute("disabled", "true")
+    } else if (collectionCheckBox) {
+      collectionCheckBox.removeAttribute("disabled");
+    }
+  });
   numericInputValidator(['scannedBarcode']);
   activeHomeCollectionNavbar();
   checkTrackingNumberSource();
   performCollectionIdcheck();
   preventManualEntry();
+
+  // Clear any errors under the date and time entry fields when values are entered
+  document.getElementById('dateCollectionCard')?.addEventListener('change', e => {
+    const value = e.target.value;
+    if (value) {
+      removeSingleError('dateCollectionCard');
+    }
+  });
+  document.getElementById('timeCollectionCard')?.addEventListener('change', e => {
+    const value = e.target.value;
+    if (value) {
+      removeSingleError('timeCollectionCard');
+    }
+  });
 };
 
 const preventManualEntry = () => {
@@ -152,24 +195,82 @@ const performCollectionIdcheck = () => {
   }
 }
 
+/**
+ * Validates that a date and time for collection have been entered. If not,
+ * display error message as is appropriate for the checkboxes and date/time data which has
+ * been entered.
+ * @returns 
+ */
+const validateCollectionCardInfo = () => {
+  // triggerErrorModal to display the alert at the top
+  const collectionCheckBox = document.getElementById('collectionCheckBox');
+  const collectionDateCheckBox = document.getElementById('collectionDateCheckBox');
+  const dateCollectionCard = document.getElementById("dateCollectionCard")?.value;
+  const timeCollectionCard = document.getElementById("timeCollectionCard")?.value;
+
+  if(!dateCollectionCard && !timeCollectionCard && (collectionCheckBox.checked || collectionDateCheckBox.checked)) {
+   /*
+   * If collection date and time not entered- Box was checked for collection card missing or 
+   * collection date missing/invalid collection date before clicking ‘Save’ - 
+   * prohibit kit receipt and display error
+   */
+    triggerErrorModal('Use the date and time of package drop off/pick up as the Collection Date and Time', 'warning', true);
+    return false;
+  } else if (!dateCollectionCard && !timeCollectionCard) {
+     /*
+     * If collection date and time not entered- Box was not checked for card missing or 
+     * date missing/invalid collection date before clicking ‘Save’- 
+     * prohibit kit receipt and display error
+     */
+    triggerErrorModal('If collection card or collection date/time are missing, check the appropriate box. Use the date and time of package drop off/pick up as the Collection Date and Time.', 'warning', true);
+    return false;
+  } else if (dateCollectionCard && !timeCollectionCard) {
+    const msg = 'Collection Time required. If missing from card, enter 12:00am.';
+    errorMessage('timeCollectionCard', msg, true, false, true);
+    return false;
+  } else if (!dateCollectionCard && timeCollectionCard) {
+    const msg = 'Collection Date required. If missing from card, use the date and time of package drop off/pick up as the Collection Date and Time and check box for "Collection Date Missing/Invalid"';
+    errorMessage('dateCollectionCard', msg, true, false, true);
+    return false;
+  } else {
+    return true;
+  }
+
+  
+
+}
+
 const formSubmit = () => {
   const form = document.getElementById("save");
   form.addEventListener("click", async (e) => {
+      removeAllErrors();
       e.preventDefault();
       const modalHeaderEl = document.getElementById("modalHeader");
       const modalBodyEl = document.getElementById("modalBody");
+      const collectionDateAndCardValid = validateCollectionCardInfo();
+      if(!collectionDateAndCardValid) {
+        // This function handles its own error messages; stop here if anything is invalid
+        return;
+      }
       const isPackageInfoValid = validatePackageInformation(true);
-      const questionableCollectionDate = !await isCollectionDateValid();
+
+      // Manually show the modal since we removed Bootstrap auto-trigger
+      const modal = document.getElementById('modalShowMoreData');
+      if (modal) {
+          // Use Bootstrap 5's vanilla JS modal method to show it
+          const bootstrapModal = new bootstrap.Modal(modal);
+          bootstrapModal.show();
+      }
 
       if (isPackageInfoValid) {
-        displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl, true, questionableCollectionDate);
+        displaySelectedPackageConditionListModal(modalHeaderEl, modalBodyEl, true);
       } else {
         displayInvalidPackageInformationModal(modalHeaderEl, modalBodyEl);
       }
   });
 };
 
-export const confirmKitReceipt = (questionableCollectionDateConfirmed) => {
+export const confirmKitReceipt = () => {
   const confirmReceiptBtn = document.getElementById('confirmReceipt');
   if (confirmReceiptBtn) {
     confirmReceiptBtn.addEventListener('click',  async () => {
@@ -194,10 +295,7 @@ export const confirmKitReceipt = (questionableCollectionDateConfirmed) => {
         
         kitObj[conceptIds.collectionCardFlag] = document.getElementById('collectionCheckBox').checked === true;
         kitObj[conceptIds.collectionAddtnlNotes] = document.getElementById('collectionComments').value;
-        kitObj[conceptIds.unexpectedCollectionDateConfirm] = 
-          questionableCollectionDateConfirmed ?
-            conceptIds.yes
-            : undefined;
+        kitObj[conceptIds.collectionDateMissingInvalid] = document.getElementById('collectionDateCheckBox').checked === true;
       }
       window.removeEventListener("beforeunload", handleBeforeUnload);
       setupLeavingPageMessage();
@@ -230,15 +328,18 @@ const storePackageReceipt = async (data) => {
     
     enableCollectionCardFields();
     enableCollectionCheckBox();
+    enableCollectionDateCheckBox();
     document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     if (document.getElementById("collectionId").value) {
       document.getElementById("collectionId").value = "";
       document.getElementById("dateCollectionCard").value = "";
       document.getElementById("timeCollectionCard").value = "";
       document.getElementById("collectionCheckBox").checked = false;
+      document.getElementById("collectionDateCheckBox").checked = false;
       document.getElementById("collectionComments").value = "";
       enableCollectionCardFields();
       enableCollectionCheckBox();
+      enableCollectionDateCheckBox();
       document.getElementById("packageCondition").setAttribute("data-selected", `[${defaultPackageCondition}]`);
     }
 
@@ -294,7 +395,8 @@ const storePackageReceipt = async (data) => {
 
     await sendInstantNotification(requestData);
   } else if (returnedPtInfo.status === "Check Collection ID") {
-    triggerErrorModal("Error during kit receipt. Please check the collection ID.");
+    // Despite the name, triggerErrorModal shows the alert at the top
+    triggerErrorModal("Error during kit receipt. Please check the collection ID.", 'warning', true);
   } else if (returnedPtInfo.status === "Check collection date, possible invalid entry") {
     const modalHeaderEl = document.getElementById("modalHeader");
     const modalBodyEl = document.getElementById("modalBody");
@@ -305,11 +407,11 @@ const storePackageReceipt = async (data) => {
       await storePackageReceipt(data);
     });
   } else if (returnedPtInfo.status) {
-    triggerErrorModal(`Error during kit receipt. ${returnedPtInfo.status}`);
+    triggerErrorModal(`Error during kit receipt. ${returnedPtInfo.status}`, 'warning', true);
   } else {
     // Leave this console log in; it's useful for debugging
     console.log('returnedPtInfo', returnedPtInfo);
-    triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.");
+    triggerErrorModal("Error during kit receipt. Please check the tracking number and other fields.", 'warning', true);
   }
 };
 

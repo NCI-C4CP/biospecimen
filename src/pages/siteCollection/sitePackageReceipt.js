@@ -1,4 +1,4 @@
-import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format } from "../../shared.js";
+import { getIdToken, showAnimation, hideAnimation, baseAPI, convertDateReceivedinISO, checkTrackingNumberSource, getCurrentDate, locationConceptIDToLocationMap, retrieveDateFromIsoString, showNotificationsCancelOrContinue, showNotificationsSelectableList, triggerSuccessModal, showNotifications, validIso8601Format, removeAllErrors } from "../../shared.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { siteCollectionNavbar } from "./siteCollectionNavbar.js";
 import { activeSiteCollectionNavbar } from "./activeSiteCollectionNavbar.js";
@@ -335,6 +335,12 @@ export const enableCollectionCheckBox = () => {
   collectionCheckBoxEl.checked = false;
 };
 
+export const enableCollectionDateCheckBox = () => {
+    const collectionDateCheckBoxEl = document.getElementById("collectionDateCheckBox");
+    collectionDateCheckBoxEl.removeAttribute("disabled");
+    collectionDateCheckBoxEl.checked = false;
+}
+
 /**
  * Adds or removes click event listener to body element to handle unsaved changes when user tries to navigate away from the page.
  * @param {boolean} inputChange - If true, add event listener to window object. If false, remove event listener from window object.
@@ -452,6 +458,7 @@ const cancelConfirm = () => {
 
     if (result) {
         resetFormInputs();
+        removeAllErrors();
         clearButtonEl.removeEventListener("click", cancelConfirm);
         window.removeEventListener("beforeunload", handleBeforeUnload);
         setupLeavingPageMessage()
@@ -666,10 +673,9 @@ export const displayPackageConditionListEmptyModal = (modalHeaderEl, modalBodyEl
     `;
 }
 
-export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate) => {
+export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
     const selectPackageConditionsList = document.getElementById('packageCondition').getAttribute('data-selected');
     const parseSelectPackageConditionsList = JSON.parse(selectPackageConditionsList);
-    const collectionDateEntered = document.getElementById("dateCollectionCard")?.value;
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
@@ -696,42 +702,9 @@ export const displaySelectedPackageConditionListModal = (modalHeaderEl, modalBod
     `;
 
     displaySelectedPackageConditionList(parseSelectPackageConditionsList);
-    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered);
+    clickConfirmPackageConditionListButton(modalHeaderEl,modalBodyEl, isKitReceipt);
 }
 
-const displayConfirmPossibleInvalidDateModal = (modalHeaderEl,modalBodyEl, collectionDateEntered) => {
-    const formattedCollectionDate = new Date(collectionDateEntered).toLocaleDateString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-        // Because the timezone in the timestamp is UTC, we must specify UTC
-        timeZone: "UTC"
-    });
-    modalHeaderEl.innerHTML = `
-        <h5>Confirmation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            </button>
-    `;
-    modalBodyEl.innerHTML = `
-        <div>
-            <div>Check collection date, possible invalid entry.</div>
-            <div class="fw-bold">Collection Date Entered: ${formattedCollectionDate}</div>
-            <br >
-            <div style="display:inline-block;">
-                <div class="row">
-                    <div class="col-5">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</strong> confirmed. Return to Kit Receipt.</button>
-                    </div>
-                    <div class="col-2"></div>
-                    <div class="col-5">
-                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="confirmReceipt" target="_blank">Collection date confirmed. Confirm Kit Receipt.</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    `;
-}
 
 const displayConfirmPackageReceiptModal = (modalHeaderEl,modalBodyEl, isKitReceipt) => {
     modalHeaderEl.innerHTML = `
@@ -762,16 +735,13 @@ const displaySelectedPackageConditionList = (parseSelectPackageConditionsList) =
     }
 }
 
-const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt, questionableCollectionDate, collectionDateEntered) => {
+const clickConfirmPackageConditionListButton = (modalHeaderEl, modalBodyEl, isKitReceipt) => {
     const confirmPackageConditionButtondocument = document.getElementById("confirmPackageConditionButton");
     confirmPackageConditionButtondocument.addEventListener("click", async () => {
-        if (isKitReceipt && questionableCollectionDate) {
-            displayConfirmPossibleInvalidDateModal(modalHeaderEl,modalBodyEl, collectionDateEntered);
-        } else {
-            displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
-        }
+        displayConfirmPackageReceiptModal(modalHeaderEl,modalBodyEl, isKitReceipt);
+
         if (isKitReceipt) { 
-            confirmKitReceipt(questionableCollectionDate); 
+            confirmKitReceipt(); 
         } else { 
             confirmPackageReceipt(); 
         }
@@ -848,33 +818,33 @@ const handleUnsavedChangesListeners = (hasUnsavedChanges) => {
     toggleBeforeUnloadListener(hasUnsavedChanges);
 };
 
-export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl, errorMessage, callback) => {
+export const displayInvalidCollectionDateModal = (modalHeaderEl, modalBodyEl) => {
     modalHeaderEl.innerHTML = `
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
     `;
     modalBodyEl.innerHTML = `
-        <div class="row">
+    <div class="row">
             <div class="col">
                 <div style="display:flex; justify-content:center; margin-bottom:1rem;">
-                <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                 </div>
-                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem;">
-                   ${errorMessage}
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Invalid Date Entered</span>
+                    <ol id="validDateRules" style="margin:0 30px;">
+                        <li>Verify against card and correct date if entered incorrectly</li>
+                        <li>Check box for Collection Date Missing/Invalid</li>
+                        <li>Refer to package tracking information and enter date and time of package drop off/pick up as Collection Date and Time</li>
+                    </ol>
                 </p>
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-            <button type="button" class="btn btn-danger col-auto" data-bs-dismiss="modal" target="_blank">Collection date <strong>not</em> confirmed. Return to Kit Receipt.</button>
-            <button type="button" id="confirm-collection-date" class="btn btn-secondary col-auto" data-bs-dismiss="modal" target="_blank">Collection date confirmed. Confirm kit receipt.</button>
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" target="_blank">Close</button>
+            </div>
         </div>
     `;
-
-    if(callback) {
-        const confirmBtn = document.getElementById('confirm-collection-date');
-        confirmBtn.addEventListener('click', callback);
-
-    }
 };
 
 export const packageConditions = [
