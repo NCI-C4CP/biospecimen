@@ -116,6 +116,21 @@ export const receiptedCSVFileTemplate = () => `
   </div>
 `;
 
+export const shippedNotReceivedCSVFileTemplate = () => `
+  <div class="container-fluid mb-4">
+    <h4 style="text-align: center; margin: 1rem 0;">Mouthwash Kits Shipped and Not Yet Received</h4> </span>
+    <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
+      <div class="card-body" style="padding: 4rem 2.5rem;">
+        <form class="form">
+        <div class="mb-3 d-flex flex-wrap align-items-center justify-content-center m-0">
+          <button id="csvShippedNotReceivedCreateFileButton" class="btn btn-primary">Create File</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+`;
+
 /**
  * function to handle both box level and specimen level in transit file type selection
  * @param {object} inTransitTypeMap - object containing modal header, button id, and type key from inTransitMapping's box or specimen key
