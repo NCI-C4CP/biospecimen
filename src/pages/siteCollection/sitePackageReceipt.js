@@ -873,6 +873,14 @@ export const packageConditions = [
         text: 'Returned Empty Vials'
     },
     {
+        value: fieldMapping.siteCollectionCupLeakedTotal,
+        text: 'Collection Cup Leaked - Total Sample Loss - Site Collections'
+    },
+    {
+        value: fieldMapping.siteCollectionCupLeakedPartial,
+        text: 'Collection Cup Leaked - Partial Sample Loss - Site Collections'
+    },
+    {
         value: fieldMapping.vialsMissingLabels,
         text: 'No Connect Label on Vials'
     },
