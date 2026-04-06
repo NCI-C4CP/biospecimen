@@ -118,7 +118,7 @@ export const receiptedCSVFileTemplate = () => `
 
 export const shippedNotReceivedCSVFileTemplate = () => `
   <div class="container-fluid mb-4">
-    <h4 style="text-align: center; margin: 1rem 0;">Mouthwash Kits Shipped and Not Yet Received</h4> </span>
+    <h4 style="text-align: center; margin: 1rem 0;">Mouthwash Kits Shipped and Not Yet Received</h4>
     <div class="card bg-light mb-3 mt-3 mx-auto" style="max-width:50rem;">
       <div class="card-body" style="padding: 4rem 2.5rem;">
         <form class="form">
