@@ -45,6 +45,8 @@ describe('packageConditions array', () => {
             'Cold Packs - Warm',
             'Damaged Vials',
             'Returned Empty Vials',
+            "Collection Cup Leaked - Total Sample Loss - Site Collections",
+            "Collection Cup Leaked - Partial Sample Loss - Site Collections",
             'No Connect Label on Vials',
             'Shipment Delay',
             'Damaged Shipper (outer and/or inner)',
@@ -62,6 +64,8 @@ describe('packageConditions array', () => {
             595987358, // coldPacksWarm
             387564837, // damagedVials
             631290535, // vialsEmpty
+            954880590, // siteCollectionCupLeakedTotal
+            421034284, // siteCollectionCupLeakedPartial
             399948893, // vialsMissingLabels
             958000780, // shipmentDelay
             678483571, // damagedContainer
