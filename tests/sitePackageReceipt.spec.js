@@ -6,8 +6,8 @@ describe('packageConditions array', () => {
         expect(Array.isArray(packageConditions)).toBe(true);
     });
 
-    it('should contain 10 options', () => {
-        expect(packageConditions).toHaveLength(10);
+    it('should contain 12 options', () => {
+        expect(packageConditions).toHaveLength(12);
     });
 
     it('should ensure all conceptIds are numbers', () => {
