@@ -874,11 +874,11 @@ export const packageConditions = [
     },
     {
         value: fieldMapping.siteCollectionCupLeakedTotal,
-        text: 'Collection Cup Leaked - Total Sample Loss - Site Collections'
+        text: 'Collection Cup Leaked - Total Sample Loss'
     },
     {
         value: fieldMapping.siteCollectionCupLeakedPartial,
-        text: 'Collection Cup Leaked - Partial Sample Loss - Site Collections'
+        text: 'Collection Cup Leaked - Partial Sample Loss'
     },
     {
         value: fieldMapping.vialsMissingLabels,

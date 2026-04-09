@@ -461,8 +461,8 @@ export const packageConditionConversion = {
     631290535: "Returned Empty Vials",
     442684673: "Participant Refusal",
     121149986: "Crushed",
-    954880590: "Collection Cup Leaked - Total Sample Loss - Site Collections",
-    421034284: "Collection Cup Leaked - Partial Sample Loss - Site Collections",
+    954880590: "Collection Cup Leaked - Total Sample Loss", // Site collection
+    421034284: "Collection Cup Leaked - Partial Sample Loss", // Site collection
     678483571: "Damaged Shipper (outer and/or inner)",
     289322354: "Material Thawed",
     909529446: "Insufficient Ice",
@@ -478,8 +478,8 @@ export const packageConditionConversion = {
     545319575: "Package Crushed",
     938338155: "Improper Packaging",
     205954477: "Collection Cup Damaged",
-    289239334: "Collection Cup Leaked - Partial Sample Loss",
-    309189173: "Collection Cup Leaked - Total Sample Loss",
+    289239334: "Collection Cup Leaked - Partial Sample Loss", // Home collection
+    309189173: "Collection Cup Leaked - Total Sample Loss", // Home collection
     992420392: "Empty Cup Returned",
     541085383: "Incorrect Material Type Returned",
     427719697: "Collection Cup Not Returned",
