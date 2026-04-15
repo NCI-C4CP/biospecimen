@@ -38,7 +38,8 @@ const csvFileButtonSubmit = () => {
       showAnimation();
       try {
           const results = await getKitsByReceivedDate(dateString);
-          const modifiedResults = modifyKitQueryResults(results.data);
+          // This is for home kits and thus should always show the collection location as home
+          const modifiedResults = modifyKitQueryResults(results.data, 'home');
           generateKitCSVData(modifiedResults);
           hideAnimation();
       } catch (e) {
@@ -133,7 +134,7 @@ const getKitsShippedNotReceived = async () => {
   }
 }
 
-const modifyKitQueryResults = (kitsData) => {
+const modifyKitQueryResults = (kitsData, collectionSource = 'site') => {
   const kitLevelLookup = {
     [conceptIds.initialKit]: 'BL',
     [conceptIds.replacementKit1]: 'BL_1',
@@ -141,7 +142,8 @@ const modifyKitQueryResults = (kitsData) => {
   }
   const csvKitArray = [];
   kitsData.forEach(kitData => {
-    const sampleCollectionCenter = keyToNameCSVObj[kitData[conceptIds.healthcareProvider]];
+    // Home collection kits should list sample collection center as "home" (1616)
+    const sampleCollectionCenter = collectionSource === 'home' ? 'Home' : keyToNameCSVObj[kitData[conceptIds.healthcareProvider]];
     const collectionId = kitData[conceptIds.collection.id]; // CNA899209
     const bsiID = kitData[conceptIds.collection.mouthwashTube1][conceptIds.collection.tube.scannedId]; // CNA899209 0007
     const tubeID = bsiID.split(' ')[1]; // 0007
