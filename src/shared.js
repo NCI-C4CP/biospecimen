@@ -40,6 +40,8 @@ let api = '';
 
 if(location.host === urls.prod) api = 'https://api-myconnect.cancer.gov/biospecimen?';
 else if(location.host === urls.stage) api = 'https://api-myconnect-stage.cancer.gov/biospecimen?';
+//TODO: remove this!! This is for local dev only.
+else if(location.host.startsWith('localhost')) api = 'http://localhost:5001/nih-nci-dceg-connect-dev/us-central1/biospecimen?';
 else api = 'https://us-central1-nih-nci-dceg-connect-dev.cloudfunctions.net/biospecimen?';
 export const baseAPI = api;
 
@@ -638,7 +640,7 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
   })
 }
 
-export const shippingDuplicateMessage = (duplicateIdNumber) => {
+export const shippingDuplicateMessage = (duplicateIdNumbers) => {
   const button = document.createElement('button');
     button.dataset.bsTarget = '#biospecimenModal';
     button.dataset.bsToggle = 'modal';
@@ -648,6 +650,11 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
     document.getElementById('root').removeChild(button);
     const header = document.getElementById('biospecimenModalHeader');
     const body = document.getElementById('biospecimenModalBody');
+    const duplicateNumbersText = `
+            <ul>
+            ${duplicateIdNumbers.map(id => `<li>${id}</li>`).join('')}
+            </ul>
+        `;
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
@@ -658,7 +665,13 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
                 <div style="display:flex; justify-content:center; margin-bottom:1rem;">
                   <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                 </div>
-                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; "><span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Duplicate Tracking Numbers${duplicateIdNumber ? `[${duplicateIdNumber}]` : ''}</span> Please enter unique Fedex tracking numbers</p>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">
+                    Duplicate Tracking Numbers
+                    </span>
+                </p>
+                ${duplicateNumbersText}
+                <p>This tracking number has already been used. Discard the shipping label(s) and use a new one.</p>
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
@@ -3491,21 +3504,63 @@ export const checkFedexShipDuplicate = (boxes) => {
   let filteredArr = new Set(arr)
   return arr.length !== filteredArr.size
 }
-  
-export const checkDuplicateTrackingIdFromDb = async (boxes) => {
+
+// ORIGINAL COPY
+// export const checkDuplicateTrackingIdFromDb = async (boxes) => {
+//     let isExistingTrackingId = false;
+    
+//     for (const boxId of boxes) {
+    
+//         let trackingId = document.getElementById(`${boxId}trackingId`).value;
+//         let numBoxesShipped = await getNumPages(5, {trackingId});
+//         if (numBoxesShipped > 0) {
+//             isExistingTrackingId = escapeHTML(trackingId);
+//             break;
+//         }
+//     }
+//     return isExistingTrackingId;
+// }
+
+// might be better to rename to getDuplicateTrackingIdFromDb
+export const checkDuplicateTrackingIdsFromDb = async (boxes) => {
+    // create an object to hold trackingIds and is duplicate or not
+    // tracking id variable
     let isExistingTrackingId = false;
-    
-    for (const boxId of boxes) {
-    
-        let trackingId = document.getElementById(`${boxId}trackingId`).value;
-        let numBoxesShipped = await getNumPages(5, {trackingId});
-        if (numBoxesShipped > 0) {
-            isExistingTrackingId = escapeHTML(trackingId);
-            break;
-        }
+    let trackingIdsArray = []
+    let duplicateTrackingIdsArray = []
+
+    console.log(boxes);
+
+    // rewrite above
+
+    const trackingIds = boxes.map(boxId => 
+        document.getElementById(`${boxId}trackingId`).value
+    );
+    console.log("🚀 ~ checkDuplicateTrackingIdFromDb ~ trackingIds:", trackingIds)
+
+    // send all tracking ids to backend and check if they exist in db
+
+    // Create request to send to backend
+    // 'checkDuplicateTrackingId rename?'
+    try {
+        const idToken = await getIdToken();
+        const response = await fetch(`${api}api=checkDuplicateTrackingId`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ trackingIds })
+        });
+        const result = await response.json();
+        console.log("🚀 ~ checkDuplicateTrackingIdFromDb ~ result:", result);
+        return result.data;
+    } catch (error) {
+        console.error("Error checking duplicate tracking IDs:", error);
     }
-    return isExistingTrackingId;
-}
+};
+
+
 
 export const checkNonAlphanumericStr = (boxes) => {
   let regExp = /^[a-z0-9]+$/i
