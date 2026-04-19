@@ -1944,13 +1944,10 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
 
         showAnimation();
         const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
-        console.log("🚀 ~ addEventSaveButton ~ getDuplicateTrackingIdsInDb:", getDuplicateTrackingIdsInDb)
         hideAnimation();
 
-        // extract data 
-        // save immediately if nothing is found 
         if (getDuplicateTrackingIdsInDb.length === 0) {
-            localforage.setItem("shipData", shippingData); // Save shipping data locally
+            localforage.setItem("shipData", shippingData);
             showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
             localforage.setItem("shipData", shippingData);
             const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
@@ -1970,7 +1967,6 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
         let shippingData = [];
         let boxIdAndTrackingObj = {};
         const boxIdArray = Object.keys(boxIdAndBagsObj);
-        console.log("🚀 ~ addEventSaveButton ~ boxIdArray:", boxIdArray)
 
         for (const boxId of boxIdArray) {
             const trackingId = document.getElementById(boxId + "trackingId").value.toUpperCase();
@@ -2000,19 +1996,14 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
             return;
         }
 
-        // This will need a loading spinner 
         showAnimation();
         const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
-        console.log("🚀 ~ addEventSaveButton ~ getDuplicateTrackingIdsInDb:", getDuplicateTrackingIdsInDb)
         hideAnimation();
         
-        // extract data 
-        // save immediately if nothing is found 
         if (getDuplicateTrackingIdsInDb.length === 0) {
-            localforage.setItem("shipData", shippingData); // Save shipping data locally
+            localforage.setItem("shipData", shippingData);
             showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
         } else {
-            // extract all duplicate tracking IDs
             const extractDuplicateTrackingIds = getDuplicateTrackingIdsInDb.map(item => item.trackingId);
             shippingDuplicateMessage(extractDuplicateTrackingIds);
             return;

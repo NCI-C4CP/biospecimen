@@ -3505,43 +3505,11 @@ export const checkFedexShipDuplicate = (boxes) => {
   return arr.length !== filteredArr.size
 }
 
-// ORIGINAL COPY
-// export const checkDuplicateTrackingIdFromDb = async (boxes) => {
-//     let isExistingTrackingId = false;
-    
-//     for (const boxId of boxes) {
-    
-//         let trackingId = document.getElementById(`${boxId}trackingId`).value;
-//         let numBoxesShipped = await getNumPages(5, {trackingId});
-//         if (numBoxesShipped > 0) {
-//             isExistingTrackingId = escapeHTML(trackingId);
-//             break;
-//         }
-//     }
-//     return isExistingTrackingId;
-// }
 
-// might be better to rename to getDuplicateTrackingIdFromDb
 export const checkDuplicateTrackingIdsFromDb = async (boxes) => {
-    // create an object to hold trackingIds and is duplicate or not
-    // tracking id variable
-    let isExistingTrackingId = false;
-    let trackingIdsArray = []
-    let duplicateTrackingIdsArray = []
-
-    console.log(boxes);
-
-    // rewrite above
-
     const trackingIds = boxes.map(boxId => 
         document.getElementById(`${boxId}trackingId`).value
     );
-    console.log("🚀 ~ checkDuplicateTrackingIdFromDb ~ trackingIds:", trackingIds)
-
-    // send all tracking ids to backend and check if they exist in db
-
-    // Create request to send to backend
-    // 'checkDuplicateTrackingId rename?'
     try {
         const idToken = await getIdToken();
         const response = await fetch(`${api}api=checkDuplicateTrackingId`, {
@@ -3553,7 +3521,6 @@ export const checkDuplicateTrackingIdsFromDb = async (boxes) => {
             body: JSON.stringify({ trackingIds })
         });
         const result = await response.json();
-        console.log("🚀 ~ checkDuplicateTrackingIdFromDb ~ result:", result);
         return result.data;
     } catch (error) {
         console.error("Error checking duplicate tracking IDs:", error);
