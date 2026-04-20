@@ -316,6 +316,10 @@ const storeAssembledKit = async (kitData) => {
       alertTemplate('This tracking number has already been used.');
       return false;
     }
+    else if (responseStatus === 'duplicate box tracking number'){
+      alertTemplate('This tracking number has already been used.');
+      return false;
+    }
     else {
       console.error('Response error', responseStatus);
       alertTemplate(`Failed to save the kit.`);

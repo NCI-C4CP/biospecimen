@@ -3,10 +3,10 @@ import {
     errorMessage, removeAllErrors, storeSpecimen, updateSpecimen, searchSpecimen, generateBarCode, updateBox,
     ship, disableInput, updateNewTempDate, getSiteTubesLists, getWorkflow, fixMissingTubeData,
     getSiteCouriers, getPage, getNumPages, removeSingleError, displayManifestContactInfo, checkShipForage, checkAlertState, retrieveDateFromIsoString,
-    convertConceptIdToPackageCondition, checkFedexShipDuplicate, shippingDuplicateMessage, checkInParticipant, checkOutParticipant, getCheckedInVisit, participantCanCheckIn, shippingPrintManifestReminder,
+    convertConceptIdToPackageCondition, checkFedexShipDuplicate, shippingDatabaseDuplicateMessage, shippingInputDuplicateMessage, checkInParticipant, checkOutParticipant, getCheckedInVisit, participantCanCheckIn, shippingPrintManifestReminder,
     checkNonAlphanumericStr, shippingNonAlphaNumericStrMessage, visitType, getParticipantCollections, updateBaselineData,
     siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, translateNumToType,
-    getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
+    getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdsFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
     showConfirmationModal, dismissBiospecimenModal, submitSpecimen, escapeHTML,
     getBagList, getBagConceptId, getBagId
 } from './shared.js';
@@ -1932,20 +1932,35 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
             };
         }
 
-        const isDuplicateTrackingIdInDb = await checkDuplicateTrackingIdFromDb(boxIdArray);
-        if (isDuplicateTrackingIdInDb || (checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)) {
-            shippingDuplicateMessage();
+        if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)) {
+            shippingInputDuplicateMessage();
             return;
-          }
-
-        if (checkNonAlphanumericStr(boxIdArray)) {
-          shippingNonAlphaNumericStrMessage();
-          return;
         }
 
-        localforage.setItem("shipData", shippingData);
-        const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
-        finalShipmentTracking({boxIdAndBagsObj, boxIdAndTrackingObj, userName, boxWithTempMonitor, shipmentCourier});
+        if (checkNonAlphanumericStr(boxIdArray)) {
+            shippingNonAlphaNumericStrMessage();
+            return;
+        }
+
+        showAnimation();
+        const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
+        hideAnimation();
+
+        if (!Array.isArray(getDuplicateTrackingIdsInDb)) {
+            showTimedNotifications({ title: 'Error', body: 'Unable to validate tracking IDs right now. Please try again.' });
+            return;
+        }
+
+        if (getDuplicateTrackingIdsInDb.length === 0) {
+            localforage.setItem("shipData", shippingData);
+            showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
+            const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
+            finalShipmentTracking({boxIdAndBagsObj, boxIdAndTrackingObj, userName, boxWithTempMonitor, shipmentCourier});
+        } else {
+            // extract all duplicate tracking IDs
+            const extractDuplicateTrackingIds = getDuplicateTrackingIdsInDb.map(item => item.trackingId);
+            shippingDatabaseDuplicateMessage(extractDuplicateTrackingIds);
+        }
     })
 
 }
@@ -1960,6 +1975,11 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
         for (const boxId of boxIdArray) {
             const trackingId = document.getElementById(boxId + "trackingId").value.toUpperCase();
             const trackingIdConfirm = document.getElementById(boxId + "trackingIdConfirm").value.toUpperCase();
+
+            if (trackingId === '' || trackingIdConfirm === '') {
+                showNotifications({ title: 'Missing Fields', body: 'Please enter in shipment tracking numbers'});
+                return;
+            }
     
             if (trackingId !== trackingIdConfirm) {
               isMismatch = true;
@@ -1978,14 +1998,28 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
             return;
         }
 
-        let isDuplicateTrackingIdInDb = await checkDuplicateTrackingIdFromDb(boxIdArray);
-        if(isDuplicateTrackingIdInDb || (checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)){
-            shippingDuplicateMessage(isDuplicateTrackingIdInDb)
-            return
-          }
-          
-        localforage.setItem("shipData", shippingData);
-        showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
+        if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)){
+            shippingInputDuplicateMessage();
+            return;
+        }
+
+        showAnimation();
+        const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
+        hideAnimation();
+        
+        if (!Array.isArray(getDuplicateTrackingIdsInDb)) {
+            showTimedNotifications({ title: 'Error', body: 'Unable to validate tracking IDs right now. Please try again.' });
+            return;
+        }
+
+        if (getDuplicateTrackingIdsInDb.length === 0) {
+            localforage.setItem("shipData", shippingData);
+            showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
+        } else {
+            const extractDuplicateTrackingIds = getDuplicateTrackingIdsInDb.map(item => item.trackingId);
+            shippingDatabaseDuplicateMessage(extractDuplicateTrackingIds);
+            return;
+        }
     })
 }
 
