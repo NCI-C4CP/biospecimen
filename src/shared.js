@@ -3506,7 +3506,7 @@ export const convertConceptIdToPackageCondition = (packagedCondition, packageCon
 
 export const checkFedexShipDuplicate = (boxes) => {
   let arr = []
-  boxes.forEach(boxId => arr.push(document.getElementById(`${boxId}trackingId`).value))
+  boxes.forEach(boxId => arr.push(document.getElementById(`${boxId}trackingId`).value.trim()))
   let filteredArr = new Set(arr)
   return arr.length !== filteredArr.size
 }
