@@ -1933,7 +1933,7 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
         }
 
         if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)) {
-            shippingDuplicateMessage();
+            shippingDuplicateMessage([]);
             return;
         }
 
@@ -1946,10 +1946,14 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
         const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
         hideAnimation();
 
+        if (!Array.isArray(getDuplicateTrackingIdsInDb)) {
+            showTimedNotifications({ title: 'Error', body: 'Unable to validate tracking IDs right now. Please try again.' });
+            return;
+        }
+
         if (getDuplicateTrackingIdsInDb.length === 0) {
             localforage.setItem("shipData", shippingData);
             showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
-            localforage.setItem("shipData", shippingData);
             const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
             finalShipmentTracking({boxIdAndBagsObj, boxIdAndTrackingObj, userName, boxWithTempMonitor, shipmentCourier});
         } else {
@@ -1971,6 +1975,11 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
         for (const boxId of boxIdArray) {
             const trackingId = document.getElementById(boxId + "trackingId").value.toUpperCase();
             const trackingIdConfirm = document.getElementById(boxId + "trackingIdConfirm").value.toUpperCase();
+
+            if (trackingId === '' || trackingIdConfirm === '') {
+                showNotifications({ title: 'Missing Fields', body: 'Please enter in shipment tracking numbers'});
+                return;
+            }
     
             if (trackingId !== trackingIdConfirm) {
               isMismatch = true;
@@ -1989,10 +1998,9 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
             return;
         }
 
-        // 
         if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)){
             // generic message without duplicates from frontend
-            shippingDuplicateMessage();
+            shippingDuplicateMessage([]);
             return;
         }
 
@@ -2000,6 +2008,11 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
         const getDuplicateTrackingIdsInDb = await checkDuplicateTrackingIdsFromDb(boxIdArray);
         hideAnimation();
         
+        if (!Array.isArray(getDuplicateTrackingIdsInDb)) {
+            showTimedNotifications({ title: 'Error', body: 'Unable to validate tracking IDs right now. Please try again.' });
+            return;
+        }
+
         if (getDuplicateTrackingIdsInDb.length === 0) {
             localforage.setItem("shipData", shippingData);
             showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });

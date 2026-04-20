@@ -639,7 +639,7 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
 }
 
 export const shippingDuplicateMessage = (duplicateIdNumbers) => {
-  const button = document.createElement('button');
+    const button = document.createElement('button');
     button.dataset.bsTarget = '#biospecimenModal';
     button.dataset.bsToggle = 'modal';
 
@@ -650,9 +650,16 @@ export const shippingDuplicateMessage = (duplicateIdNumbers) => {
     const body = document.getElementById('biospecimenModalBody');
     const duplicateNumbersText = `
             <ul>
-            ${duplicateIdNumbers.map(id => `<li>${id}</li>`).join('')}
+            ${duplicateIdNumbers.map(id => `<li>${escapeHTML(id)}</li>`).join('')}
             </ul>
         `;
+    let message = '';
+    const duplicateCount = duplicateIdNumbers.length;
+    if (duplicateCount === 1) {
+        message = `This tracking number has already been used. Discard the shipping label and use a new one.`;
+    } else {
+        message = `These tracking numbers have already been used. Discard the shipping labels and use new ones.`;
+    }
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
@@ -661,20 +668,21 @@ export const shippingDuplicateMessage = (duplicateIdNumbers) => {
         <div class="row">
             <div class="col">
                 <div style="display:flex; justify-content:center; margin-bottom:1rem;">
-                  <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                 </div>
                 <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
                     <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">
-                    Duplicate Tracking Numbers
+                        ${duplicateCount === 1 ? `Duplicate Tracking Number` : `Duplicate Tracking Numbers`}
                     </span>
                 </p>
                 ${duplicateNumbersText}
-                <p>This tracking number has already been used. Discard the shipping label(s) and use a new one.</p>
+                <p>${message}</p>
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
-        </div>`;
+            <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+        </div>
+        `;
 }
 
 export const shippingNonAlphaNumericStrMessage = () => {
@@ -3518,6 +3526,10 @@ export const checkDuplicateTrackingIdsFromDb = async (boxes) => {
             },
             body: JSON.stringify({ trackingIds })
         });
+        if (!response.ok) {
+            throw new Error(`Failed to check duplicate tracking IDs: ${response.status} ${response.statusText}`);
+        }
+
         const result = await response.json();
         return result.data;
     } catch (error) {
