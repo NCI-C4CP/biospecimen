@@ -638,7 +638,12 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
   })
 }
 
-export const shippingDuplicateMessage = (duplicateIdNumbers) => {
+/**
+ * Displays a modal warning for backend-confirmed duplicate tracking IDs.
+ * @param {Array<string>} duplicateIdNumbers - Duplicate tracking IDs returned from the database validation check.
+ * @returns {void}
+ */
+export const shippingDatabaseDuplicateMessage = (duplicateIdNumbers) => {
     const button = document.createElement('button');
     button.dataset.bsTarget = '#biospecimenModal';
     button.dataset.bsToggle = 'modal';
@@ -684,6 +689,43 @@ export const shippingDuplicateMessage = (duplicateIdNumbers) => {
         </div>
         `;
 }
+
+/**
+ * Prior to database duplicate validation, displays a modal warning for duplicate tracking numbers in the input.
+ * @returns {void}
+*/
+export const shippingInputDuplicateMessage = () => {
+    const button = document.createElement('button');
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
+
+    document.getElementById('root').appendChild(button);
+    button.click();
+    document.getElementById('root').removeChild(button);
+    const header = document.getElementById('biospecimenModalHeader');
+    const body = document.getElementById('biospecimenModalBody');
+    header.innerHTML = `<h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
+                        </button>`;
+    body.innerHTML = `
+        <div class="row">
+            <div class="col">
+                <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                </div>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">
+                        Duplicate Tracking Numbers
+                    </span>
+                </p>
+                <p>There are duplicate tracking numbers in the input. Please correct them before proceeding.</p>
+            </div>
+        </div>
+        <div class="row" style="display:flex; justify-content:center;">
+            <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+        </div>
+        `;
+};
 
 export const shippingNonAlphaNumericStrMessage = () => {
   const button = document.createElement('button');

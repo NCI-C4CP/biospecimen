@@ -3,7 +3,7 @@ import {
     errorMessage, removeAllErrors, storeSpecimen, updateSpecimen, searchSpecimen, generateBarCode, updateBox,
     ship, disableInput, updateNewTempDate, getSiteTubesLists, getWorkflow, fixMissingTubeData,
     getSiteCouriers, getPage, getNumPages, removeSingleError, displayManifestContactInfo, checkShipForage, checkAlertState, retrieveDateFromIsoString,
-    convertConceptIdToPackageCondition, checkFedexShipDuplicate, shippingDuplicateMessage, checkInParticipant, checkOutParticipant, getCheckedInVisit, participantCanCheckIn, shippingPrintManifestReminder,
+    convertConceptIdToPackageCondition, checkFedexShipDuplicate, shippingDatabaseDuplicateMessage, shippingInputDuplicateMessage, checkInParticipant, checkOutParticipant, getCheckedInVisit, participantCanCheckIn, shippingPrintManifestReminder,
     checkNonAlphanumericStr, shippingNonAlphaNumericStrMessage, visitType, getParticipantCollections, updateBaselineData,
     siteSpecificLocationToConceptId, conceptIdToSiteSpecificLocation, locationConceptIDToLocationMap, translateNumToType,
     getCollectionsByVisit, getSpecimenAndParticipant, getUserProfile, checkDuplicateTrackingIdsFromDb, checkAccessionId, checkSurveyEmailTrigger, checkDerivedVariables, isDeviceMobile, replaceDateInputWithMaskedInput, bagConceptIdList, showModalNotification, showTimedNotifications, showNotificationsCancelOrContinue, validateSpecimenAndParticipantResponse, findReplacementTubeLabels, 
@@ -1933,7 +1933,7 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
         }
 
         if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)) {
-            shippingDuplicateMessage([]);
+            shippingInputDuplicateMessage();
             return;
         }
 
@@ -1959,7 +1959,7 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
         } else {
             // extract all duplicate tracking IDs
             const extractDuplicateTrackingIds = getDuplicateTrackingIdsInDb.map(item => item.trackingId);
-            shippingDuplicateMessage(extractDuplicateTrackingIds);
+            shippingDatabaseDuplicateMessage(extractDuplicateTrackingIds);
         }
     })
 
@@ -1999,8 +1999,7 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
         }
 
         if ((checkFedexShipDuplicate(boxIdArray) && boxIdArray.length > 1)){
-            // generic message without duplicates from frontend
-            shippingDuplicateMessage([]);
+            shippingInputDuplicateMessage();
             return;
         }
 
@@ -2018,7 +2017,7 @@ export const addEventSaveButton = async (boxIdAndBagsObj) => {
             showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
         } else {
             const extractDuplicateTrackingIds = getDuplicateTrackingIdsInDb.map(item => item.trackingId);
-            shippingDuplicateMessage(extractDuplicateTrackingIds);
+            shippingDatabaseDuplicateMessage(extractDuplicateTrackingIds);
             return;
         }
     })
