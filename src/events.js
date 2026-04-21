@@ -1953,7 +1953,6 @@ export const addEventSaveAndContinueButton = async (boxIdAndBagsObj, userName, b
 
         if (getDuplicateTrackingIdsInDb.length === 0) {
             localforage.setItem("shipData", shippingData);
-            showTimedNotifications({ title: 'Reminder', body: 'Tracking input saved.' });
             const shipmentCourier = escapeHTML(document.getElementById('courierSelect').value);
             finalShipmentTracking({boxIdAndBagsObj, boxIdAndTrackingObj, userName, boxWithTempMonitor, shipmentCourier});
         } else {
