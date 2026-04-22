@@ -2,7 +2,7 @@ import { showAnimation, hideAnimation, getParticipantsByKitStatus, convertISODat
 import { displayKitStatusReportsHeader } from "./participantSelectionHeaders.js";
 import { nonUserNavBar } from "../../navbar.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
-import { conceptIds } from "../../fieldToConceptIdMapping.js";
+import { conceptIds, packageConditionConversion } from "../../fieldToConceptIdMapping.js";
 
 export const displayKitStatusReportsScreen = async (auth) => {
     const user = auth.currentUser;
@@ -483,7 +483,23 @@ export const kitStatusSelectionOptions = {
                     }
                     return kitLevelMap[dataRow[conceptIds.kitLevel]] || '';
                 }
+            },
+            {
+                header: 'Package Condition',
+                key: conceptIds.pkgReceiptConditions,
+                renderer: (dataRow) => {
+                    const packageConditions = dataRow[conceptIds.pkgReceiptConditions];
+                    let fullString  = ''
+                    for (const condition of packageConditions) {
+                        // loop through each condition and add to fullString
+                        fullString += `${packageConditionConversion[condition]}, ` || '';
+                    }
+                    return fullString.slice(0, -2); // remove the trailing comma and space on last condition
+                }
             }
+
         ]
     }
 };
+
+// packageConditionConversion
