@@ -497,9 +497,6 @@ export const kitStatusSelectionOptions = {
                     return fullString.slice(0, -2); // remove the trailing comma and space on last condition
                 }
             }
-
         ]
     }
 };
-
-// packageConditionConversion
