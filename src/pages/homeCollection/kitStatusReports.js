@@ -452,49 +452,50 @@ export const kitStatusSelectionOptions = {
         queryParam: 'status=received',
         columns: [
             {
-            header: 'Connect ID',
-            key: 'Connect_ID'
+                header: 'Connect ID',
+                key: 'Connect_ID'
             },
             {
-            header: 'Collection ID',
-            key: conceptIds.collectionCardId
+                header: 'Collection ID',
+                key: conceptIds.collectionCardId
             },
             {
-            header: 'Date Received',
-            key: conceptIds.receivedDateTime,
-            renderer: (dataRow) => {
-                const isoDate = dataRow[conceptIds.receivedDateTime];
-                if (!isoDate) return '';
-                return convertISODateTime(isoDate).split(/\s+/)[0]
-                }
-            },
-            {
-            header: 'Return Kit Tracking Number',
-            key: conceptIds.returnKitTrackingNum
-            },
-            {
-            header: 'Kit Type (Initial, 2nd, 3rd)',
-            key: conceptIds.kitLevel,
-            renderer: (dataRow) => {
-                    const kitLevelMap = {
-                        [conceptIds.initialKit]: 'Initial',
-                        [conceptIds.replacementKit1]: '2nd',
-                        [conceptIds.replacementKit2]: '3rd'
+                header: 'Date Received',
+                key: conceptIds.receivedDateTime,
+                renderer: (dataRow) => {
+                    const isoDate = dataRow[conceptIds.receivedDateTime];
+                    if (!isoDate) return '';
+                    return convertISODateTime(isoDate).split(/\s+/)[0]
                     }
-                    return kitLevelMap[dataRow[conceptIds.kitLevel]] || '';
-                }
+            },
+            {
+                header: 'Return Kit Tracking Number',
+                key: conceptIds.returnKitTrackingNum
+            },
+            {
+                header: 'Kit Type (Initial, 2nd, 3rd)',
+                key: conceptIds.kitLevel,
+                renderer: (dataRow) => {
+                        const kitLevelMap = {
+                            [conceptIds.initialKit]: 'Initial',
+                            [conceptIds.replacementKit1]: '2nd',
+                            [conceptIds.replacementKit2]: '3rd'
+                        }
+                        return kitLevelMap[dataRow[conceptIds.kitLevel]] || '';
+                    }
             },
             {
                 header: 'Package Condition',
                 key: conceptIds.pkgReceiptConditions,
                 renderer: (dataRow) => {
-                    const packageConditions = dataRow[conceptIds.pkgReceiptConditions];
-                    let fullString  = ''
-                    for (const condition of packageConditions) {
-                        // loop through each condition and add to fullString
-                        fullString += `${packageConditionConversion[condition]}, ` || '';
-                    }
-                    return fullString.slice(0, -2); // remove the trailing comma and space on last condition
+                    const packageConditions = Array.isArray(dataRow[conceptIds.pkgReceiptConditions])
+                        ? dataRow[conceptIds.pkgReceiptConditions]
+                        : [];
+
+                    return packageConditions
+                        .map((condition) => packageConditionConversion[condition] || '')
+                        .filter(Boolean)
+                        .join(', ');
                 }
             }
         ]
