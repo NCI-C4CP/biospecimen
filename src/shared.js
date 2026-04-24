@@ -638,8 +638,13 @@ export const shippingPrintManifestReminder = (boxesToShip, userName, tempCheckSt
   })
 }
 
-export const shippingDuplicateMessage = (duplicateIdNumber) => {
-  const button = document.createElement('button');
+/**
+ * Displays a modal warning for backend-confirmed duplicate tracking IDs.
+ * @param {Array<string>} duplicateIdNumbers - Duplicate tracking IDs returned from the database validation check.
+ * @returns {void}
+ */
+export const shippingDatabaseDuplicateMessage = (duplicateIdNumbers) => {
+    const button = document.createElement('button');
     button.dataset.bsTarget = '#biospecimenModal';
     button.dataset.bsToggle = 'modal';
 
@@ -648,6 +653,18 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
     document.getElementById('root').removeChild(button);
     const header = document.getElementById('biospecimenModalHeader');
     const body = document.getElementById('biospecimenModalBody');
+    const duplicateNumbersText = `
+            <ul>
+            ${duplicateIdNumbers.map(id => `<li>${escapeHTML(id)}</li>`).join('')}
+            </ul>
+        `;
+    let message = '';
+    const duplicateCount = duplicateIdNumbers.length;
+    if (duplicateCount === 1) {
+        message = `This tracking number has already been used. Discard the shipping label and use a new one.`;
+    } else {
+        message = `These tracking numbers have already been used. Discard the shipping labels and use new ones.`;
+    }
     header.style.borderBottom = 0;
     header.innerHTML = `<h5 class="modal-title"></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
@@ -656,15 +673,59 @@ export const shippingDuplicateMessage = (duplicateIdNumber) => {
         <div class="row">
             <div class="col">
                 <div style="display:flex; justify-content:center; margin-bottom:1rem;">
-                  <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
                 </div>
-                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; "><span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">Duplicate Tracking Numbers${duplicateIdNumber ? `[${duplicateIdNumber}]` : ''}</span> Please enter unique Fedex tracking numbers</p>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">
+                        ${duplicateCount === 1 ? `Duplicate Tracking Number` : `Duplicate Tracking Numbers`}
+                    </span>
+                </p>
+                ${duplicateNumbersText}
+                <p>${message}</p>
             </div>
         </div>
         <div class="row" style="display:flex; justify-content:center;">
-          <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
-        </div>`;
+            <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+        </div>
+        `;
 }
+
+/**
+ * Prior to database duplicate validation, displays a modal warning for duplicate tracking numbers in the input.
+ * @returns {void}
+*/
+export const shippingInputDuplicateMessage = () => {
+    const button = document.createElement('button');
+    button.dataset.bsTarget = '#biospecimenModal';
+    button.dataset.bsToggle = 'modal';
+
+    document.getElementById('root').appendChild(button);
+    button.click();
+    document.getElementById('root').removeChild(button);
+    const header = document.getElementById('biospecimenModalHeader');
+    const body = document.getElementById('biospecimenModalBody');
+    header.innerHTML = `<h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size:2rem;">
+                        </button>`;
+    body.innerHTML = `
+        <div class="row">
+            <div class="col">
+                <div style="display:flex; justify-content:center; margin-bottom:1rem;">
+                    <i class="fas fa-exclamation-triangle fa-5x" style="color:#ffc107"></i>
+                </div>
+                <p style="text-align:center; font-size:1.4rem; margin-bottom:1.2rem; ">
+                    <span style="display:block; font-weight:600;font-size:1.8rem; margin-bottom: 0.5rem;">
+                        Duplicate Tracking Numbers
+                    </span>
+                </p>
+                <p>There are duplicate tracking numbers in the input. Please correct them before proceeding.</p>
+            </div>
+        </div>
+        <div class="row" style="display:flex; justify-content:center;">
+            <button id="shipManifestConfirm" type="button" class="btn btn-secondary col-auto" data-bs-dismiss="modal" aria-label="Close" style="margin-right:4%; padding:6px 25px;">Close</button>
+        </div>
+        `;
+};
 
 export const shippingNonAlphaNumericStrMessage = () => {
   const button = document.createElement('button');
@@ -3487,25 +3548,38 @@ export const convertConceptIdToPackageCondition = (packagedCondition, packageCon
 
 export const checkFedexShipDuplicate = (boxes) => {
   let arr = []
-  boxes.forEach(boxId => arr.push(document.getElementById(`${boxId}trackingId`).value))
+  boxes.forEach(boxId => arr.push(document.getElementById(`${boxId}trackingId`).value.trim()))
   let filteredArr = new Set(arr)
   return arr.length !== filteredArr.size
 }
-  
-export const checkDuplicateTrackingIdFromDb = async (boxes) => {
-    let isExistingTrackingId = false;
-    
-    for (const boxId of boxes) {
-    
-        let trackingId = document.getElementById(`${boxId}trackingId`).value;
-        let numBoxesShipped = await getNumPages(5, {trackingId});
-        if (numBoxesShipped > 0) {
-            isExistingTrackingId = escapeHTML(trackingId);
-            break;
+
+
+export const checkDuplicateTrackingIdsFromDb = async (boxes) => {
+    const trackingIds = boxes.map(boxId => 
+        document.getElementById(`${boxId}trackingId`).value
+    );
+    try {
+        const idToken = await getIdToken();
+        const response = await fetch(`${api}api=checkDuplicateTrackingId`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ trackingIds })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to check duplicate tracking IDs: ${response.status} ${response.statusText}`);
         }
+
+        const result = await response.json();
+        return result.data;
+    } catch (error) {
+        console.error("Error checking duplicate tracking IDs:", error);
     }
-    return isExistingTrackingId;
-}
+};
+
+
 
 export const checkNonAlphanumericStr = (boxes) => {
   let regExp = /^[a-z0-9]+$/i
