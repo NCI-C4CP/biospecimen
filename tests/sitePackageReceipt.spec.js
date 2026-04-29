@@ -6,8 +6,8 @@ describe('packageConditions array', () => {
         expect(Array.isArray(packageConditions)).toBe(true);
     });
 
-    it('should contain 10 options', () => {
-        expect(packageConditions).toHaveLength(10);
+    it('should contain 12 options', () => {
+        expect(packageConditions).toHaveLength(12);
     });
 
     it('should ensure all conceptIds are numbers', () => {
@@ -45,6 +45,8 @@ describe('packageConditions array', () => {
             'Cold Packs - Warm',
             'Damaged Vials',
             'Returned Empty Vials',
+            'Collection Cup Leaked - Total Sample Loss',
+            'Collection Cup Leaked - Partial Sample Loss',
             'No Connect Label on Vials',
             'Shipment Delay',
             'Damaged Shipper (outer and/or inner)',
@@ -62,6 +64,8 @@ describe('packageConditions array', () => {
             595987358, // coldPacksWarm
             387564837, // damagedVials
             631290535, // vialsEmpty
+            954880590, // siteCollectionCupLeakedTotal
+            421034284, // siteCollectionCupLeakedPartial
             399948893, // vialsMissingLabels
             958000780, // shipmentDelay
             678483571, // damagedContainer

@@ -3,7 +3,7 @@ import { homeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { showAnimation, hideAnimation, getIdToken, baseAPI, keyToNameCSVObj, conceptIdToHealthProviderAbbrObj, triggerErrorModal, convertISODateTime, convertISODateTimeToEST } from "../../shared.js";
 import { activeHomeCollectionNavbar } from "./homeCollectionNavbar.js";
 import { conceptIds } from '../../fieldToConceptIdMapping.js';
-import { receiptedCSVFileTemplate, downloadCSVfile } from '../siteCollection/csvFileReceipt.js';
+import { receiptedCSVFileTemplate, shippedNotReceivedCSVFileTemplate, downloadCSVfile } from '../siteCollection/csvFileReceipt.js';
 
 export const kitCsvScreen = (auth) => {
   const user = auth.currentUser;
@@ -12,6 +12,7 @@ export const kitCsvScreen = (auth) => {
   showAnimation();
   kitCsvTemplate(username);
   csvFileButtonSubmit();
+  csvFileShippedNotReceivedButtonSubmit();
   hideAnimation();
 };
 
@@ -21,6 +22,7 @@ const kitCsvTemplate = (name) => {
 
   template += `<div id="root root-margin" style="margin-top:3rem;">
               <div id="alert_placeholder"></div>
+              ${shippedNotReceivedCSVFileTemplate()}
               ${receiptedCSVFileTemplate()}
               </div>`
   
@@ -36,10 +38,53 @@ const csvFileButtonSubmit = () => {
       showAnimation();
       try {
           const results = await getKitsByReceivedDate(dateString);
-          const modifiedResults = modifyKitQueryResults(results.data);
+          // This is for home kits and thus should always show the collection location as home
+          const modifiedResults = modifyKitQueryResults(results.data, 'home');
           generateKitCSVData(modifiedResults);
           hideAnimation();
       } catch (e) {
+          hideAnimation();
+          triggerErrorModal(`Error fetching Kit Data -- ${e.message}`);
+      }
+  });
+}
+
+const csvFileShippedNotReceivedButtonSubmit = () => {
+  document.getElementById("csvShippedNotReceivedCreateFileButton").addEventListener("click", async (e)=> {
+      e.preventDefault();
+      showAnimation();
+      try {
+          const results = await getKitsShippedNotReceived();
+          // CSV columns:
+          // Connect ID
+          // Return Kit Tracking Number (<972453354> BioKit_ReturnKitTrack_v1r0)
+          // Expected Number of Samples (hardcoded as '1')
+          // BSI ID (<259846815> BioKit_MWCupID_v1r0)
+          // Material Type (hardcoded
+          // Kit status
+
+          const kitStatusLookup = {
+            [conceptIds.shipped]: 'Shipped',
+            [conceptIds.assigned]: 'Assigned'
+          }
+          const csv = 'Connect ID, Return Kit Tracking Number, Expected Number of Samples, BSI ID, Material Type, Kit Status\r\n';
+          const items = results.data.map(kit => {
+            // downloadCSVFile is expecting an object that you can do Object.values on, but that works with arrays, so this is an appropriate format
+
+            return [
+              kit['Connect_ID'],
+              kit[conceptIds.returnKitTrackingNum],
+              '1', // Currently always 1
+              kit[conceptIds.collectionCupId],
+              "Saliva", // Currently always saliva; revisit if other home kit types become available
+              kitStatusLookup[kit[conceptIds.kitStatus]]
+            ]
+          });
+
+          downloadCSVfile(items, csv, 'Kit-shipped-not-received-data-export');
+          hideAnimation();
+      } catch (e) {
+        console.error('Error', e);
           hideAnimation();
           triggerErrorModal(`Error fetching Kit Data -- ${e.message}`);
       }
@@ -68,7 +113,28 @@ const getKitsByReceivedDate = async (dateString) => {
 
 }
 
-const modifyKitQueryResults = (kitsData) => {
+const getKitsShippedNotReceived = async () => {
+  try {
+    const idToken = await getIdToken();
+    const response = await fetch(`${baseAPI}api=getKitsShippedNotReceived`, {
+        method: "GET",
+        headers: {
+            Authorization: "Bearer " + idToken,
+        },
+    });
+
+    if (response.status !== 200) {
+      throw new Error(`Error fetching kits which have been shipped but not yet received. ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (e) {
+    console.error('Error fetching kits', e);
+    throw new Error(`Error fetching kits which have been shipped but not yet received: ${e.message}`);
+  }
+}
+
+const modifyKitQueryResults = (kitsData, collectionSource = 'site') => {
   const kitLevelLookup = {
     [conceptIds.initialKit]: 'BL',
     [conceptIds.replacementKit1]: 'BL_1',
@@ -76,7 +142,8 @@ const modifyKitQueryResults = (kitsData) => {
   }
   const csvKitArray = [];
   kitsData.forEach(kitData => {
-    const sampleCollectionCenter = keyToNameCSVObj[kitData[conceptIds.healthcareProvider]];
+    // Home collection kits should list sample collection center as "home" (1616)
+    const sampleCollectionCenter = collectionSource === 'home' ? 'Home' : keyToNameCSVObj[kitData[conceptIds.healthcareProvider]];
     const collectionId = kitData[conceptIds.collection.id]; // CNA899209
     const bsiID = kitData[conceptIds.collection.mouthwashTube1][conceptIds.collection.tube.scannedId]; // CNA899209 0007
     const tubeID = bsiID.split(' ')[1]; // 0007
