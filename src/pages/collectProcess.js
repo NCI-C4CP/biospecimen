@@ -5,6 +5,7 @@ import { conceptIds } from '../fieldToConceptIdMapping.js';
 
 export const tubeCollectedTemplate = (participantData, biospecimenData) => {
     const isCheckedIn = checkedIn(participantData);
+    const isFinalized = biospecimenData?.[conceptIds.collection.isFinalized] === conceptIds.yes;
     const inputNote = getWorkflow() === 'research' 
         ? 'Enter Data AFTER specimens have been collected' 
         : 'Enter data ONLY for tubes received from the clinical lab';
@@ -249,9 +250,14 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                 `<div class="ms-auto col-auto" style="display:none">
                     <button class="btn btn-outline-primary text-nowrap" data-connect-id=${participantData.Connect_ID} type="button" id="collectionCheckout">Go to Check-Out</button>
                 </div>` : ``}               
-                <div class="ms-auto col-auto">
-                    <button class="btn btn-info" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionSave">Save</button>
-                </div>
+                ${
+                    /* Do not display save button for already finalized collections (1338)*/
+                    isFinalized ? 
+                        `` : 
+                        `<div class="ms-auto col-auto">
+                            <button class="btn btn-info" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionSave">Save</button>
+                        </div>`
+                }
                 <div class="col-auto">
                     <button class="btn btn-outline-primary" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionNext">Go to Review</button>
                 </div>
