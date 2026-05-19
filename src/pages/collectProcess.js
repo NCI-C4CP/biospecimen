@@ -258,7 +258,7 @@ export const tubeCollectedTemplate = (participantData, biospecimenData) => {
                             <button class="btn btn-info" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionSave">Save</button>
                         </div>`
                 }
-                <div class="col-auto">
+                <div class="${isFinalized ? 'ms-auto' : ''} col-auto">
                     <button class="btn btn-outline-primary" data-connect-id="${participantData.Connect_ID}" type="button" id="collectionNext">Go to Review</button>
                 </div>
             </div>
