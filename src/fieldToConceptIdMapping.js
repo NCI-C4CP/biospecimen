@@ -345,7 +345,11 @@ export const conceptIds = {
         574104518: 'Temple Roney',
         749199085: 'Temple Westfield',
         603989030: 'Killeen Main',
-        471260082: 'Waco Fishpond'
+        471260082: 'Waco Fishpond',
+        // Placeholders for bwswh until Cids are assigned,
+        900000001: 'Southwest Family Medicine',
+        900000002: 'Grapevine',
+        900000003: 'Plano Heart'
     },
 
     nameToKeyObj: {
@@ -397,6 +401,11 @@ export const conceptIds = {
         templeWestfield: 749199085,
         killeenMain: 603989030,
         wacoFishpond: 471260082,
+        // Placeholders for bwswh until Cids are assigned,
+        southwestFamilyMedicine: 900000001,
+        grapevine: 900000002,
+        planoHeart: 900000003,
+        
         kpHawaii: 531313956,
         nci: 111111111,
         nciFrederick: 222222222,
