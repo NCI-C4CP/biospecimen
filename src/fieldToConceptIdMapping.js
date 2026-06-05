@@ -403,7 +403,6 @@ export const conceptIds = {
         southwestFamilyMedicine: 528017143,
         grapevine: 253098609,
         planoHeart: 864987193,
-        
         kpHawaii: 531313956,
         nci: 111111111,
         nciFrederick: 222222222,
