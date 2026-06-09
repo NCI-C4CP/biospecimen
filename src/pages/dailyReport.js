@@ -109,7 +109,10 @@ const renderCollectionLocationList = () => {
                     <li><a class="dropdown-item" data-siteKey="templeRoney" id="templeRoney">Temple Roney</a></li>
                     <li><a class="dropdown-item" data-siteKey="templeWestfield" id="templeWestfield">Temple Westfield</a></li>
                     <li><a class="dropdown-item" data-siteKey="killeenMain" id="killeenMain">Killeen Main</a></li>
-                    <li><a class="dropdown-item" data-siteKey="wacoFishpond" id="wacoFishpond">Waco Fishpond</a></li>`
+                    <li><a class="dropdown-item" data-siteKey="wacoFishpond" id="wacoFishpond">Waco Fishpond</a></li>
+                    <li><a class="dropdown-item" data-siteKey="southwestFamilyMedicine" id="southwestFamilyMedicine">Southwest Family Medicine</a></li>
+                    <li><a class="dropdown-item" data-siteKey="grapevine" id="grapevine">Grapevine</a></li>
+                    <li><a class="dropdown-item" data-siteKey="planoHeart" id="planoHeart">Plano Heart</a></li>`
                     :
                 appState.getState().siteAcronym === 'NIH' ? 
                     `<li><a class="dropdown-item" data-siteKey="nci" id="nci">NIH/NCI</a></li>` :
