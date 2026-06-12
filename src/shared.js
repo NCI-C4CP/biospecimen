@@ -554,7 +554,10 @@ export const showTimedNotifications = (data, zIndex, timeInMilliseconds = 2600) 
 
 const closeBiospecimenModal = () => {
     const modal = document.getElementById('biospecimenModal');
-    const backdrop = document.querySelector('.modal-backdrop');
+    if (!modal) return;
+
+    const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
+    if (bootstrapModal) bootstrapModal.hide();
 
     modal.style.display = 'none';
     modal.classList.remove('show');
@@ -562,12 +565,11 @@ const closeBiospecimenModal = () => {
     modal.removeAttribute('aria-modal');
     modal.removeAttribute('role');
 
-    if (backdrop) {
-        backdrop.style.display = 'none';
-        backdrop.classList.remove('show');
-    }
-
+    // add fallback for removing backdrop and modal-open class in case hide method fails
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
     document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
 };
 
 /**
