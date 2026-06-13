@@ -1530,28 +1530,7 @@ const handleFinalizedCollectionUpdate = async (biospecimenData, participantData,
     };
 
     showNotificationsCancelOrContinue(modalMessage, null, onCancel, onContinue);
-}
-
-// TODO: The write process would benefit from optimization. Many sequential reads/writes.
-const processSpecimenCollectionFormUpdates = async (biospecimenData, participantData, siteTubesList) => {
-    const baselineVisit = (biospecimenData[conceptIds.collection.selectedVisit] === conceptIds.baseline.visitId);
-    const clinicalResearchSetting = (biospecimenData[conceptIds.collection.collectionSetting] === conceptIds.research || biospecimenData[conceptIds.collection.collectionSetting] === conceptIds.clinical);
-    
-    try {
-        showAnimation();
-
-        const {code, message} = await submitSpecimen(biospecimenData, participantData, siteTubesList);
-        if(code !== 200) {
-            throw new Error(message);
-        }
-
-        hideAnimation();
-    } catch (error) {
-        hideAnimation();
-        console.error("Error saving collection: ", error);
-        showNotifications({ title: 'Error saving collection!', body: error.message });
-    }
-}
+};
 
 const handleFormSaveAndNavigation = async (biospecimenData, continueToFinalizeScreen) => {
     if (continueToFinalizeScreen) {
