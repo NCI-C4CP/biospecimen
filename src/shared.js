@@ -2126,6 +2126,9 @@ export const siteSpecificLocation = {
   "Temple Westfield": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Killeen Main": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Waco Fishpond": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Southwest Family Medicine": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Grapevine": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
+  "Plano Heart": {"SiteAcronym":"BSWH", "siteCode": healthProviderAbbrToConceptIdObj.bswh, "loginSiteName": "Baylor Scott & White Health"},
   "Main Campus": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
   "Frederick": {"siteAcronym":"NIH", "siteCode": healthProviderAbbrToConceptIdObj.nci, "loginSiteName": "National Cancer Institute"},
 }
@@ -2549,6 +2552,30 @@ export const locationConceptIDToLocationMap = {
         loginSiteName: 'Baylor Scott & White Health',
         email: 'connectbiospecimen@BSWHealth.org'
     },
+    [conceptIds.nameToKeyObj.southwestFamilyMedicine]: {
+        siteSpecificLocation: 'Southwest Family Medicine',
+        siteAcronym: 'BSWH',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
+    [conceptIds.nameToKeyObj.grapevine]: {
+        siteSpecificLocation: 'Grapevine',
+        siteAcronym: 'BSWH',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
+    [conceptIds.nameToKeyObj.planoHeart]: {
+        siteSpecificLocation: 'Plano Heart',
+        siteAcronym: 'BSWH',
+        siteCode: `${healthProviderAbbrToConceptIdObj.bswh}`,
+        siteTeam: 'BSWH Connect Study Team',
+        loginSiteName: 'Baylor Scott & White Health',
+        email: 'connectbiospecimen@BSWHealth.org'
+    },
     111111111: {
         siteSpecificLocation: 'Main Campus',
         siteAcronym: 'NIH',
@@ -2622,6 +2649,9 @@ export const conceptIdToSiteSpecificLocation = {
   [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
   [conceptIds.nameToKeyObj.killeenMain]: "Killeen Main",
   [conceptIds.nameToKeyObj.wacoFishpond]: "Waco Fishpond",
+  [conceptIds.nameToKeyObj.southwestFamilyMedicine]: "Southwest Family Medicine",
+  [conceptIds.nameToKeyObj.grapevine]: "Grapevine",
+  [conceptIds.nameToKeyObj.planoHeart]: "Plano Heart",
 }
 
 export const siteSpecificLocationToConceptId = {
@@ -2679,6 +2709,9 @@ export const siteSpecificLocationToConceptId = {
   "Temple Westfield": conceptIds.nameToKeyObj.templeWestfield,
   "Killeen Main": conceptIds.nameToKeyObj.killeenMain,
   "Waco Fishpond": conceptIds.nameToKeyObj.wacoFishpond,
+  "Southwest Family Medicine": conceptIds.nameToKeyObj.southwestFamilyMedicine,
+  "Grapevine": conceptIds.nameToKeyObj.grapevine,
+  "Plano Heart": conceptIds.nameToKeyObj.planoHeart,
 }
 
 export const conceptIdToHealthProviderAbbrObj = {
@@ -2776,6 +2809,9 @@ export const keyToLocationObj =
     [conceptIds.nameToKeyObj.templeWestfield]: "Temple Westfield",
     [conceptIds.nameToKeyObj.killeenMain]: "Killeen Main",
     [conceptIds.nameToKeyObj.wacoFishpond]: "Waco Fishpond",
+    [conceptIds.nameToKeyObj.southwestFamilyMedicine]: "Southwest Family Medicine",
+    [conceptIds.nameToKeyObj.grapevine]: "Grapevine",
+    [conceptIds.nameToKeyObj.planoHeart]: "Plano Heart",
     111111111: "NIH",
     13: "NCI"
 
@@ -3060,6 +3096,9 @@ export const siteLocations = {
                 { location: 'Temple Westfield', concept: conceptIds.nameToKeyObj.templeWestfield },
                 { location: 'Killeen Main', concept: conceptIds.nameToKeyObj.killeenMain },
                 { location: 'Waco Fishpond', concept: conceptIds.nameToKeyObj.wacoFishpond },
+                { location: 'Southwest Family Medicine', concept: conceptIds.nameToKeyObj.southwestFamilyMedicine },
+                { location: 'Grapevine', concept: conceptIds.nameToKeyObj.grapevine },
+                { location: 'Plano Heart', concept: conceptIds.nameToKeyObj.planoHeart },
         ],
         NIH: [
                 { location: 'NIH-1', concept: conceptIds.nameToKeyObj.nci }, 
