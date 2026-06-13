@@ -4,7 +4,7 @@ import {searchTemplate} from "./dashboard.js";
 import { collectionIdSearchScreenTemplate } from "./siteCollection/collectionIdSearch.js";
 import { conceptIds } from "./../fieldToConceptIdMapping.js";
 
-export const finalizeTemplate = (participantData, specimenData, bptlCollectionFlag) => {
+export const finalizeTemplate = (participantData, specimenData, bptlCollectionFlag, isAlreadyFinalized) => {
     removeActiveClass('navbar-btn', 'active')
     const navBarBtn = document.getElementById('navBarReview');
     navBarBtn?.classList.remove('disabled');

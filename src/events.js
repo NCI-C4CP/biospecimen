@@ -1104,7 +1104,7 @@ export const addEventBiospecimenCollectionFormToggles = () => {
                 const allBloodUrineCheckedArray = allTubesCollected.filter(
                     item => (item.getAttribute("data-tube-type") === "Blood tube" && item.checked) || (item.getAttribute("data-tube-type") === "Urine" && item.checked)
                 );
-               
+
                 if (collected.checked) {
                     biohazardBagChkb.checked = true;
                     biohazardBagText.disabled = false;
@@ -1506,9 +1506,8 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
 const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen) => {
     const modalMessage = {
         title: `Collection ${biospecimenData[conceptIds.collection.id]} is Already Finalized`,
-        body: 'IMPORTANT: This Collection has already been finalized. Click continue if you want to update the collection and re-finalize. Click Cancel to discard changes.',
+        body: 'IMPORTANT: This Collection has already been finalized. Click continue if you want to update the collection and re-finalize. Changes will not be saved unless you click Review Complete on the review page. If you return to Collection Data Entry before completing review, these changes will be discarded. Click Cancel to discard changes.',
     };
-
     const onCancel = () => { /* Nothing to do here */ };
     
     // Specimen is not already finalized before this point. Manage boxedStatus and finalize.
@@ -1523,8 +1522,7 @@ const handleFinalizedCollectionUpdate = async (biospecimenData, participantData,
                 biospecimenData[conceptIds.strayTubesList] = strayTubesList;
                 biospecimenData[conceptIds.boxedStatus] = conceptIds.partiallyBoxed;
             }
-            await processSpecimenCollectionFormUpdates(biospecimenData, participantData, siteTubesList, continueToFinalizeScreen);
-            await handleFormSaveAndNavigation(biospecimenData, continueToFinalizeScreen);
+            finalizeTemplate(participantData, biospecimenData, false, true); // Does not fetch updated participant/specimen data (Not needed since finalizeTemplate only uses the data to populate the review screen and the biospecimenData object has all the updated data).
         } catch (error) {
             console.error(`Error handleFinalizedCollectionUpdate -> onContinue. ${error}`);
             showNotifications({ title: "Error updating collection", body: error.message });
@@ -1609,7 +1607,7 @@ export const addEventReturnToCollectProcess = () => {
         const participantData = response.data[0];
         const biospecimenData = (await searchSpecimen(masterSpecimenId)).data;
         hideAnimation();
-        
+
         tubeCollectedTemplate(participantData, biospecimenData);
     })
 };
