@@ -168,12 +168,12 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
     document.getElementById('contentBody').innerHTML = template;
     generateBarCode('connectIdBarCode', participantData.Connect_ID);
 
-    document.getElementById('returnToSpecimenSearch') && document.getElementById('returnToSpecimenSearch').addEventListener('click', () => {
-        collectionIdSearchScreenTemplate(appState.getState().username);
-    });
-
     document.getElementById('finalizedSaveExit') && document.getElementById('finalizedSaveExit').addEventListener('click', () => {
         searchTemplate();
+    });
+    
+    document.getElementById('returnToSpecimenSearch') && document.getElementById('returnToSpecimenSearch').addEventListener('click', () => {
+        collectionIdSearchScreenTemplate(appState.getState().username);
     });
 
     document.getElementById('finalizeForm') && document.getElementById('finalizeForm').addEventListener('submit', (e) => { 
