@@ -1481,7 +1481,7 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
         continueToFinalizeScreen ? finalizeTemplate(participantData, biospecimenData) : showTimedNotifications({ title: 'No changes detected', body: 'No changes have been made to the collection data.' });
     } else if (isFinalized) {
         
-        handleFinalizedCollectionUpdate(biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen);
+        handleFinalizedCollectionUpdate(biospecimenData, participantData, siteTubesList, addedStrayTubes);
     } else {
         try {
             await updateSpecimen([biospecimenData]);
@@ -1501,9 +1501,8 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
  * @param {object} participantData - the participantData from Firestore.
  * @param {array} siteTubesList - the list of tubes based on the site (from getSiteTubesLists()).
  * @param {array} addedStrayTubes - tubes added this form submission.
- * @param {boolean} continueToFinalizeScreen - if true, navigate to finalize screen.
  */
-const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen) => {
+const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes) => {
     const modalMessage = {
         title: `Collection ${biospecimenData[conceptIds.collection.id]} is Already Finalized`,
         body: 'IMPORTANT: This Collection has already been finalized. Click continue if you want to update the collection and re-finalize. Changes will not be saved unless you click Review Complete on the review page. Click Cancel to discard changes.',
@@ -1586,7 +1585,6 @@ export const addEventReturnToCollectProcess = () => {
         const participantData = response.data[0];
         const biospecimenData = (await searchSpecimen(masterSpecimenId)).data;
         hideAnimation();
-
         tubeCollectedTemplate(participantData, biospecimenData);
     })
 };
