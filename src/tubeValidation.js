@@ -23,8 +23,8 @@ const deviationReason22 = {'concept': 742806035, 'label': 'Less than 30 seconds'
 
 const deviationCollection1 = [deviationReason1, deviationReason2, deviationReason3, deviationReason4, deviationReason5, deviationReason6, deviationReason7, deviationReason8, deviationReason9, deviationReason10, deviationReason11, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason17, deviationReason18, deviationReason19, deviationReason20, deviationReason21];
 const deviationCollection2 = [deviationReason1, deviationReason9, deviationReason10, deviationReason11, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason17, deviationReason18, deviationReason19, deviationReason20, deviationReason21];
-const deviationCollection3 = [deviationReason1, deviationReason10, deviationReason11, deviationReason12, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason19, deviationReason20, deviationReason21];
-const deviationCollection4 = [deviationReason1, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason19, deviationReason20, deviationReason21, deviationReason22];
+const deviationCollection3 = [deviationReason1, deviationReason10, deviationReason11, deviationReason12, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason17, deviationReason18, deviationReason19, deviationReason20, deviationReason21];
+const deviationCollection4 = [deviationReason1, deviationReason13, deviationReason14, deviationReason15, deviationReason16, deviationReason17, deviationReason18, deviationReason19, deviationReason20, deviationReason21, deviationReason22];
 
 const tubeNotCollectedReason1 = {'concept': 234139565, 'label': 'Short draw'};
 const tubeNotCollectedReason2 = {'concept': 681745422, 'label': 'Participant refusal'};
