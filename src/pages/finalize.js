@@ -4,7 +4,7 @@ import {searchTemplate} from "./dashboard.js";
 import { collectionIdSearchScreenTemplate } from "./siteCollection/collectionIdSearch.js";
 import { conceptIds } from "./../fieldToConceptIdMapping.js";
 
-export const finalizeTemplate = (participantData, specimenData, bptlCollectionFlag, isAlreadyFinalized) => {
+export const finalizeTemplate = (participantData, specimenData, bptlCollectionFlag) => {
     removeActiveClass('navbar-btn', 'active')
     const navBarBtn = document.getElementById('navBarReview');
     navBarBtn?.classList.remove('disabled');
@@ -116,6 +116,9 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
                     <button class="btn btn-outline-danger" type="button" data-connect-id="${participantData.Connect_ID}" id="returnToCollectProcess" data-master-specimen-id="${specimenData[conceptIds.collection.id]}">${getWorkflow() === 'research' ? 'Return to Collection Data Entry' : 'Return to Collection Data Entry'}</button>
                 </div>
                 <div class="col-auto ms-auto">
+                    <button class="btn btn-outline-warning" data-connect-id="${participantData.Connect_ID}" data-master-specimen-id="${specimenData[conceptIds.collection.id]}" type="button" id="finalizedSaveExit">Exit</button>
+                </div>
+                <div class="col-auto">
                     <button class="btn btn-outline-primary modal-open" data-modal-id="modal1" data-connect-id="${participantData.Connect_ID}" data-master-specimen-id="${specimenData[conceptIds.collection.id]}" type="submit" id="finalizedContinue">Review Complete</button>
                 </div>
             </div>`}
@@ -167,6 +170,10 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
 
     document.getElementById('returnToSpecimenSearch') && document.getElementById('returnToSpecimenSearch').addEventListener('click', () => {
         collectionIdSearchScreenTemplate(appState.getState().username);
+    });
+
+    document.getElementById('finalizedSaveExit') && document.getElementById('finalizedSaveExit').addEventListener('click', () => {
+        searchTemplate();
     });
 
     document.getElementById('finalizeForm') && document.getElementById('finalizeForm').addEventListener('submit', (e) => { 
