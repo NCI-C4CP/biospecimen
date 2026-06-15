@@ -171,7 +171,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
     document.getElementById('finalizedSaveExit') && document.getElementById('finalizedSaveExit').addEventListener('click', () => {
         searchTemplate();
     });
-    
+
     document.getElementById('returnToSpecimenSearch') && document.getElementById('returnToSpecimenSearch').addEventListener('click', () => {
         collectionIdSearchScreenTemplate(appState.getState().username);
     });
@@ -198,7 +198,7 @@ export const finalizeTemplate = (participantData, specimenData, bptlCollectionFl
             searchTemplate();
         });
     });
-    
+
     addEventReturnToCollectProcess();
     document.querySelector('body').scrollIntoView(true);
 
