@@ -1505,7 +1505,7 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
 const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes) => {
     const modalMessage = {
         title: `Collection ${biospecimenData[conceptIds.collection.id]} is Already Finalized`,
-        body: 'IMPORTANT: This Collection has already been finalized. Click Continue if you want to update the collection and re-finalize. Changes will not be saved unless you click \'Confirm\' on the Confirm Collection modal from the Review Collection Data Entry page.',
+        body: 'IMPORTANT: This Collection has already been finalized. Click Continue if you want to update the collection and re-finalize. Changes will not be saved unless you click Review Complete and then click "Confirm" on the Confirm Collection modal from the Review Collection Data Entry page.',
     };
     const onCancel = () => { /* Nothing to do here */ };
     
