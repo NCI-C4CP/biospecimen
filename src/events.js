@@ -1104,7 +1104,7 @@ export const addEventBiospecimenCollectionFormToggles = () => {
                 const allBloodUrineCheckedArray = allTubesCollected.filter(
                     item => (item.getAttribute("data-tube-type") === "Blood tube" && item.checked) || (item.getAttribute("data-tube-type") === "Urine" && item.checked)
                 );
-               
+
                 if (collected.checked) {
                     biohazardBagChkb.checked = true;
                     biohazardBagText.disabled = false;
@@ -1481,7 +1481,7 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
         continueToFinalizeScreen ? finalizeTemplate(participantData, biospecimenData) : showTimedNotifications({ title: 'No changes detected', body: 'No changes have been made to the collection data.' });
     } else if (isFinalized) {
         
-        handleFinalizedCollectionUpdate(biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen);
+        handleFinalizedCollectionUpdate(biospecimenData, participantData, siteTubesList, addedStrayTubes);
     } else {
         try {
             await updateSpecimen([biospecimenData]);
@@ -1501,14 +1501,12 @@ const collectionSubmission = async (participantData, biospecimenData, continueTo
  * @param {object} participantData - the participantData from Firestore.
  * @param {array} siteTubesList - the list of tubes based on the site (from getSiteTubesLists()).
  * @param {array} addedStrayTubes - tubes added this form submission.
- * @param {boolean} continueToFinalizeScreen - if true, navigate to finalize screen.
  */
-const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes, continueToFinalizeScreen) => {
+const handleFinalizedCollectionUpdate = async (biospecimenData, participantData, siteTubesList, addedStrayTubes) => {
     const modalMessage = {
         title: `Collection ${biospecimenData[conceptIds.collection.id]} is Already Finalized`,
-        body: 'IMPORTANT: This Collection has already been finalized. Click continue if you want to update the collection and re-finalize. Click Cancel to discard changes.',
+        body: 'IMPORTANT: This Collection has already been finalized. Click "Continue" if you want to update the collection and re-finalize. Changes will not be saved unless you click "Confirm" during Review Collection Data Entry.',
     };
-
     const onCancel = () => { /* Nothing to do here */ };
     
     // Specimen is not already finalized before this point. Manage boxedStatus and finalize.
@@ -1523,8 +1521,7 @@ const handleFinalizedCollectionUpdate = async (biospecimenData, participantData,
                 biospecimenData[conceptIds.strayTubesList] = strayTubesList;
                 biospecimenData[conceptIds.boxedStatus] = conceptIds.partiallyBoxed;
             }
-            await processSpecimenCollectionFormUpdates(biospecimenData, participantData, siteTubesList, continueToFinalizeScreen);
-            await handleFormSaveAndNavigation(biospecimenData, continueToFinalizeScreen);
+            finalizeTemplate(participantData, biospecimenData, false);
         } catch (error) {
             console.error(`Error handleFinalizedCollectionUpdate -> onContinue. ${error}`);
             showNotifications({ title: "Error updating collection", body: error.message });
@@ -1532,28 +1529,7 @@ const handleFinalizedCollectionUpdate = async (biospecimenData, participantData,
     };
 
     showNotificationsCancelOrContinue(modalMessage, null, onCancel, onContinue);
-}
-
-// TODO: The write process would benefit from optimization. Many sequential reads/writes.
-const processSpecimenCollectionFormUpdates = async (biospecimenData, participantData, siteTubesList) => {
-    const baselineVisit = (biospecimenData[conceptIds.collection.selectedVisit] === conceptIds.baseline.visitId);
-    const clinicalResearchSetting = (biospecimenData[conceptIds.collection.collectionSetting] === conceptIds.research || biospecimenData[conceptIds.collection.collectionSetting] === conceptIds.clinical);
-    
-    try {
-        showAnimation();
-
-        const {code, message} = await submitSpecimen(biospecimenData, participantData, siteTubesList);
-        if(code !== 200) {
-            throw new Error(message);
-        }
-
-        hideAnimation();
-    } catch (error) {
-        hideAnimation();
-        console.error("Error saving collection: ", error);
-        showNotifications({ title: 'Error saving collection!', body: error.message });
-    }
-}
+};
 
 const handleFormSaveAndNavigation = async (biospecimenData, continueToFinalizeScreen) => {
     if (continueToFinalizeScreen) {
@@ -1609,7 +1585,6 @@ export const addEventReturnToCollectProcess = () => {
         const participantData = response.data[0];
         const biospecimenData = (await searchSpecimen(masterSpecimenId)).data;
         hideAnimation();
-        
         tubeCollectedTemplate(participantData, biospecimenData);
     })
 };
