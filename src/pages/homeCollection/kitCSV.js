@@ -76,7 +76,7 @@ const csvFileShippedNotReceivedButtonSubmit = () => {
               kit[conceptIds.returnKitTrackingNum],
               '1', // Currently always 1
               kit[conceptIds.collectionCupId],
-              "Saliva", // Currently always saliva; revisit if other home kit types become available
+              "Oral Rinse", // Currently always Oral Rinse; revisit if other home kit types become available
               kitStatusLookup[kit[conceptIds.kitStatus]]
             ]
           });
@@ -186,7 +186,7 @@ const modifyKitQueryResults = (kitsData, collectionSource = 'site') => {
 const getVialTypesMapping = (collectionType, site, tubeId) => {
   if (collectionType === 'home') {
     // Home collections, currently the only type used, always return the same value
-    return ["15ml Nalgene jar",	"Crest Alcohol Free",	"Saliva",	"10"];
+    return ["15ml Nalgene jar",	"Crest Alcohol Free",	"Oral Rinse",	"10"];
   }
 }
 
