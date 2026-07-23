@@ -403,7 +403,7 @@ const materialTypeMapping = (specimenId) => {
     "0014": "WHOLE BL",
     "0024": "WHOLE BL",
     "0006": "Urine",
-    "0007": "Saliva",
+    "0007": "Oral Rinse",
     "0060": "WHOLE BL",
   };
   return materialTypeObject[tubeId] ?? "";

@@ -9,7 +9,7 @@ const defaultMapping = {
             '0004': ['10 ml Vacutainer', 'EDTA = K2', 'WHOLE BL', '10'],
             '0005': ['6 ml Vacutainer', 'ACD', 'WHOLE BL', '6'],
             '0006': ['10 ml Vacutainer', 'No Additive', 'Urine', '10'],
-            '0007': ['15ml Nalgene jar', 'Crest Alcohol Free', 'Saliva', '15'],
+            '0007': ['15ml Nalgene jar', 'Crest Alcohol Free', 'Oral Rinse', '15'],
             '0060': ['Streck Tube', 'Streck DNA', 'WHOLE BL', '10'],
         },
     },
@@ -119,7 +119,7 @@ const defaultMapping = {
             '0024': ['4 ml Vacutainer', 'EDTA = K2', 'WHOLE BL', '4'],
             '0005': ['6 ml Vacutainer', 'ACD', 'WHOLE BL', '6'],
             '0006': ['10 ml Vacutainer', 'No Additive', 'Urine', '10'],
-            '0007': ['15ml Nalgene jar', 'Crest Alcohol Free', 'Saliva', '15'],
+            '0007': ['15ml Nalgene jar', 'Crest Alcohol Free', 'Oral Rinse', '15'],
             '0060': ['Streck Tube', 'Streck DNA', 'WHOLE BL', '10'],
         },
     }
