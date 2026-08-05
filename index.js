@@ -22,6 +22,7 @@ import { collectionIdSearchScreen } from "./src/pages/siteCollection/collectionI
 import { bptlShipReportsScreen } from "./src/pages/siteCollection/shippingReport.js";
 import { checkOutReportTemplate } from "./src/pages/checkOutReport.js";
 import { dailyReportTemplate } from "./src/pages/dailyReport.js";
+import { unfinalizedBoxesReportTemplate } from "./src/pages/unfinalizedBoxesReport.js";
 
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker
@@ -130,6 +131,7 @@ const manageRoutes = async () => {
         else if (route === "#reports") reportsQuery(auth, route);
         else if (route === "#checkoutReport") checkOutReportTemplate(auth, route);
         else if (route === "#dailyReport") dailyReportTemplate(auth, route);
+        else if (route === "#unfinalizedBoxesReport") unfinalizedBoxesReportTemplate(auth, route);
         else if (route === "#bptlShipReports") bptlShipReportsScreen(auth, route);
         else if (route === "#sign_out") signOut();
         else window.location.hash = "#welcome";

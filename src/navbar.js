@@ -127,6 +127,9 @@ export const reportSideNavBar = () => {
             <li class="nav-item">
                 <a class="nav-link" href="#dailyReport" id="navBarDailyReport">Daily Review Report</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#unfinalizedBoxesReport" id="navBarUnfinalizedBoxesReport">Unfinalized Boxes Report</a>
+            </li>
         </ul>`;
 }
 
